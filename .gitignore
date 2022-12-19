@@ -1,15 +1,14 @@
-geoharvester_frontend/node_modules
-geoharvester_backend/env
-geoharvester_backend/__pycache__
-geoharvester_backend/src/__pycache__
+client/node_modules
+server/env
+server/__pycache__
 
 
 
 # testing
-geoharvester_frontend/coverage
+client/coverage
 
 # production
-geoharvester_frontend/build
+client/build
 
 # misc
 env
