@@ -1,0 +1,23 @@
+client/node_modules
+server/env
+server/__pycache__
+
+
+
+# testing
+client/coverage
+
+# production
+client/build
+
+# misc
+env
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
