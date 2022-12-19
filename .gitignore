@@ -1,12 +1,18 @@
 geoharvester_frontend/node_modules
+geoharvester_backend/env
+geoharvester_backend/__pycache__
+geoharvester_backend/src/__pycache__
+
+
 
 # testing
-geoharvester_frontend//coverage
+geoharvester_frontend/coverage
 
 # production
-geoharvester_frontend//build
+geoharvester_frontend/build
 
 # misc
+env
 .DS_Store
 .env.local
 .env.development.local
