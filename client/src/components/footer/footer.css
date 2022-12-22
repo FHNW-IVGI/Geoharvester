@@ -1,11 +1,15 @@
-.footer-bar {
+#footer-bar {
     display: flex;
     flex-direction: row;
     width: 100%;
     background-color: white;
 }
 
-.footer-text {
+#footer-text {
     padding-left: 15px;
     width: 100%
+}
+
+#footer-button {
+    margin-right: 15px;
 }

@@ -1,0 +1,7 @@
+#results-resultarea {
+    flex-grow: 1;
+    padding: 0 30px;
+    margin: 20px 20%;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+}

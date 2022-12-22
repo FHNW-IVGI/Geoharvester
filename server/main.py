@@ -1,3 +1,6 @@
+import re
+from typing import Union
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,3 +23,16 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"message": "running"}
+
+
+@app.get("/getServerStatus")
+async def getServerStatus():
+    return {"message": "running"}
+
+
+@app.get("/getData")
+async def getData(query: Union[str, None] = None):
+    payload = re.split(r',|!|;', str(query))
+
+    print(payload)
+    return {"data": payload}

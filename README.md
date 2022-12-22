@@ -36,6 +36,8 @@ NDGI Project Geoharvester
 
 #### Troubleshooting:
 
-##### VSCode does not detect venv
+##### VSCode does not detect venv / installed libraries
 
-- https://stackoverflow.com/questions/66869413/visual-studio-code-does-not-detect-virtual-environments
+- Run `pip -V` from server directory. It should point to the .env hidden folder ("....Geoharverster/server/env/lib/python3.9/site-packages/pip (python 3.9)"), otherwise activate the environment from your current terminal window (see above)
+- In VSCode hit "CTRL + SHIFT + P" and select "Python: Select Interpreter". Select Python from .env folder (by drobdown or by using "find" to navigate to it).
+- Also: https://stackoverflow.com/questions/66869413/visual-studio-code-does-not-detect-virtual-environments

@@ -1,55 +1,61 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import Input from "@mui/material/Input";
-import FilledInput from "@mui/material/FilledInput";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormHelperText from "@mui/material/FormHelperText";
-import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
+import React, { useState } from "react";
+import {
+  IconButton,
+  OutlinedInput,
+  InputLabel,
+  FormControl,
+  InputAdornment,
+  Button,
+} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import "./SearchBar.css";
+import { getData } from "../../requests";
+import "./search.css";
 
-export const SearchBar = () => {
+type SearchBarProps = {
+  setSearchResults: (searchResult: any) => void;
+};
+
+export const SearchBar = ({ setSearchResults }: SearchBarProps) => {
+  const [searchString, setSearchString] = useState("");
+
+  const triggerSearch = async () =>
+    await getData(searchString)
+      .then((res) => {
+        const { data } = res;
+        setSearchResults(data);
+      })
+      .catch((e) => {
+        console.error(e);
+        setSearchResults([]); // Fallback on error
+      });
+
   return (
     <div id="search">
-      <div id="search-toparea"></div>
-      <div id="search-searcharea">
-        <FormControl sx={{ m: 1, width: "100ch" }} variant="outlined">
-          <InputLabel htmlFor="search-bar">Search</InputLabel>
-          <OutlinedInput
-            id="search-bar"
-            type="text"
-            startAdornment={
-              <InputAdornment position="start">
-                <IconButton
-                  aria-label="trigger-search"
-                  onClick={() => console.log("not implemented")}
-                  edge="end"
-                >
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            }
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="trigger-cancel"
-                  onClick={() => console.log("not implemented")}
-                  edge="end"
-                >
-                  <CancelIcon />
-                </IconButton>
-              </InputAdornment>
-            }
-            label="Search"
-          />
-        </FormControl>
-      </div>
-      <div id="search-resultarea"></div>
+      <FormControl sx={{ m: 1, width: "100ch" }} variant="outlined">
+        <InputLabel htmlFor="search-bar">Search</InputLabel>
+        <OutlinedInput
+          id="search-bar"
+          type="text"
+          value={searchString}
+          onChange={(e) => setSearchString(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && triggerSearch()}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="trigger-cancel"
+                onClick={() => setSearchString("")}
+                edge="end"
+              >
+                <CancelIcon />
+              </IconButton>
+            </InputAdornment>
+          }
+          label="Search"
+        />
+      </FormControl>
+      <Button id="search-button" size="large" onClick={triggerSearch}>
+        Search
+      </Button>
     </div>
   );
 };

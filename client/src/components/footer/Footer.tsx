@@ -1,10 +1,16 @@
-import { Paper } from "@mui/material";
-import "./Footer.css";
+import { Paper, Button } from "@mui/material";
+import "./footer.css";
 
-export const Footer = ({ status }: { status: string }) => (
+export const Footer = ({
+  status,
+  checkServerStatus,
+}: {
+  status: string;
+  checkServerStatus: () => void;
+}) => (
   <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
-    <div className="footer-bar">
-      <p className="footer-text">
+    <div id="footer-bar">
+      <p id="footer-text">
         Server is
         <span
           style={{
@@ -16,6 +22,9 @@ export const Footer = ({ status }: { status: string }) => (
           {status}
         </span>
       </p>
+      <Button id="footer-button" onClick={checkServerStatus}>
+        Check
+      </Button>
     </div>
   </Paper>
 );
