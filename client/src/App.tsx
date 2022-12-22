@@ -1,29 +1,36 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { SearchBar } from "./components/search/SearchBar";
+import { Footer } from "./components/footer/Footer";
+import { ResultArea } from "./components/results/ResultArea";
+import { getServerStatus } from "./requests";
 import "./App.css";
 
-const BASEURL = "http://localhost:8000"; // Adjust to port where backend is running
-const defaultRoute = `${BASEURL}/`;
-
 function App() {
-  const [helloString, setHelloString] = useState("not connected");
+  const [statusString, setStatusString] = useState("not connected");
+  const [searchResults, setSearchResults] = useState([]);
+
+  const checkServerStatus = () =>
+    getServerStatus()
+      .then((res) => {
+        setStatusString(res ? res : "error");
+      })
+      .catch((e) => console.error(e));
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await axios(defaultRoute, {});
-      const { message } = result.data;
-      setHelloString(message ? message : "error");
-    };
-    fetchData().catch((e) => console.error(e));
+    checkServerStatus();
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>Server says:</p>
-        <p style={{ color: "green" }}>"{helloString}"</p>
-      </header>
-    </div>
+    <>
+      <header className="App-header">NDGI Project Geoharvester</header>
+      <main className="App-main">
+        <SearchBar setSearchResults={setSearchResults} />
+        <ResultArea results={searchResults}></ResultArea>
+      </main>
+      <footer className="App-footer">
+        <Footer status={statusString} checkServerStatus={checkServerStatus} />
+      </footer>
+    </>
   );
 }
 
