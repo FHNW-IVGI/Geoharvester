@@ -1,4 +1,4 @@
-# Geoharverster
+# Geoharvester
 
 NDGI Project Geoharvester
 
@@ -15,7 +15,7 @@ NDGI Project Geoharvester
 
 ###### Run:
 
-1. cd into frontend folder ("geoharvester_frontend")
+1. cd into frontend folder ("geoharvester_client")
 2. run `npm i` to install dependencies (from package.json)
 3. run `npm start` to start the fronted on localhost (`npm start` is defined in package.json)
 
@@ -29,7 +29,7 @@ NDGI Project Geoharvester
 
 ###### Run:
 
-1. cd into backend folder ("geoharvester_backend")
+1. cd into backend folder ("geoharvester_server")
 2. run `pip install -r requirements.txt` to install dependencies
 3. run `uvicorn main:app --reload` to start server on localhost
 4. Check `localhost:8000`in your browser to verify that backend is running
