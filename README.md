@@ -41,3 +41,9 @@ NDGI Project Geoharvester
 - Run `pip -V` from server directory. It should point to the .env hidden folder ("....Geoharverster/server/env/lib/python3.9/site-packages/pip (python 3.9)"), otherwise activate the environment from your current terminal window (see above)
 - In VSCode hit "CTRL + SHIFT + P" and select "Python: Select Interpreter". Select Python from .env folder (by drobdown or by using "find" to navigate to it).
 - Also: https://stackoverflow.com/questions/66869413/visual-studio-code-does-not-detect-virtual-environments
+
+
+## API Documentation
+### SwaggerUI
+Fast API comes with Swagger UI preinstalled. If you have the backend running (see steps above), Swagger UI is available on http://localhost:8000/docs. See the wiki pages of this repo for the documentation of this project.
+
