@@ -1,8 +1,7 @@
-import re
-from typing import Union
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from routers import getData
 
 app = FastAPI()
 
@@ -10,6 +9,8 @@ origins = [
     # Adjust to your frontend localhost port if not default
     "http://localhost:3000"
 ]
+
+app.include_router(getData.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,9 +31,9 @@ async def getServerStatus():
     return {"message": "running"}
 
 
-@app.get("/getData")
-async def getData(query: Union[str, None] = None):
-    payload = re.split(r',|!|;', str(query))
+# @app.get("/getData")
+# async def getData(query: Union[str, None] = None):
+#     payload = re.split(r',|!|;', str(query))
 
-    print(payload)
-    return {"data": payload}
+#     print(payload)
+#     return {"data": payload}
