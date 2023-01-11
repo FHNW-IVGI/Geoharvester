@@ -1,6 +1,7 @@
 import re
 from typing import Union
 
+import geopandas as gpd
 from fastapi import APIRouter
 
 router = APIRouter()

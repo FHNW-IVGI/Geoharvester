@@ -40,3 +40,9 @@ NDGI Project Geoharvester
 ##### Cannot start application
 
 - Check if conda environment is set up and running `conda info --envs` (active environment with asterik \*)
+
+##### Can`t resolve geopanda import
+
+- Is the package installed? (run `conda list` in your activated conda env)
+- You might need to switch your Python interpreter in VS Code (bottom right corner, click on it, select anaconda version "geoharvester")
+- This might happen because of the old env version still being there, delete env folder as we now use conda instead

@@ -30,10 +30,3 @@ async def root():
 async def getServerStatus():
     return {"message": "running"}
 
-
-# @app.get("/getData")
-# async def getData(query: Union[str, None] = None):
-#     payload = re.split(r',|!|;', str(query))
-
-#     print(payload)
-#     return {"data": payload}
