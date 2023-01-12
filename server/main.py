@@ -1,7 +1,9 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import getData
+
+from constants import url_geoservices_CH_csv
+from routers import get_data
 
 app = FastAPI()
 
@@ -10,7 +12,7 @@ origins = [
     "http://localhost:3000"
 ]
 
-app.include_router(getData.router)
+app.include_router(get_data.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,10 +25,12 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
+    '''Root endpoint'''
     return {"message": "running"}
 
 
 @app.get("/getServerStatus")
-async def getServerStatus():
+async def get_server_status():
+    '''Helper method for client'''
     return {"message": "running"}
 
