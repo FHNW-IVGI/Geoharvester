@@ -1,5 +1,5 @@
 
-from app.routers import get_data
+from app.getGeodata import get_data
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

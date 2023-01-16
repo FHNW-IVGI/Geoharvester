@@ -1,6 +1,4 @@
-
-
-# url="https://raw.githubusercontent.com/cs109/2014_data/master/countries.csv"
+###  URLS
 
 # Scraper related URLs:
 url_github_repo = "https://github.com/davidoesch/geoservice_harvester_poc/blob/main/data/"
