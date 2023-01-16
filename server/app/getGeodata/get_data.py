@@ -1,11 +1,9 @@
 """Imports."""
 from typing import Union
 
-import pandas as pd
 from fastapi import APIRouter, Depends
 
-from ..constants import url_geoservices_CH_csv
-from .methods import split_request_data
+from .methods import load_data, search_by_terms, split_search_string
 
 router = APIRouter()
 
@@ -13,14 +11,17 @@ router = APIRouter()
 async def get_data(query: Union[str, None] = None):
     """Route for the get_data request (search by terms)"""
 
-    word_list = split_request_data(query)
+    if (query == None):
+        return {"data": ""}
 
-    # Which columns of the csv to use (enhances performance):
-    columns_to_use = ["OWNER","TITLE", "ABSTRACT"]
-    df_geoservices = pd.read_csv(url_geoservices_CH_csv, usecols=columns_to_use)
-    payload = word_list
-    # payload = df_geoservices.head(20)
+    word_list = split_search_string(query)
 
+    dataframe_some_cols = load_data()
+
+    search_result = search_by_terms(word_list, dataframe_some_cols)
+
+
+    payload = search_result
 
     print(payload)
     return {"data": payload}
