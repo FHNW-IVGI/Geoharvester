@@ -1,8 +1,8 @@
 server/.vscode
 server/app/env
-server/__pycache__
-server/app/__pycache__
-server/app/routers/__pycache__
+
+__pycache__
+**/__pycache__
 
 
 client/node_modules
