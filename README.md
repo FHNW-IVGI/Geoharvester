@@ -30,9 +30,9 @@ NDGI Project Geoharvester
 
 ###### Run:
 
-1. cd into backend folder ("geoharvester_server")
+1. cd into backend folder ("server")
 2. run `conda activate geoharvester` to activate environment (replace "geoharvester" with name of your environment if it differs)
-3. run `uvicorn main:app --reload` to start server on localhost
+3. run `uvicorn app.main:app --reload` to start server on localhost (from `server` folder)
 4. Check `localhost:8000`in your browser to verify that backend is running
 
 #### Troubleshooting:
@@ -40,6 +40,7 @@ NDGI Project Geoharvester
 ##### Cannot start application
 
 - Check if conda environment is set up and running by typing `conda info --envs` (active environment with asterik \*)
+- Check that you are starting the backend from the `server` folder (not server/apps) and use `uvicorn app.main:...` (NOT `uvicorn main:...`) - this is required for relative imports (see: https://fastapi.tiangolo.com/tutorial/bigger-applications/)
 
 ##### Can`t resolve dependencies
 

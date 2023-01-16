@@ -3,14 +3,19 @@ import re
 from typing import Union
 
 import pandas as pd
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from ..constants import url_geoservices_CH_csv
 
 # url_github_repo = "https://github.com/davidoesch/geoservice_harvester_poc/blob/main/data/"
 # url_github_repo_suffix = "?raw=true"
 
 # url_geoservices_CH_csv = "{}geoservices_CH.csv{}".format(url_github_repo, url_github_repo_suffix)
 
-router = APIRouter()
+router = APIRouter(
+        # dependencies=[Depends(url_geoservices_CH_csv)],
+
+)
 
 @router.get("/getData")
 async def get_data(query: Union[str, None] = None):

@@ -1,9 +1,7 @@
 
+from app.routers import get_data
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from constants import url_geoservices_CH_csv
-from routers import get_data
 
 app = FastAPI()
 
