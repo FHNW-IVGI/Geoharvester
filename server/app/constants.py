@@ -16,3 +16,4 @@ url_geoservices_stats_CH_csv = "{}geodata_CH.csv{}".format(url_github_repo,url_g
 
 # Used to create a subset of the full csv data:
 fields_to_include = ["OWNER","TITLE", "ABSTRACT"]
+fields_to_output = ["OWNER","TITLE"] # Needs to be subset of fields_to_include

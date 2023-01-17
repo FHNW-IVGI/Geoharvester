@@ -4,7 +4,8 @@ from typing import List
 
 import pandas as pd
 
-from ..constants import fields_to_include, url_geoservices_CH_csv
+from ..constants import (fields_to_include, fields_to_output,
+                         url_geoservices_CH_csv)
 
 
 def load_data():
@@ -57,11 +58,13 @@ def search_by_terms(word_list: List[str], dataframe):
         "layers": []
     }
 
+
     for term in word_list:
         result = dataframe[dataframe.apply(lambda dataset: dataset.astype(str).str.contains(term, case=False).any(), axis=1)]
 
         result_without_nan = result.fillna("")
-        search_result["layers"].append(result_without_nan.values.tolist())
+        truncated_dataframe = result_without_nan[fields_to_output]
+        search_result["layers"] = truncated_dataframe.values.tolist()
 
         search_result["statistics"].append({
             "term": term,
