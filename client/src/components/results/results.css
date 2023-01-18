@@ -1,8 +1,8 @@
 #results-statisticsarea {
     flex-grow: 1;
-    padding: 10px 0;
-    margin: 20px;
-    font-weight: 700;
-    border: 1px solid grey;
-    border-radius: 10px;
+    margin: 10px 20px;
+}
+
+#results-table {
+    margin: 0 20px;
 }

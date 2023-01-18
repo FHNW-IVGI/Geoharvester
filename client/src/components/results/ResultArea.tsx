@@ -7,6 +7,7 @@ import {
   TableRow,
   TableCell,
   Paper,
+  Chip,
 } from "@mui/material";
 
 type StatisticsProps = {
@@ -25,7 +26,7 @@ export const StatisticsBox = ({ stats }: StatisticsProps) =>
   stats && stats.length ? (
     <div id="results-statisticsarea">
       {stats.map((entry) => (
-        <div>{`${entry.term}: ${entry.count}`}</div>
+        <Chip label={`${entry.term}: ${entry.count}`} variant="outlined" />
       ))}
     </div>
   ) : (
@@ -38,31 +39,33 @@ export const ResultArea = ({ data, fields }: ResultProps) => {
   }
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            {fields.length ? (
-              fields.map((field) => <TableCell>{field}</TableCell>)
+    <div id="results-table">
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              {fields.length ? (
+                fields.map((field) => <TableCell>{field}</TableCell>)
+              ) : (
+                <TableCell>.</TableCell>
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.length ? (
+              data.map((row, index) => (
+                <TableRow key={index}>
+                  {row.map((cell) => (
+                    <TableCell>{cell}</TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : (
-              <TableCell>.</TableCell>
+              <TableRow />
             )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.length ? (
-            data.map((row, index) => (
-              <TableRow>
-                {row.map((cell) => (
-                  <TableCell>{cell}</TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow />
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };

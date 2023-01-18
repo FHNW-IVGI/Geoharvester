@@ -56,7 +56,7 @@ def search_by_terms(word_list: List[str], dataframe):
     search_result = {
         "fields": [],
         "layers": [],
-        "statistics": {},
+        "statistics": [],
     }
 
 
@@ -68,9 +68,9 @@ def search_by_terms(word_list: List[str], dataframe):
         search_result["layers"] = truncated_dataframe.values.tolist()
         search_result["fields"] = truncated_dataframe.columns.tolist()
 
-        search_result["statistics"] = {
+        search_result["statistics"].append({
             "term": term,
             "count": len(result_without_nan),
-        }
+        })
     
     return search_result
