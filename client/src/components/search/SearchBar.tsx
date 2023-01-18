@@ -12,21 +12,21 @@ import { getData } from "../../requests";
 import "./search.css";
 
 type SearchBarProps = {
-  setSearchResults: (searchResult: any) => void;
+  setSearchResult: (searchResult: any) => void;
 };
 
-export const SearchBar = ({ setSearchResults }: SearchBarProps) => {
+export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
   const [searchString, setSearchString] = useState("");
 
   const triggerSearch = async () =>
     await getData(searchString)
       .then((res) => {
         const { data } = res;
-        setSearchResults(data);
+        setSearchResult(data);
       })
       .catch((e) => {
         console.error(e);
-        setSearchResults([]); // Fallback on error
+        setSearchResult([]); // Fallback on error
       });
 
   return (

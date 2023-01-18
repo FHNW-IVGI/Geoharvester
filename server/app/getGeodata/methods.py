@@ -54,8 +54,9 @@ def search_by_terms(word_list: List[str], dataframe):
        Return layers and count per term"""
 
     search_result = {
-        "statistics": [],
-        "layers": []
+        "fields": [],
+        "layers": [],
+        "statistics": {},
     }
 
 
@@ -65,10 +66,11 @@ def search_by_terms(word_list: List[str], dataframe):
         result_without_nan = result.fillna("")
         truncated_dataframe = result_without_nan[fields_to_output]
         search_result["layers"] = truncated_dataframe.values.tolist()
+        search_result["fields"] = truncated_dataframe.columns.tolist()
 
-        search_result["statistics"].append({
+        search_result["statistics"] = {
             "term": term,
             "count": len(result_without_nan),
-        })
+        }
     
     return search_result

@@ -1,7 +1,6 @@
 import "./results.css";
 import {
   TableContainer,
-  ListItem,
   Table,
   TableBody,
   TableHead,
@@ -18,7 +17,8 @@ type StatisticsProps = {
 };
 
 type ResultProps = {
-  results: string[][];
+  data: string[][];
+  fields: string[];
 };
 
 export const StatisticsBox = ({ stats }: StatisticsProps) =>
@@ -32,18 +32,26 @@ export const StatisticsBox = ({ stats }: StatisticsProps) =>
     <div></div>
   );
 
-export const ResultArea = ({ results }: ResultProps) => {
-  if (results.length < 2) {
+export const ResultArea = ({ data, fields }: ResultProps) => {
+  if (data.length < 2) {
     return <div>No Data</div>;
   }
 
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            {fields.length ? (
+              fields.map((field) => <TableCell>{field}</TableCell>)
+            ) : (
+              <TableCell>.</TableCell>
+            )}
+          </TableRow>
+        </TableHead>
         <TableBody>
-          <TableHead></TableHead>
-          {results.length ? (
-            results.map((row, index) => (
+          {data.length ? (
+            data.map((row, index) => (
               <TableRow>
                 {row.map((cell) => (
                   <TableCell>{cell}</TableCell>

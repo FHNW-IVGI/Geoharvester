@@ -11,11 +11,14 @@ export type SearchResult = {
     count: number;
   }[];
   layers: string[][];
+  fields: string[];
 };
 
 function App() {
   const [statusString, setStatusString] = useState("not connected");
-  const [searchResults, setSearchResults] = useState({} as SearchResult);
+  const [searchResult, setSearchResult] = useState({} as SearchResult);
+
+  console.log(searchResult);
 
   const checkServerStatus = () =>
     getServerStatus()
@@ -28,13 +31,14 @@ function App() {
     checkServerStatus();
   }, []);
 
+  const { statistics, layers, fields } = searchResult;
   return (
     <>
       <header className="App-header">NDGI Project Geoharvester</header>
       <main className="App-main">
-        <SearchBar setSearchResults={setSearchResults} />
-        <StatisticsBox stats={searchResults.statistics || []}></StatisticsBox>
-        <ResultArea results={searchResults.layers || []}></ResultArea>
+        <SearchBar setSearchResult={setSearchResult} />
+        <StatisticsBox stats={statistics || []}></StatisticsBox>
+        <ResultArea data={layers || [[]]} fields={fields || []}></ResultArea>
       </main>
       <footer className="App-footer">
         <Footer status={statusString} checkServerStatus={checkServerStatus} />
