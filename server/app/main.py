@@ -1,6 +1,5 @@
-import re
-from typing import Union
 
+from app.getGeodata import get_data
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -10,6 +9,8 @@ origins = [
     # Adjust to your frontend localhost port if not default
     "http://localhost:3000"
 ]
+
+app.include_router(get_data.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,17 +23,12 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
+    '''Root endpoint'''
     return {"message": "running"}
 
 
 @app.get("/getServerStatus")
-async def getServerStatus():
+async def get_server_status():
+    '''Helper method for client'''
     return {"message": "running"}
 
-
-@app.get("/getData")
-async def getData(query: Union[str, None] = None):
-    payload = re.split(r',|!|;', str(query))
-
-    print(payload)
-    return {"data": payload}

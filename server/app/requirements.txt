@@ -1,0 +1,4 @@
+fastapi
+geopandas
+pandas
+uvicorn

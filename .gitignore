@@ -1,8 +1,12 @@
+server/.vscode
+server/app/env
+
+__pycache__
+**/__pycache__
+
+
 client/node_modules
-server/env
-server/__pycache__
-
-
+client/.vscode
 
 # testing
 client/coverage
@@ -21,3 +25,5 @@ env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+.vscode
