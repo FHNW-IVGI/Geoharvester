@@ -1,5 +1,14 @@
 import "./results.css";
-import { List, ListItem } from "@mui/material";
+import {
+  TableContainer,
+  ListItem,
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+  Paper,
+} from "@mui/material";
 
 type StatisticsProps = {
   stats: {
@@ -9,7 +18,7 @@ type StatisticsProps = {
 };
 
 type ResultProps = {
-  results: string[];
+  results: string[][];
 };
 
 export const StatisticsBox = ({ stats }: StatisticsProps) =>
@@ -24,17 +33,28 @@ export const StatisticsBox = ({ stats }: StatisticsProps) =>
   );
 
 export const ResultArea = ({ results }: ResultProps) => {
+  if (results.length < 2) {
+    return <div>No Data</div>;
+  }
+
   return (
-    <div id="results-resultarea">
-      <List>
-        {results.length ? (
-          results.map((result, index) => (
-            <ListItem key={index}>- {`${result[0]} - ${result[1]}`}</ListItem>
-          ))
-        ) : (
-          <div />
-        )}
-      </List>
-    </div>
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableBody>
+          <TableHead></TableHead>
+          {results.length ? (
+            results.map((row, index) => (
+              <TableRow>
+                {row.map((cell) => (
+                  <TableCell>{cell}</TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow />
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };

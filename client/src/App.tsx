@@ -10,7 +10,7 @@ export type SearchResult = {
     term: string;
     count: number;
   }[];
-  layers: string[];
+  layers: string[][];
 };
 
 function App() {
