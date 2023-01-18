@@ -48,3 +48,9 @@ NDGI Project Geoharvester
 - Close and reopen VSCode, sometimes it gets stuck on changes in the terminal
 - You might need to switch your Python interpreter in VS Code (bottom right corner, click on it, select anaconda version "geoharvester")
 - This might happen because of the old env version still being there, delete env folder as we now rely on conda instead
+
+## API Documentation
+
+### SwaggerUI
+
+Fast API comes with Swagger UI preinstalled. If you have the backend running (see steps above), Swagger UI is available on http://localhost:8000/docs. See the wiki pages of this repo for the documentation of this project.
