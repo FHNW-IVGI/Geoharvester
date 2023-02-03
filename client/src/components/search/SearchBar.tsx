@@ -10,6 +10,7 @@ import {
 import CancelIcon from "@mui/icons-material/Cancel";
 import { getData } from "../../requests";
 import "./search.css";
+import SearchIcon from "@mui/icons-material/Search";
 
 type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
@@ -32,13 +33,14 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
   return (
     <div id="search">
       <FormControl sx={{ m: 1, width: "100ch" }} variant="outlined">
-        <InputLabel htmlFor="search-bar">Search</InputLabel>
+        <InputLabel htmlFor="search-bar">Webservices durchsuchen</InputLabel>
         <OutlinedInput
           id="search-bar"
           type="text"
           value={searchString}
           onChange={(e) => setSearchString(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && triggerSearch()}
+          startAdornment={<SearchIcon color="disabled"/>}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -50,11 +52,11 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
               </IconButton>
             </InputAdornment>
           }
-          label="Search"
+          label="Webservices durchsuchen"
         />
       </FormControl>
       <Button id="search-button" size="large" onClick={triggerSearch}>
-        Search
+        Suchen
       </Button>
     </div>
   );

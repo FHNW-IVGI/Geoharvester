@@ -35,7 +35,7 @@ export const StatisticsBox = ({ stats }: StatisticsProps) =>
 
 export const ResultArea = ({ data, fields }: ResultProps) => {
   if (data.length < 2) {
-    return <div>No Data</div>;
+    return <div>No Data (yet)</div>;
   }
 
   return (

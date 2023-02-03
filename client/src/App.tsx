@@ -3,7 +3,19 @@ import { SearchBar } from "./components/search/SearchBar";
 import { Footer } from "./components/footer/Footer";
 import { ResultArea, StatisticsBox } from "./components/results/ResultArea";
 import { getServerStatus } from "./requests";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { MenuBar } from "./components/menu/MenuBar";
 import "./App.css";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      // main: "#ED7D31",
+      main: "#ffbe92",
+      contrastText: "#000000",
+    },
+  },
+});
 
 export type SearchResult = {
   statistics: {
@@ -33,8 +45,15 @@ function App() {
 
   const { statistics, layers, fields } = searchResult;
   return (
-    <>
-      <header className="App-header">NDGI Project Geoharvester</header>
+    <ThemeProvider theme={theme}>
+    {/* <ThemeProvider theme={theme}> */}
+      <header className="App-header">
+        {/* NDGI Project Geoharvester */}
+        <MenuBar/>
+      </header>
+      {/* <div>
+      <FilterAltIcon variant="contained">Hello World</FilterAltIcon>
+      </div> */}
       <main className="App-main">
         <SearchBar setSearchResult={setSearchResult} />
         <StatisticsBox stats={statistics || []}></StatisticsBox>
@@ -43,7 +62,7 @@ function App() {
       <footer className="App-footer">
         <Footer status={statusString} checkServerStatus={checkServerStatus} />
       </footer>
-    </>
+    </ThemeProvider>
   );
 }
 
