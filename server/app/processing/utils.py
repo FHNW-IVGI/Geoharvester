@@ -7,7 +7,10 @@ from nltk.stem import PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
+from rake_nltk import Rake
+from scipy import sparse
 
+# TODO: Integrate the function in the class TFIDF_BM25
 def detect_language(phrase):
     """
     Test function for language detection!
@@ -19,14 +22,13 @@ def detect_language(phrase):
         lang = 'english'
     return lang
 
-
-# TODO: Test the functions to rank the results based on TITLE, ABSTRACT and KEYWORDS
+# TODO: Integrate the function in the class TFIDF_BM25
 def ranking_tfidf(text, out_dataframe=False):
     """
     Testing fuction to create a TFIDF score (requires to download the nltk data packages!)
     ** Formula: score(D, T) = termFrequency(D, T) * log(N / docFrequency(T))
     ** Automatic detection of the language
-    ** Return momentarily a touple [(word, TFIDF score)],   or a pandas dataframe
+    ** Return momentarily a tuple [(word, TFIDF score)],   or a pandas dataframe
     """
     # Detect the language of the text
     lang = detect_language(text)
@@ -59,22 +61,31 @@ def ranking_tfidf(text, out_dataframe=False):
 
 
 
-def rank_results_lsi(document, query):
-    """
-    Calculate LSI for the document and compare it to the query!
 
-    """
-    # Convert documents and query to a matrix representation using TF-IDF
-    tfidf_vectorizer = TfidfVectorizer()
-    sentences = sent_tokenize(document, language = 'german')
-    words = [word_tokenize(sentence, language='german') for sentence in sentences]
-    documents_matrix = tfidf_vectorizer.fit_transform(words)
-    query_matrix = tfidf_vectorizer.fit_transform(query)
-    # Perform LSI on the document matrix
-    svd = TruncatedSVD(n_components=len(words))
-    lsi_matrix = svd.fit_transform(documents_matrix)
-    # Compute cosine similarity between the query and each document in the LSI space
-    similarity = cosine_similarity(query_matrix, lsi_matrix)
-    # Rank the documents based on their similarity scores
-    ranked_indices = similarity.argsort()[0][::-1]
-    return [document[i] for i in ranked_indices]
+class TFIDF_BM25():
+    def __init__(self, b=0.75, k1=1.6):
+        self.vectorizer = TfidfVectorizer(norm=None, smooth_idf=False)
+        self.b = b
+        self.k1 = k1
+
+    # FIXME: Implement a function for stemming, otherwise also the connection words are searched!
+    # Consider lemmatization if the dataset is not too big (computationally expensive)
+    def stemming(self, text, output_dataframe=False):
+        
+    
+    def fit(self, text):
+        self.vectorizer.fit(text)
+        score = super(TfidfVectorizer, self.vectorizer).transform(text)
+        self.avd1 = score.sum(1).mean()
+    
+    def transform(self, q, d):
+        document = super(TfidfVectorizer, self.vectorizer).transform(d)
+        doc_lenght = document.sum(1).A1
+        query, = super(TfidfVectorizer, self.vectorizer).transform([q])
+        assert sparse.isspmatrix_csr(query)
+
+        document = document.tocsc()[:, query.indices]
+        denom = document + (self.k1 * (1 - self.b + self.b * doc_lenght / self.avd1))[:, None]
+        idf = self.vectorizer._tfidf.idf_[None, query.indices] - 1.
+        numer = document.multiply(np.broadcast_to(idf, document.shape)) * (self.k1 + 1)
+        return (numer / denom).sum(1).A1
