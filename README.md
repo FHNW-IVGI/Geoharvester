@@ -24,12 +24,12 @@ NDGI Project Geoharvester
 ###### Requirements:
 
 - Your favorite terminal
-- Have docker and docker compose installed (https://docs.docker.com/compose/install/)
+- Have docker and docker compose installed (https://docs.docker.com/compose/install/). Windows users need to install Docker Desktop (https://docs.docker.com/desktop/install/windows-install/)
 
 ###### Run:
 
 1. cd into server folder
-2. Run `docker compose up --build` (this takes a while for the first build)
+2. Run `docker compose up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
 3. Check `localhost:8000`in your browser to verify that backend is running
 
 #### Troubleshooting:
