@@ -30,10 +30,23 @@ NDGI Project Geoharvester
 
 ###### Run:
 
+0. Start redis first (see below)
 1. cd into backend folder ("server")
 2. run `conda activate geoharvester` to activate environment (replace "geoharvester" with name of your environment if it differs)
 3. run `uvicorn app.main:app --reload` to start server on localhost (from `server` folder)
 4. Check `localhost:8000`in your browser to verify that backend is running
+
+#### Database:
+
+###### Requirements:
+
+- Install redis for your plattform (https://redis.io/docs/getting-started/installation/)
+- Follow the getting-started-guide (https://redis.io/docs/getting-started/). Make sure that redis can be pinged. You might need to start the redis server first (Ubuntu: `redis-server` from your favorite terminal)
+- Modify the redis config file to secure redis (Ubuntu: `sudo vi /etc/redis/redis.conf` - replace vi with nano or your cmd line editor.) Check if `bind 127.0.0.1` is set (Ubuntu: seems to be default) otherwise add it to that file to only allow connections from localhost.
+
+###### Run:
+
+- Ubuntu: run `redis-server` to spin up the database
 
 #### Troubleshooting:
 

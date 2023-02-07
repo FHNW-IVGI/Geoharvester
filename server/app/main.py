@@ -50,12 +50,12 @@ async def startup_event():
         global datajson
         datajson = dataframe.to_json()
 
-        try:
+        # try:
             # Needs redis stack needs docker
-            r.json().set("geoservices", "$", datajson)
+            # r.json().set("geoservices", "$", datajson)
             # r.json().get("geoservices")
-        except:
-             raise Exception("ERROR: Redis import failed")
+        # except:
+        #      raise Exception("ERROR: Redis import failed")
 
 
 
