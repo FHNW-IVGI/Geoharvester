@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  server:
+    container_name: fastapi
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
+    volumes:
+      - .:/server
+
+    links:
+      - redis
+    environment:
+      # Required for Python to print to terminal
+      PYTHONUNBUFFERED: 1
+
+  redis:
+    image: redis/redis-stack-server
+    container_name: redis
+    hostname: redis
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    restart: unless-stopped

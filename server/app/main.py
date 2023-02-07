@@ -15,7 +15,7 @@ app = FastAPI()
 dataframe=None
 datajson=None
 csv_row_limit= 50
-r = redis.Redis(host="localhost", port=6379)
+r = redis.Redis(host="redis", port=6379)
 
 origins = [
     # Adjust to your frontend localhost port if not default
@@ -49,6 +49,7 @@ async def startup_event():
     else:
         global datajson
         datajson = dataframe.to_json()
+        print("Startup done")
 
         # try:
             # Needs redis stack needs docker
