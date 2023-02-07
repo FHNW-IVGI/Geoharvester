@@ -1,17 +1,21 @@
 
+import os
 from typing import Union
 
 import pandas as pd
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
+import redis
 from app.constants import fields_to_include, url_geoservices_CH_csv
 from app.processing.methods import (load_data, search_by_terms,
                                     split_search_string)
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 dataframe=None
+datajson=None
+csv_row_limit= 50
+r = redis.Redis(host="localhost", port=6379)
 
 origins = [
     # Adjust to your frontend localhost port if not default
@@ -26,11 +30,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
 @app.on_event("startup")
 async def startup_event():
     """Startup Event: Load csv into data frame"""
     global dataframe
-    dataframe = pd.read_csv(url_geoservices_CH_csv, usecols=fields_to_include)
+
+    # To reduce traffic we load the file from ./tmp instead frim Github. Remove the next this and the next line for prod / demo use:
+    url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
+
+    dataframe = pd.read_csv(url_geoservices_CH_csv, usecols=fields_to_include, nrows=csv_row_limit)
+
+    try:
+        r.ping()
+    except:
+         raise Exception("ERROR: Cannot connect to redis, ping failed. Have you started redis?")
+    else:
+        global datajson
+        datajson = dataframe.to_json()
+
+        try:
+            # Needs redis stack needs docker
+            r.json().set("geoservices", "$", datajson)
+            # r.json().get("geoservices")
+        except:
+             raise Exception("ERROR: Redis import failed")
+
 
 
 @app.get("/")

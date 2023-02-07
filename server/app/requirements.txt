@@ -2,3 +2,4 @@ fastapi
 geopandas
 pandas
 uvicorn
+redis-py
