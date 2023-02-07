@@ -5,13 +5,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    restart: always
+
     ports:
       - 8000:8000
     expose:
       - 8000
     volumes:
-      - .:/server
-
+    # Allow hot reloading on code changes for Docker. Uvicorn also requires --reload flag
+      - ./app:/server/app
     links:
       - redis
     environment:
