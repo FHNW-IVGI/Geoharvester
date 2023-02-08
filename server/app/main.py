@@ -1,11 +1,12 @@
 
-import os
 from typing import Union
 
 import pandas as pd
 import redis
 from app.constants import fields_to_include, url_geoservices_CH_csv
-from app.processing.methods import (load_data, search_by_terms,
+from app.processing.methods import (import_into_dataframe,
+                                    search_by_terms_database,
+                                    search_by_terms_dataframe,
                                     split_search_string)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,7 +38,7 @@ async def startup_event():
     """Startup Event: Load csv into data frame"""
     global dataframe
 
-    # To reduce traffic we load the file from ./tmp instead frim Github. Remove the next this and the next line for prod / demo use:
+    # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
     url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
 
     dataframe = pd.read_csv(url_geoservices_CH_csv, usecols=fields_to_include, nrows=csv_row_limit)
@@ -49,14 +50,12 @@ async def startup_event():
     else:
         global datajson
         datajson = dataframe.to_json()
-        print("Startup done")
 
-        # try:
-            # Needs redis stack needs docker
-            # r.json().set("geoservices", "$", datajson)
-            # r.json().get("geoservices")
-        # except:
-        #      raise Exception("ERROR: Redis import failed")
+        try:
+            r.json().set("geoservices", "$", datajson)
+            data = r.json().get("geoservices")
+        except:
+             raise Exception("ERROR: Redis data import failed")
 
 
 
@@ -81,9 +80,8 @@ async def get_data(query: Union[str, None] = None):
 
     word_list = split_search_string(query)
 
-    dataframe_some_cols = load_data()
-
-    search_result = search_by_terms(word_list, dataframe_some_cols)
+    dataframe_some_cols = import_into_dataframe()
+    search_result = search_by_terms_dataframe(word_list, dataframe_some_cols)
 
     payload = search_result
 

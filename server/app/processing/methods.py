@@ -8,7 +8,7 @@ from ..constants import (fields_to_include, fields_to_output,
                          url_geoservices_CH_csv)
 
 
-def load_data():
+def import_into_dataframe():
     """Load csv into data frame"""
         # Which columns of the csv to use (enhances performance):
     dataframe = pd.read_csv(url_geoservices_CH_csv, usecols=fields_to_include)
@@ -49,7 +49,7 @@ def split_search_string(query: str) -> List[str]:
     return trimmed_word_list
 
 
-def search_by_terms(word_list: List[str], dataframe):
+def search_by_terms_dataframe(word_list: List[str], dataframe):
     """Search the geodata collection based on the search terms
        Return layers and count per term"""
 
@@ -74,3 +74,8 @@ def search_by_terms(word_list: List[str], dataframe):
         })
     
     return search_result
+
+def search_by_terms_database(word_list: List[str], redis):
+    """Search the database based on the search terms
+       Return layers and count per term"""
+    return
