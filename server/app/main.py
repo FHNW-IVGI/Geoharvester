@@ -5,17 +5,20 @@ from typing import Union
 
 import pandas as pd
 import redis
-from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
+from app.constants import (INDEX_KEY, REDIS_HOST, REDIS_PORT,
+                           url_geoservices_CH_csv)
 from app.processing.methods import (import_csv_into_dataframe,
-                                    search_by_terms_database,
                                     search_by_terms_dataframe,
                                     split_search_string)
 from app.redis.methods import check_if_index_exists
 from app.redis.schemas import geoservices_schema
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from redis import StrictRedis
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query
+
+cache = StrictRedis()
 
 app = FastAPI()
 
@@ -49,6 +52,7 @@ async def startup_event():
 
     dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
 
+
     try:
         r.ping()
     except:
@@ -61,17 +65,19 @@ async def startup_event():
             PREFIX = "svc:"    
             SERVICE_KEY = PREFIX + '{}'
 
+            # Flush DB on startup
+            for key in r.keys('{}*'.format(PREFIX)):
+                r.delete(key)
+
             index_def = IndexDefinition(
                 index_type=IndexType.JSON,
                 prefix = [PREFIX],
-                score = 0.5,
-                score_field = 'doc_score')
+            )
 
-            index_key = "py_svc_idx"
-            if(check_if_index_exists(index_key)):
+            if(check_if_index_exists(INDEX_KEY)):
                 # Drop index in case it is cached
-                r.ft(index_key).dropindex()
-            r.ft(index_key).create_index(geoservices_schema, definition = index_def)
+                r.ft(INDEX_KEY).dropindex()
+            r.ft(INDEX_KEY).create_index(geoservices_schema, definition = index_def)
             
             pipeline = r.pipeline(transaction=False)
 
@@ -81,16 +87,15 @@ async def startup_event():
                 pipeline.json().set(key, "$", service)
             pipeline.execute()
 
-
-            search_result = r.ft(index_key).search(Query('@TITLE:(Amtliche)')
-                .return_field('NAME')
-                .return_field('OWNER'))
-
-            print(r.ft(index_key).info())
-            print(search_result)
-
         except:
              raise Exception("ERROR: Redis data import failed")
+        finally:
+            # Index Debugging:
+            # print(r.ft(INDEX_KEY).info())
+
+            # Verify data loading:
+            total_keys = r.dbsize()
+            print("--- Redis initialized with {} records".format(total_keys))
 
 
 
@@ -106,8 +111,8 @@ async def get_server_status():
     return {"message": "running"}
 
 @app.get("/getDataFromPandas")
-async def get_data(query: Union[str, None] = None):
-    """Route for the get_data request (search by terms)"""
+async def get_data_from_pandas(query: Union[str, None] = None):
+    """Route for the get_data request (search by terms) targeted at pandas dataframe"""
 
     if (query == None):
         return {"data": ""}
@@ -120,3 +125,28 @@ async def get_data(query: Union[str, None] = None):
     payload = search_result
 
     return {"data": payload}
+
+
+@app.get("/getDataFromRedis")
+async def get_data_from_redis(query: Union[str, None] = None):
+    """Route for the get_data request (search by terms) targeted at redis"""
+
+    if (query == None):
+        return {"data": ""}
+
+    # word_list = split_search_string(query) # Needs proper handling
+
+    # Simple Search
+    simple = r.ft(INDEX_KEY).search(query)
+
+    # Define return fields, search mutliple fields
+    ## WIP: https://redis.io/docs/stack/search/reference/query_syntax/
+    search_result = r.ft(INDEX_KEY).search(Query('@TITLE|ABSTRACT:({})'.format(query))
+        .return_field('NAME')
+        .return_field('OWNER')
+        .return_field('TITLE')
+        .return_field('ABSTRACT'))
+
+    ## todo: Implement stemming and better indexing
+
+    return {"data": search_result}

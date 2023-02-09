@@ -75,8 +75,3 @@ def search_by_terms_dataframe(word_list: List[str], dataframe):
         })
     
     return search_result
-
-def search_by_terms_database(word_list: List[str], redis):
-    """Search the database based on the search terms
-       Return layers and count per term"""
-    return
