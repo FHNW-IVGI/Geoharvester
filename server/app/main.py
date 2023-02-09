@@ -1,13 +1,12 @@
 
 import json
+import uuid
 from typing import Union
 
 import pandas as pd
 import redis
-import requests
-from app.constants import (REDIS_HOST, REDIS_PORT, fields_to_include,
-                           url_geoservices_CH_csv)
-from app.processing.methods import (import_into_dataframe,
+from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
+from app.processing.methods import (import_csv_into_dataframe,
                                     search_by_terms_database,
                                     search_by_terms_dataframe,
                                     split_search_string)
@@ -22,7 +21,7 @@ app = FastAPI()
 
 dataframe=None
 datajson=None
-csv_row_limit= 50
+csv_row_limit= 5000
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
 
@@ -48,7 +47,7 @@ async def startup_event():
     # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
     url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
 
-    dataframe = pd.read_csv(url_geoservices_CH_csv, usecols=fields_to_include, nrows=csv_row_limit)
+    dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
 
     try:
         r.ping()
@@ -56,16 +55,9 @@ async def startup_event():
          raise Exception("ERROR: Cannot connect to redis, ping failed. Have you started redis?")
     else:
         global datajson
-        datajson = dataframe.to_json()
-
+        datajson = json.loads(dataframe.to_json(orient='records'))
 
         try:
-
-            # Data ingest:
-
-            with open('app/tmp/test.json', encoding='utf-8') as f:
-                services = json.loads(f.read())
-
             PREFIX = "svc:"    
             SERVICE_KEY = PREFIX + '{}'
 
@@ -84,26 +76,19 @@ async def startup_event():
             pipeline = r.pipeline(transaction=False)
 
             # Load json data into redis:
-            for service in services:
-                key = SERVICE_KEY.format(service['TITLE']) # Keys need to be unique
-                pipeline.json().set(key, "$", service)   
+            for service in datajson:
+                key = SERVICE_KEY.format(uuid.uuid4()) # Keys need to be unique
+                pipeline.json().set(key, "$", service)
             pipeline.execute()
 
-            test = r.json().get(SERVICE_KEY.format("Abwasser Werkplan Gde"))
-            print(test)
 
-            print(r.ft(index_key).info())
-
-            search_result = r.ft(index_key).search(Query('@TITLE:(Gde)')
+            search_result = r.ft(index_key).search(Query('@TITLE:(Amtliche)')
                 .return_field('NAME')
                 .return_field('OWNER'))
 
+            print(r.ft(index_key).info())
             print(search_result)
 
-            # test = Geoservice(services[0])   
-            # print(test)
-
-            # print(Geoservice.all_pks())
         except:
              raise Exception("ERROR: Redis data import failed")
 
@@ -120,23 +105,18 @@ async def get_server_status():
     '''Helper method for client'''
     return {"message": "running"}
 
-@app.get("/getData")
+@app.get("/getDataFromPandas")
 async def get_data(query: Union[str, None] = None):
     """Route for the get_data request (search by terms)"""
 
     if (query == None):
         return {"data": ""}
 
-    # word_list = split_search_string(query)
+    word_list = split_search_string(query)
 
-    # dataframe_some_cols = import_into_dataframe()
-    # search_result = search_by_terms_dataframe(word_list, dataframe_some_cols)
+    dataframe_some_cols = import_csv_into_dataframe(url_geoservices_CH_csv, csv_row_limit)
+    search_result = search_by_terms_dataframe(word_list, dataframe_some_cols)
 
-    # payload = search_result
+    payload = search_result
 
-    # payload =  {"customers": Geoservice.all_pks()}
-
-
-    # print(payload)
-    # return {"data": payload}
-    return
+    return {"data": payload}

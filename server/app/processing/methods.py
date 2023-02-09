@@ -4,14 +4,15 @@ from typing import List
 
 import pandas as pd
 
-from ..constants import (fields_to_include, fields_to_output,
-                         url_geoservices_CH_csv)
+from ..constants import fields_to_output
 
 
-def import_into_dataframe():
+def import_csv_into_dataframe(url, usecols=None):
     """Load csv into data frame"""
-        # Which columns of the csv to use (enhances performance):
-    dataframe = pd.read_csv(url_geoservices_CH_csv, usecols=fields_to_include)
+    if(usecols):
+        dataframe = pd.read_csv(url, usecols=usecols)
+    else: 
+        dataframe = pd.read_csv(url)
     return dataframe
 
 
