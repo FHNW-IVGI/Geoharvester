@@ -3,3 +3,4 @@ geopandas
 pandas
 uvicorn
 redis
+requests
