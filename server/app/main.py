@@ -16,6 +16,7 @@ from app.redis.schemas import geoservices_schema
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+from redis.commands.search.query import Query
 
 app = FastAPI()
 
@@ -65,32 +66,40 @@ async def startup_event():
             with open('app/tmp/test.json', encoding='utf-8') as f:
                 services = json.loads(f.read())
 
-            pipeline = r.pipeline(transaction=False)
-            
-
-            SERVICE_KEY = 'svc:{}'
-            for service in services:
-                key = SERVICE_KEY.format(service['TITLE'])
-
-                print(key)
-                pipeline.json().set(key, "$", service)   
-
-            pipeline.execute()
-
+            PREFIX = "svc:"    
+            SERVICE_KEY = PREFIX + '{}'
 
             index_def = IndexDefinition(
                 index_type=IndexType.JSON,
-                prefix = ['item:'],
+                prefix = [PREFIX],
                 score = 0.5,
                 score_field = 'doc_score')
 
             index_key = "py_svc_idx"
+            if(check_if_index_exists(index_key)):
+                # Drop index in case it is cached
+                r.ft(index_key).dropindex()
+            r.ft(index_key).create_index(geoservices_schema, definition = index_def)
+            
+            pipeline = r.pipeline(transaction=False)
 
-            if(check_if_index_exists(index_key) == False):
-                r.ft(index_key).create_index(geoservices_schema, definition = index_def)
+            # Load json data into redis:
+            for service in services:
+                key = SERVICE_KEY.format(service['TITLE']) # Keys need to be unique
+                pipeline.json().set(key, "$", service)   
+            pipeline.execute()
 
+            test = r.json().get(SERVICE_KEY.format("Abwasser Werkplan Gde"))
+            print(test)
 
-            test = r.json().get(services[0]["TITLE"])
+            print(r.ft(index_key).info())
+
+            search_result = r.ft(index_key).search(Query('@TITLE:(Gde)')
+                .return_field('NAME')
+                .return_field('OWNER'))
+
+            print(search_result)
+
             # test = Geoservice(services[0])   
             # print(test)
 
