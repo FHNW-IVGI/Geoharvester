@@ -4,16 +4,17 @@ from typing import Union
 
 import pandas as pd
 import redis
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from redis import StrictRedis
+from redis.commands.search.query import Query
+
 from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
 from app.processing.methods import (import_csv_into_dataframe,
                                     search_by_terms_dataframe,
                                     split_search_string)
 from app.redis.methods import create_index, drop_redis_db, ingest_data
 from app.redis.schemas import geoservices_schema
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from redis import StrictRedis
-from redis.commands.search.query import Query
 
 cache = StrictRedis()
 

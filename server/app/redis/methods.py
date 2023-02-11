@@ -5,6 +5,7 @@ import redis
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
 from app.constants import REDIS_HOST, REDIS_PORT
+from app.processing.stopwords import get_stopwords
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
@@ -31,7 +32,7 @@ def create_index(PREFIX, INDEX_KEY, schema):
     if(check_if_index_exists(INDEX_KEY)):
         # Drop index in case it is cached by Docker
         r.ft(INDEX_KEY).dropindex()
-    r.ft(INDEX_KEY).create_index(schema, definition = index_def)
+    r.ft(INDEX_KEY).create_index(schema, definition = index_def, stopwords=get_stopwords())
     return
 
 
