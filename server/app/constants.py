@@ -2,7 +2,6 @@
 # Redis:
 REDIS_HOST = "redis" # See docker-compose, hostname
 REDIS_PORT = 6379 # See docker-compose, port / expose
-INDEX_KEY = "py_svc_idx"
 
 #---------------------------------------------------------------------------------------------------------------  
 # URLs:

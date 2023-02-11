@@ -1,21 +1,18 @@
 
 import json
-import uuid
 from typing import Union
 
 import pandas as pd
 import redis
-from app.constants import (INDEX_KEY, REDIS_HOST, REDIS_PORT,
-                           url_geoservices_CH_csv)
+from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
 from app.processing.methods import (import_csv_into_dataframe,
                                     search_by_terms_dataframe,
                                     split_search_string)
-from app.redis.methods import check_if_index_exists
+from app.redis.methods import create_index, drop_redis_db, ingest_data
 from app.redis.schemas import geoservices_schema
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from redis import StrictRedis
-from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query
 
 cache = StrictRedis()
@@ -26,6 +23,10 @@ dataframe=None
 datajson=None
 csv_row_limit= 5000
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+
+PREFIX = "svc:"    
+SERVICE_KEY = PREFIX + '{}'
+INDEX_KEY = "py_{}_idx".format(PREFIX)
 
 
 origins = [
@@ -49,9 +50,7 @@ async def startup_event():
 
     # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
     url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
-
     dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
-
 
     try:
         r.ping()
@@ -62,30 +61,12 @@ async def startup_event():
         datajson = json.loads(dataframe.to_json(orient='records'))
 
         try:
-            PREFIX = "svc:"    
-            SERVICE_KEY = PREFIX + '{}'
-
             # Flush DB on startup
-            for key in r.keys('{}*'.format(PREFIX)):
-                r.delete(key)
+            drop_redis_db(PREFIX)
 
-            index_def = IndexDefinition(
-                index_type=IndexType.JSON,
-                prefix = [PREFIX],
-            )
+            create_index(PREFIX, INDEX_KEY, geoservices_schema)
 
-            if(check_if_index_exists(INDEX_KEY)):
-                # Drop index in case it is cached
-                r.ft(INDEX_KEY).dropindex()
-            r.ft(INDEX_KEY).create_index(geoservices_schema, definition = index_def)
-            
-            pipeline = r.pipeline(transaction=False)
-
-            # Load json data into redis:
-            for service in datajson:
-                key = SERVICE_KEY.format(uuid.uuid4()) # Keys need to be unique
-                pipeline.json().set(key, "$", service)
-            pipeline.execute()
+            ingest_data(datajson, SERVICE_KEY)
 
         except:
              raise Exception("ERROR: Redis data import failed")
@@ -93,7 +74,7 @@ async def startup_event():
             # Index Debugging:
             # print(r.ft(INDEX_KEY).info())
 
-            # Verify data loading:
+            # Verify database is up and running:
             total_keys = r.dbsize()
             print("--- Redis initialized with {} records".format(total_keys))
 
