@@ -7,10 +7,10 @@ import pandas as pd
 from ..constants import fields_to_output
 
 
-def import_csv_into_dataframe(url, usecols=None):
+def import_csv_into_dataframe(url, column_limit=None):
     """Load csv into data frame"""
-    if(usecols):
-        dataframe = pd.read_csv(url, usecols=usecols)
+    if(column_limit):
+        dataframe = pd.read_csv(url, usecols=column_limit)
     else: 
         dataframe = pd.read_csv(url)
     return dataframe

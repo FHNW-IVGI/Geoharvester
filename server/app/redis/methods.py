@@ -2,8 +2,9 @@
 import uuid
 
 import redis
-from app.constants import REDIS_HOST, REDIS_PORT
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+
+from app.constants import REDIS_HOST, REDIS_PORT
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
