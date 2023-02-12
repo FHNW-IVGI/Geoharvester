@@ -14,7 +14,8 @@ from app.processing.methods import (import_csv_into_dataframe,
                                     search_by_terms_dataframe,
                                     split_search_string)
 from app.redis.methods import create_index, drop_redis_db, ingest_data
-from app.redis.schemas import geoservices_schema
+from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
+                               geoservices_schema)
 
 cache = StrictRedis()
 
@@ -25,9 +26,7 @@ datajson=None
 csv_row_limit= 5000
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
-SVC_PREFIX = "svc:"    
-SVC_KEY = SVC_PREFIX + '{}'
-SVC_INDEX_ID = "py_{}_idx".format(SVC_PREFIX)
+
 
 
 origins = [

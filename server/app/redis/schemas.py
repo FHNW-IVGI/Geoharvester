@@ -2,6 +2,13 @@
 from redis.commands.search.field import (GeoField, NumericField, TagField,
                                          TextField)
 
+### Geoservices
+# Source data:  https://github.com/davidoesch/geoservice_harvester_poc/tree/main/data/geoservices_CH.csv
+
+SVC_PREFIX = "svc:"    
+SVC_KEY = SVC_PREFIX + '{}'
+SVC_INDEX_ID = "py_{}_idx".format(SVC_PREFIX)
+
 geoservices_schema = (
     TextField('$.OWNER', as_name='OWNER', no_stem=True),
     TextField('$.TITLE', as_name='TITLE'),
@@ -22,6 +29,13 @@ geoservices_schema = (
     NumericField('$.CENTER_LON', as_name='CENTER_LON'),
     TextField('$.BBOX', as_name='BBOX', no_stem=True)
 )
+
+### Geodata
+# Source data:  https://github.com/davidoesch/geoservice_harvester_poc/tree/main/data/geodata_CH.csv
+
+DTA_PREFIX = "dta:"    
+DTA_KEY = DTA_PREFIX + '{}'
+DTA_INDEX_ID = "py_{}_idx".format(DTA_PREFIX)
 
 geodata_schema = (
     TextField('$.OWNER', as_name='OWNER', no_stem=True),
