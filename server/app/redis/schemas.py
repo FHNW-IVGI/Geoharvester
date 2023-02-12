@@ -22,3 +22,16 @@ geoservices_schema = (
     NumericField('$.CENTER_LON', as_name='CENTER_LON'),
     TextField('$.BBOX', as_name='BBOX', no_stem=True)
 )
+
+geodata_schema = (
+    TextField('$.OWNER', as_name='OWNER', no_stem=True),
+    TextField('$.TITLE', as_name='TITLE'),
+    TextField('$.NAME', as_name='NAME'),
+    TextField('$.MAPGEO', as_name='MAPGEO'),
+    TextField('$.ABSTRACT', as_name='ABSTRACT'),
+    TagField('$.KEYWORDS', as_name='KEYWORDS'),
+    TextField('$.CONTACT', as_name='CONTACT', no_stem=True),
+    TextField('$.WMSGetCap', as_name='WMSGetCap', no_stem=True),
+    TextField('$.WMTSGetCap', as_name='WMTSGetCap', no_stem=True),
+    TextField('$.WFSGetCap', as_name='WFSGetCap', no_stem=True)
+)
