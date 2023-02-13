@@ -2,6 +2,7 @@ version: "3.8"
 services:
   server:
     container_name: fastapi
+    # Environment variables
     build:
       context: .
       dockerfile: Dockerfile.dev

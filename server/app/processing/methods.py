@@ -10,7 +10,7 @@ from ..constants import fields_to_output
 def import_csv_into_dataframe(url, column_limit=None):
     """Load csv into data frame"""
     if(column_limit):
-        dataframe = pd.read_csv(url, usecols=column_limit)
+        dataframe = pd.read_csv(url, nrows=column_limit)
     else: 
         dataframe = pd.read_csv(url)
     return dataframe
@@ -58,6 +58,8 @@ def search_by_terms_dataframe(word_list: List[str], dataframe):
     docs = []
     total = 0
 
+    print("test")
+
     try:
         for term in word_list:
             result = dataframe[dataframe.apply(lambda dataset: dataset.astype(str).str.contains(term, case=False).any(), axis=1)]
@@ -66,14 +68,14 @@ def search_by_terms_dataframe(word_list: List[str], dataframe):
             truncated_dataframe = result_without_nan[fields_to_output]
 
             # This does not handle duplicates at all:
-            docs.append(truncated_dataframe.values.tolist())
+            docs += truncated_dataframe.values.tolist()
             total += len(result_without_nan)
     except:
         raise Exception
 
     finally:
-        search_result["docs"] = docs
         search_result["total"] = total
         search_result["duration"] = 99
+        search_result["docs"] = docs
 
     return search_result

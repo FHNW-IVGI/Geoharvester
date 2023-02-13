@@ -1,10 +1,12 @@
 
 import json
+import logging
 from typing import Union
 
 import pandas as pd
 import redis
 from fastapi import FastAPI
+from fastapi.logger import logger
 from fastapi.middleware.cors import CORSMiddleware
 from redis import StrictRedis
 from redis.commands.search.query import Query
@@ -19,7 +21,7 @@ from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
 
 cache = StrictRedis()
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 dataframe=None
 datajson=None
@@ -103,7 +105,7 @@ async def get_data_from_pandas(query: Union[str, None] = None):
 
     dataframe_some_cols = import_csv_into_dataframe(url_geoservices_CH_csv, csv_row_limit)
     search_result = search_by_terms_dataframe(word_list, dataframe_some_cols)
-
+    logger.info(search_result)
     payload = search_result
 
     return {"data": payload}
