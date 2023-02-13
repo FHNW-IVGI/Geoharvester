@@ -52,26 +52,28 @@ def split_search_string(query: str) -> List[str]:
 
 def search_by_terms_dataframe(word_list: List[str], dataframe):
     """Search the geodata collection based on the search terms
-       Return layers and count per term"""
+       Return response object aligned with redis response format"""
 
-    search_result = {
-        "fields": [],
-        "layers": [],
-        "statistics": [],
-    }
+    search_result = {}
+    docs = []
+    total = 0
 
+    try:
+        for term in word_list:
+            result = dataframe[dataframe.apply(lambda dataset: dataset.astype(str).str.contains(term, case=False).any(), axis=1)]
 
-    for term in word_list:
-        result = dataframe[dataframe.apply(lambda dataset: dataset.astype(str).str.contains(term, case=False).any(), axis=1)]
+            result_without_nan = result.fillna("")
+            truncated_dataframe = result_without_nan[fields_to_output]
 
-        result_without_nan = result.fillna("")
-        truncated_dataframe = result_without_nan[fields_to_output]
-        search_result["layers"] = truncated_dataframe.values.tolist()
-        search_result["fields"] = truncated_dataframe.columns.tolist()
+            # This does not handle duplicates at all:
+            docs.append(truncated_dataframe.values.tolist())
+            total += len(result_without_nan)
+    except:
+        raise Exception
 
-        search_result["statistics"].append({
-            "term": term,
-            "count": len(result_without_nan),
-        })
-    
+    finally:
+        search_result["docs"] = docs
+        search_result["total"] = total
+        search_result["duration"] = 99
+
     return search_result

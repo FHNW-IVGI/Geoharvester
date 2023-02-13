@@ -113,7 +113,6 @@ async def get_data_from_pandas(query: Union[str, None] = None):
 async def get_data_from_redis(query: Union[str, None] = None):
     """Route for the get_data request (search by terms) targeted at redis"""
 
-    print("test")
     if (query == None):
         return {"data": ""}
 
