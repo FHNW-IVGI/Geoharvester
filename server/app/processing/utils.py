@@ -1,15 +1,25 @@
+"""
+Work in progress
+"""
+
+from string import punctuation
 import numpy as np
 import pandas as pd
+import spacy
+import re
+import matplotlib.pyplot as plt
 from langdetect import detect
-from string import punctuation
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
 from nltk.stem import SnowballStemmer, PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import TruncatedSVD
-from sklearn.metrics.pairwise import cosine_similarity
 from rake_nltk import Rake
 from scipy import sparse
+from gensim import corpora
+from gensim.models import LsiModel
+from gensim.models.coherencemodel import CoherenceModel
+
+
 
 
 def detect_language(phrase):
@@ -23,104 +33,173 @@ def detect_language(phrase):
         lang = 'english'
     return lang
 
-# TODO: Safe delete the function ranking_tfidf
-def ranking_tfidf(text, out_dataframe=False):
+def stemming_sentence(sentence) -> list:
+    # WARNING The stemming and cleansing process is computationally expensive! (1421 lines in 36 s)
     """
-    Testing fuction to create a TFIDF score (requires to download the nltk data packages!)
-    ** Formula: score(D, T) = termFrequency(D, T) * log(N / docFrequency(T))
-    ** Automatic detection of the language
-    ** Return momentarily a tuple [(word, TFIDF score)],   or a pandas dataframe
+    sentences is a list of sentences [str, str]
     """
-    # Detect the language of the text
-    lang = detect_language(text)
-    # Tokenize the text into sentences
-    sentences = sent_tokenize(text, language=lang)
+    lang = detect_language(sentence)
+    stemmer = SnowballStemmer(lang)
+    words = (word_tokenize(sentence, language= lang))
+    stop_words = stopwords.words(lang)
+    words_cleaned = [stemmer.stem(word.lower()) for word in words if word.lower() not in stop_words
+                    and word.lower() not in list(punctuation)]
+    return words_cleaned
 
-    # Tokenize each sentence into words
-    words = [word_tokenize(sentence, language=lang) for sentence in sentences]
-
-    # Remove stop words and perform stemming to normalize the text
-    stop_words = set(stopwords.words(lang))
-    stemmer = PorterStemmer()
-    words = [[stemmer.stem(word.lower())
-        for word in sentence if word.lower() not in stop_words] for sentence in words]
-
-    # Calculate the TF-IDF (improvement with BM25 possible) score for each sentence to rank them
-    vectorizer = TfidfVectorizer()
-    vect = vectorizer.fit_transform([" ".join(sentence) for sentence in words])
-
-    # Rank the words based on their TF-IDF scores
-    scores = zip(vectorizer.get_feature_names_out(),
-                 np.around(np.asarray(vect.sum(axis=0)).ravel(), decimals=2))
-    sorted_scores = sorted(scores, key=lambda x: x[1], reverse=True)
-    df_ranking = pd.DataFrame(sorted_scores, columns=['word', 'tfidf'])
-
-    if out_dataframe:
-        return df_ranking
-    else:
-        return (sorted_scores, lang)
-
+def tokenize_abstract(text):
+    """
+    text is a str, which is tokenized and stemmed,
+    returning a pandas with the words and the scores
+    """
+    ranker = TfidfVectorizer(norm='l2')
+    sentences = sent_tokenize(text, language=detect_language(text))
+    negative_sentences = {'english':'not contained', 'german':'nicht enthalten',
+                        'italian':'non contenuti', 'french':'non contenu'}
+    # WARNING: The removal needs to be tested on the whole dataset, possible further negative forms could be contained!
+    sentences_cleaned = [stemming_sentence(sentence) for sentence in sentences
+                        if negative_sentences[detect_language(sentence)] not in sentence.lower()]
+    vector = ranker.fit_transform(' '.join(words) for words in sentences_cleaned)
+    scores = zip(ranker.get_feature_names_out(),
+                np.around(np.asarray(vector.sum(axis=0)).ravel(), decimals=2))
+    scores_df = pd.DataFrame(sorted(scores, key=lambda x: x[1], reverse=True), columns=['word', 'tfidf'])
+    return scores_df
 
 
 
 class TFIDF_BM25():
-    def __init__(self, b=0.75, k1=1.6, avd1=0.1):
+    """
+    Class for the extraction ranking of keywords in a text,
+    with an additional function to search a query in the database.
+    """
+    def __init__(self, b=0.75, k1=1.6, avd1=0.1) -> None:
         self.vectorizer = TfidfVectorizer(norm=None, smooth_idf=False)
         self.b = b
         self.k1 = k1
         self.avd1 = avd1
-        self.abstracts = []
+        self.abstracts, self.results = [], []
+        self.index = np.array([])
 
-    # TODO: Improve loop efficiency in the cleansing_ranking function
-    # WARNING The stemming and cleansing process is computationally expensive! (1421 lines in 36 s)
-    # TODO: We could integrate the cleaned results into the data with an additional column "keywords+"
-    def cleansing_ranking(self, texts):
+    def cleansing_ranking(self, texts, column='ABSTRACT') -> None:
+        # TODO: We could integrate the cleaned results into the database with an additional column "keywords+"
         """
         texts is a pandas DF with at least a non empty "ABSTRACT" column
         """
-        self.results = []
         self.index = texts.index.values
-        for text in texts['ABSTRACT'].values.tolist():
-            ranker = TfidfVectorizer(norm='l2')
-            sentences = sent_tokenize(text, language=detect_language(text))
-            sentence_cleaned = []
-            for sentence in sentences:
-                lang = detect_language(sentence)
-                stemmer = SnowballStemmer(lang)
-                words = (word_tokenize(sentence, language= lang))
-                stop_words = stopwords.words(detect_language(sentence))
-                words_cleaned = []
-                for word in words:
-                    if word.lower() not in stop_words and word.lower() not in list(punctuation):
-                        words_cleaned.append(stemmer.stem(word.lower()))
-                sentence_cleaned.append(words_cleaned)
-            vector = ranker.fit_transform([' '.join(words) for words in sentence_cleaned])
-            scores = zip(ranker.get_feature_names_out(),
-                        np.around(np.asarray(vector.sum(axis=0)).ravel(), decimals=2))
-            self.results.append(pd.DataFrame(sorted(scores, key=lambda x: x[1], reverse=True), columns=['word', 'tfidf']))
-        return self.results # REMOVE?
+        self.results = [tokenize_abstract(text) for text in texts[column].values.tolist()]
     
-    def fit(self, texts):
+    def fit(self) -> None:
         """
         Texts is a list of pandas from cleansing_ranking.
         """
-        self.abstracts = [' '.join(abstract['word'].tolist()) for abstract in texts]
+        self.abstracts = [' '.join(abstract['word'].tolist()) for abstract in self.results]
         self.vectorizer.fit(self.abstracts)
         score = super(TfidfVectorizer, self.vectorizer).transform(self.abstracts)
         self.avd1 = score.sum(1).mean()
     
-    def transform(self, q):
+    def search(self, q):
         """
         q is a str with a query (single word or multiple words)
         """
+        # FIXME: If the query contains more than one word, the abstract must contain all the words to be considered! (bug or feature)
         document = super(TfidfVectorizer, self.vectorizer).transform(self.abstracts)
         doc_lenght = document.sum(1).A1
-
-        query, = super(TfidfVectorizer, self.vectorizer).transform([q])
+        query_cleaned = stemming_sentence(q)
+        query, = super(TfidfVectorizer, self.vectorizer).transform([' '.join(word) for word in [query_cleaned]])
         assert sparse.isspmatrix_csr(query)
 
         document = document.tocsc()[:, query.indices]
-        denom = document + (self.k1 * (1 - self.b + self.b * doc_lenght / self.avd1))[:, None]
+        # denom = document + (self.k1 * (1 - self.b + self.b * doc_lenght / self.avd1))[:, None]
         idf = self.vectorizer._tfidf.idf_[None, query.indices] - 1.
-        numer = document.multiply(np.broadcast_to(idf, document.shape)) * (self.k1 + 1)
-        return (numer / denom).sum(1).A1
+        # numer = document.multiply(np.broadcast_to(idf, document.shape)) * (self.k1 + 1)
+        scores = (document.multiply(np.broadcast_to(idf, document.shape)) * (self.k1 + 1)/
+                document + (self.k1 * (1 - self.b + self.b * doc_lenght / self.avd1))[:, None]).sum(1).A1
+        scores_idx = [self.index[i] for i in range(0, len(scores)) if scores[i] > 0]
+        return scores_idx
+
+
+class KeywordsRake():
+    """
+    Keywords ranking with Rake
+    """
+    def __init__(self) -> None:
+        self.keywords = []
+
+    def rake_keywords(self, text, score=False, keyword_length = 3):
+        text = re.sub(str([punctuation]), ' ', text)
+        rake_nltk = Rake(language=detect_language(text), include_repeated_phrases=False, max_length=keyword_length)
+        rake_nltk.extract_keywords_from_text(text)
+        if score:
+            keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
+        else:
+            keywords = rake_nltk.get_ranked_phrases()# limit by number of results [:5]
+        return keywords
+        
+    def extract_keywords(self, texts, column='ABSTRACT', keyword_length=3, score=False):
+        self.index = texts.index.values
+        self.keywords = [self.rake_keywords(text, score=score, keyword_length=keyword_length)
+                        for text in texts[column].values.tolist()]
+        return self.keywords
+
+
+class NLP_spacy():
+    """
+    Keywords ranking with NLP models of spacy.
+    Do not remove punctuation, it is needed for the context extraction in NLP.
+    """
+    def __init__(self) -> None:
+        """
+        Diverese models are available on https://spacy.io/models/en
+        sm = small 15MB, md = middle 45MB, lg = large 500MB
+        """
+        self.nlp_en = spacy.load("en_core_web_sm")
+        self.nlp_fr = spacy.load("fr_core_news_sm")
+        self.nlp_de = spacy.load("de_core_news_sm")
+        self.nlp_it = spacy.load("it_core_news_sm")
+
+    def fit_nlp(self, text) -> list:
+        lang = detect_language(text)
+        if lang == 'english':
+            keywords = self.nlp_en(text).ents
+        elif lang == 'german':
+            keywords = self.nlp_de(text).ents
+        elif lang == 'french':
+            keywords = self.nlp_fr(text).ents
+        elif lang == 'italian':
+            keywords = self.nlp_it(text).ents
+        else:
+            print("The language model is not implemented for " + lang)
+            keywords = []
+        return list(keywords)
+
+
+    def extract_keywords(self, texts, column='ABSTRACT') -> list:
+        self.index = texts.index.values
+        keywords = [self.fit_nlp(text) for text in texts[column].values.tolist()]
+        return keywords
+
+
+# TODO implement NLP with clustering to divide the abstracts into topics
+
+
+# TODO implemente Latent Semantic Analysis (LSA) and LSI with gensim
+# https://www.datacamp.com/tutorial/discovering-hidden-topics-python
+class LSI():
+    def __init__(self) -> None:
+        pass
+
+    def preprocess(self):
+        pass
+
+    def prepare_matrix(self):
+        pass
+
+    def create_gensim_lsa_model(self):
+        pass
+
+    def compute_coherence_values(self):
+        pass
+
+    def display_coherence_scores(self):
+        pass
+
+
