@@ -6,7 +6,7 @@ from typing import Union
 import pandas as pd
 import redis
 from fastapi import FastAPI
-from fastapi.logger import logger
+from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from redis import StrictRedis
 from redis.commands.search.query import Query
@@ -28,9 +28,6 @@ datajson=None
 csv_row_limit= 5000
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
-
-
-
 origins = [
     # Adjust to your frontend localhost port if not default
     "http://localhost:3000"
@@ -44,6 +41,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+gunicorn_logger = logging.getLogger('gunicorn.error')
+fastapi_logger.handlers = gunicorn_logger.handlers
+if __name__ != "main":
+    fastapi_logger.setLevel("DEBUG")
+    # fastapi_logger.setLevel(gunicorn_logger.level)
+else:
+    fastapi_logger.setLevel(logging.DEBUG)
 
 @app.on_event("startup")
 async def startup_event():
@@ -53,6 +57,7 @@ async def startup_event():
     # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
     url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
     dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
+
 
     try:
         r.ping()
@@ -72,19 +77,27 @@ async def startup_event():
 
         except:
              raise Exception("ERROR: Redis data import failed")
-        finally:
-            # Index Debugging:
-            # print(r.ft(INDEX_KEY).info())
+    finally:
+        # Index Debugging:
+        # print(r.ft(INDEX_KEY).info())
 
-            # Verify database is up and running:
-            total_keys = r.dbsize()
-            print("--- Redis initialized with {} records".format(total_keys))
+        # Verify database is up and running:
+        total_keys = r.dbsize()
+        fastapi_logger.info("--- Redis initialized with {} records".format(total_keys))
+        logging.info("--- Redis initialized with {} records".format(total_keys))
+        print("blap")
+        logging.info("bla1")
+        logging.error("bla1b")
+        fastapi_logger.info("bla2")
+        fastapi_logger.error("bla2b")
 
 
 
 @app.get("/")
 async def root():
     '''Root endpoint'''
+    fastapi_logger.error("bla2boooooooooo")
+
     return {"message": "running"}
 
 
@@ -105,7 +118,7 @@ async def get_data_from_pandas(query: Union[str, None] = None):
 
     dataframe_some_cols = import_csv_into_dataframe(url_geoservices_CH_csv, csv_row_limit)
     search_result = search_by_terms_dataframe(word_list, dataframe_some_cols)
-    logger.info(search_result)
+    fastapi_logger.info(search_result)
     payload = search_result
 
     return {"data": payload}

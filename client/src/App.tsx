@@ -6,11 +6,9 @@ import { getServerStatus } from "./requests";
 import "./App.css";
 
 export type SearchResult = {
-  statistics: {
-    term: string;
-    count: number;
-  }[];
-  layers: string[][];
+  duration: number;
+  total: number;
+  docs: string[][];
   fields: string[];
 };
 
@@ -31,14 +29,14 @@ function App() {
     checkServerStatus();
   }, []);
 
-  const { statistics, layers, fields } = searchResult;
+  const { docs, total, fields } = searchResult;
   return (
     <>
       <header className="App-header">NDGI Project Geoharvester</header>
       <main className="App-main">
         <SearchBar setSearchResult={setSearchResult} />
-        <StatisticsBox stats={statistics || []}></StatisticsBox>
-        <ResultArea data={layers || [[]]} fields={fields || []}></ResultArea>
+        <StatisticsBox total={total || 0}></StatisticsBox>
+        <ResultArea docs={docs || [[]]} fields={ fields || []}></ResultArea>
       </main>
       <footer className="App-footer">
         <Footer status={statusString} checkServerStatus={checkServerStatus} />

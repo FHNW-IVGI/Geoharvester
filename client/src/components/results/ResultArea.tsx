@@ -11,30 +11,22 @@ import {
 } from "@mui/material";
 
 type StatisticsProps = {
-  stats: {
-    term: string;
-    count: number;
-  }[];
+  total: number;
 };
 
 type ResultProps = {
-  data: string[][];
+  docs: string[][];
   fields: string[];
 };
 
-export const StatisticsBox = ({ stats }: StatisticsProps) =>
-  stats && stats.length ? (
-    <div id="results-statisticsarea">
-      {stats.map((entry) => (
-        <Chip label={`${entry.term}: ${entry.count}`} variant="outlined" />
-      ))}
-    </div>
-  ) : (
-    <div></div>
-  );
+export const StatisticsBox = ({ total }: StatisticsProps) => (
+  <div id="results-statisticsarea">
+    <Chip label={`Results: ${total}`} variant="outlined" />
+  </div>
+);
 
-export const ResultArea = ({ data, fields }: ResultProps) => {
-  if (data.length < 2) {
+export const ResultArea = ({ docs, fields }: ResultProps) => {
+  if (docs.length < 2) {
     return <div>No Data</div>;
   }
 
@@ -52,10 +44,10 @@ export const ResultArea = ({ data, fields }: ResultProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.length ? (
-              data.map((row, index) => (
+            {docs.length ? (
+              docs.map((doc, index) => (
                 <TableRow key={index}>
-                  {row.map((cell) => (
+                  {doc.map((cell) => (
                     <TableCell>{cell}</TableCell>
                   ))}
                 </TableRow>

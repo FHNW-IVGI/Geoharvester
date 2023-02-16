@@ -20,6 +20,7 @@ services:
     environment:
       # Required for Python to print to terminal
       PYTHONUNBUFFERED: 1
+      LOG_LEVEL: debug
 
   redis:
     image: redis/redis-stack-server

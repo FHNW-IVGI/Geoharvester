@@ -2,6 +2,7 @@
 import uuid
 
 import redis
+from fastapi.logger import logger as fastapi_logger
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
 from app.constants import REDIS_HOST, REDIS_PORT
@@ -43,7 +44,7 @@ def drop_redis_db(PREFIX):
         r.delete(key)
 
     remaining_records = r.dbsize()
-    print("--- Redis dropped with {} records remaining".format(remaining_records))
+    fastapi_logger.info("--- Redis dropped with {} records remaining".format(remaining_records))
 
     return remaining_records
 
@@ -63,9 +64,10 @@ def ingest_data(json, KEY):
 
     except:
         raise Exception("ERROR: Ingestion failed")
+        
 
     finally:    
         redis_size_after_ingest = r.dbsize()
-        print("--- Redis received {} additional records".format(redis_size_after_ingest - redis_size_before_ingest))
+        fastapi_logger.info("--- Redis received {} additional records".format(redis_size_after_ingest - redis_size_before_ingest))
     
     return redis_size_after_ingest
