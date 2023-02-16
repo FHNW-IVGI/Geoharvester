@@ -9,13 +9,14 @@ import {
   Paper,
   Chip,
 } from "@mui/material";
+import { Geoservice } from "../../types";
 
 type StatisticsProps = {
   total: number;
 };
 
-type ResultProps = {
-  docs: string[][];
+type TableProps = {
+  docs: Geoservice[];
   fields: string[];
 };
 
@@ -25,10 +26,18 @@ export const StatisticsBox = ({ total }: StatisticsProps) => (
   </div>
 );
 
-export const ResultArea = ({ docs, fields }: ResultProps) => {
-  if (docs.length < 2) {
+export const ResultArea = ({ docs, fields }: TableProps) => {
+  if (docs.length < 1) {
     return <div>No Data</div>;
   }
+
+  // Pandas provide column headers, for Redis JSON Objects we have to get them from the JSON Object:
+  const columns =
+    fields && fields.length > 1
+      ? fields
+      : Object.keys(docs[0]).filter(
+          (key) => !["id", "payload"].includes(key)
+        ) || [];
 
   return (
     <div id="results-table">
@@ -36,25 +45,21 @@ export const ResultArea = ({ docs, fields }: ResultProps) => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              {fields.length ? (
-                fields.map((field) => <TableCell>{field}</TableCell>)
-              ) : (
-                <TableCell>.</TableCell>
-              )}
+              {columns.map((col_header, index) => (
+                <TableCell key={index}>{col_header}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {docs.length ? (
-              docs.map((doc, index) => (
-                <TableRow key={index}>
-                  {doc.map((cell) => (
-                    <TableCell>{cell}</TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow />
-            )}
+            {docs.map((doc, index) => (
+              <TableRow key={index}>
+                {columns.map((column, key) => (
+                  <TableCell key={key}>
+                    {doc[column as keyof Geoservice]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

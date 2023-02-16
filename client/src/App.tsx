@@ -3,12 +3,13 @@ import { SearchBar } from "./components/search/SearchBar";
 import { Footer } from "./components/footer/Footer";
 import { ResultArea, StatisticsBox } from "./components/results/ResultArea";
 import { getServerStatus } from "./requests";
+import { Geoservice } from "./types";
 import "./App.css";
 
 export type SearchResult = {
   duration: number;
   total: number;
-  docs: string[][];
+  docs: Geoservice[];
   fields: string[];
 };
 
@@ -30,13 +31,14 @@ function App() {
   }, []);
 
   const { docs, total, fields } = searchResult;
+
   return (
     <>
       <header className="App-header">NDGI Project Geoharvester</header>
       <main className="App-main">
         <SearchBar setSearchResult={setSearchResult} />
         <StatisticsBox total={total || 0}></StatisticsBox>
-        <ResultArea docs={docs || [[]]} fields={ fields || []}></ResultArea>
+        <ResultArea docs={docs || [[]]} fields={fields}></ResultArea>
       </main>
       <footer className="App-footer">
         <Footer status={statusString} checkServerStatus={checkServerStatus} />
