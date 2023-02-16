@@ -12,8 +12,15 @@ const theme = createTheme({
     primary: {
       // main: "#ED7D31",
       main: "#ffbe92",
+      // main: "#e69138",
       contrastText: "#000000",
     },
+    secondary: {
+      // main: "#ED7D31",
+      // main: "#ffbe92",
+      main: "#e69138",
+      contrastText: "#000000",
+    }
   },
 });
 
