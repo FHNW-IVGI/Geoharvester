@@ -33,7 +33,7 @@ def detect_language(phrase):
         lang = 'english'
     return lang
 
-def stemming_sentence(sentence) -> list:
+def stemming_sentence(sentence, output_list=True):
     # WARNING The stemming and cleansing process is computationally expensive! (1421 lines in 36 s)
     """
     sentences is a list of sentences [str, str]
@@ -42,11 +42,14 @@ def stemming_sentence(sentence) -> list:
     stemmer = SnowballStemmer(lang)
     words = (word_tokenize(sentence, language= lang))
     stop_words = stopwords.words(lang)
-    words_cleaned = [stemmer.stem(word.lower()) for word in words if word.lower() not in stop_words
+    words_cleaned_list = [stemmer.stem(word.lower()) for word in words if word.lower() not in stop_words
                     and word.lower() not in list(punctuation)]
-    return words_cleaned
+    if output_list:
+        return words_cleaned_list
+    else:
+        return [' '.join(word) for word in [words_cleaned_list]][0]
 
-def tokenize_abstract(text):
+def tokenize_abstract(text, output_scores=True):
     """
     text is a str, which is tokenized and stemmed,
     returning a pandas with the words and the scores
@@ -56,13 +59,17 @@ def tokenize_abstract(text):
     negative_sentences = {'english':'not contained', 'german':'nicht enthalten',
                         'italian':'non contenuti', 'french':'non contenu'}
     # WARNING: The removal needs to be tested on the whole dataset, possible further negative forms could be contained!
-    sentences_cleaned = [stemming_sentence(sentence) for sentence in sentences
+    sentences_cleaned = [stemming_sentence(sentence, output_list=True) for sentence in sentences
                         if negative_sentences[detect_language(sentence)] not in sentence.lower()]
-    vector = ranker.fit_transform(' '.join(words) for words in sentences_cleaned)
-    scores = zip(ranker.get_feature_names_out(),
-                np.around(np.asarray(vector.sum(axis=0)).ravel(), decimals=2))
-    scores_df = pd.DataFrame(sorted(scores, key=lambda x: x[1], reverse=True), columns=['word', 'tfidf'])
-    return scores_df
+    if output_scores:
+        vector = ranker.fit_transform(' '.join(words) for words in sentences_cleaned)
+        scores = zip(ranker.get_feature_names_out(),
+                    np.around(np.asarray(vector.sum(axis=0)).ravel(), decimals=2))
+        output = pd.DataFrame(sorted(scores, key=lambda x: x[1], reverse=True), columns=['word', 'tfidf'])
+    else:
+        output = [stemming_sentence(sentence, output_list=False) for sentence in sentences
+                        if negative_sentences[detect_language(sentence)] not in sentence.lower()]
+    return output
 
 
 
@@ -125,7 +132,7 @@ class KeywordsRake():
         self.keywords = []
 
     def rake_keywords(self, text, score=False, keyword_length = 3):
-        text = re.sub(str([punctuation]), ' ', text)
+        text = re.sub(str([punctuation]), ' ', text) # Remove the punctuation
         rake_nltk = Rake(language=detect_language(text), include_repeated_phrases=False, max_length=keyword_length)
         rake_nltk.extract_keywords_from_text(text)
         if score:
@@ -181,25 +188,59 @@ class NLP_spacy():
 # TODO implement NLP with clustering to divide the abstracts into topics
 
 
-# TODO implemente Latent Semantic Analysis (LSA) and LSI with gensim
+# FIXME: The text input must be a list of words not a list of sentences!!
 # https://www.datacamp.com/tutorial/discovering-hidden-topics-python
 class LSI():
+    """
+    ...
+    """
     def __init__(self) -> None:
-        pass
+        self.abstracts_tokenized = []
+        self.coherence_values = []
+        self.model_list = []
 
-    def preprocess(self):
-        pass
+    def preprocess(self, texts, column='ABSTRACT'):
+        self.index = texts.index.values
+        self.abstracts_tokenized = [tokenize_abstract(text, output_scores=False) for text in texts[column].values.tolist()]
+        #return self.abstracts_tokenized
 
     def prepare_matrix(self):
-        pass
+        """
+        Prepares the text, creating a document-term matrix and
+        a dictionary of terms to read the values in the matrix
+        """
+        dictionary = corpora.Dictionary(self.abstracts_tokenized)
+        doc_term_matrix = [dictionary.doc2bow(abstract) for abstract in self.abstracts_tokenized]
+        return dictionary, doc_term_matrix
 
-    def create_gensim_lsa_model(self):
-        pass
+    def create_gensim_lsa_model(self, number_of_topics, number_of_words):
+        """
+        Generates a model using LSA
+        """
+        dictionary, doc_term_matrix = self.prepare_matrix()
+        # Generate LAS model with training data
+        lsamodel = LsiModel(doc_term_matrix, num_topics=number_of_topics, id2word=dictionary)
+        print(lsamodel.print_topics(num_topics=number_of_topics, num_words=number_of_words))
+        return lsamodel
 
-    def compute_coherence_values(self):
-        pass
+    def plot_graph(self, min, max, step):
+        x = range(min, max, step)
+        plt.plot(x, self.coherence_values)
+        plt.xlabel("Number of topics")
+        plt.ylabel("Coherence score")
+        # plt.legend(("coherence_values"), loc="best")
+        plt.show();
 
-    def display_coherence_scores(self):
-        pass
+    def compute_coherence_values(self, min_max_step):
+        """
+        Computes the optimal number of topics
+        """
+        dictionary, doc_term_matrix = self.prepare_matrix()
+        for num_topics in range(min_max_step[0], min_max_step[1], min_max_step[2]):
+            model = LsiModel(doc_term_matrix, num_topics=num_topics, id2word= dictionary)
+            self.model_list.append(model)
+            coherencemodel = CoherenceModel(model=model, texts=self.abstracts_tokenized, dictionary=dictionary, coherence='c_v')
+            self.coherence_values.append(coherencemodel.get_coherence())
+        self.plot_graph(min_max_step[0], min_max_step[1], min_max_step[2])
 
 
