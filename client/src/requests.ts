@@ -17,6 +17,5 @@ export const getServerStatus = async () => {
 export const getData = async (query: string) => {
     const result = await axios(routes.getDataFromRedis, { params: { query } });
     const { data } = result;
-    console.log(result)
     return data
 }

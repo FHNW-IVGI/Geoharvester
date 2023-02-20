@@ -17,8 +17,6 @@ function App() {
   const [statusString, setStatusString] = useState("not connected");
   const [searchResult, setSearchResult] = useState({} as SearchResult);
 
-  console.log(searchResult);
-
   const checkServerStatus = () =>
     getServerStatus()
       .then((res) => {

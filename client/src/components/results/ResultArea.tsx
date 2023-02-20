@@ -41,8 +41,8 @@ export const ResultArea = ({ docs, fields }: TableProps) => {
 
   return (
     <div id="results-table">
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <TableContainer component={Paper} sx={{ maxHeight: "65vh" }}>
+        <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
               {columns.map((col_header, index) => (
