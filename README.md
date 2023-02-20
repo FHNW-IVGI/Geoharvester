@@ -39,6 +39,10 @@ b) For a "single source of truth" approach, install the "dev containers" extensi
 
 #### Troubleshooting:
 
+##### Cannot start Docker from terminal
+
+- Error `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?` Start docker process with `sudo service docker start`
+
 ##### Cannot start application
 
 - Check that you are starting the backend from the `server` folder (not server/apps). Is Docker running? You might need to start the daemon (Ubuntu: `sudo service docker start`) or Docker Desktop (Windows)

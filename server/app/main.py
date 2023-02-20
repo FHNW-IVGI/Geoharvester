@@ -18,8 +18,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from redis import StrictRedis
 from redis.commands.search.query import Query
 
-cache = StrictRedis()
-
 app = FastAPI(debug=True)
 
 dataframe=None
