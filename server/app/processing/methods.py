@@ -4,14 +4,15 @@ from typing import List
 
 import pandas as pd
 
-from ..constants import (fields_to_include, fields_to_output,
-                         url_geoservices_CH_csv)
+from ..constants import fields_to_output
 
 
-def load_data():
+def import_csv_into_dataframe(url, column_limit=None):
     """Load csv into data frame"""
-        # Which columns of the csv to use (enhances performance):
-    dataframe = pd.read_csv(url_geoservices_CH_csv, usecols=fields_to_include)
+    if(column_limit):
+        dataframe = pd.read_csv(url, nrows=column_limit)
+    else: 
+        dataframe = pd.read_csv(url)
     return dataframe
 
 
@@ -49,28 +50,31 @@ def split_search_string(query: str) -> List[str]:
     return trimmed_word_list
 
 
-def search_by_terms(word_list: List[str], dataframe):
+def search_by_terms_dataframe(word_list: List[str], dataframe):
     """Search the geodata collection based on the search terms
-       Return layers and count per term"""
+       Return response object aligned with redis response format"""
 
-    search_result = {
-        "fields": [],
-        "layers": [],
-        "statistics": [],
-    }
+    search_result = {}
+    docs = []
+    total = 0
 
+    try:
+        for term in word_list:
+            result = dataframe[dataframe.apply(lambda dataset: dataset.astype(str).str.contains(term, case=False).any(), axis=1)]
 
-    for term in word_list:
-        result = dataframe[dataframe.apply(lambda dataset: dataset.astype(str).str.contains(term, case=False).any(), axis=1)]
+            result_without_nan = result.fillna("")
+            truncated_dataframe = result_without_nan[fields_to_output]
 
-        result_without_nan = result.fillna("")
-        truncated_dataframe = result_without_nan[fields_to_output]
-        search_result["layers"] = truncated_dataframe.values.tolist()
-        search_result["fields"] = truncated_dataframe.columns.tolist()
+            # This does not handle duplicates at all:
+            docs += truncated_dataframe.values.tolist()
+            total += len(result_without_nan)
+            search_result["fields"] = truncated_dataframe.columns.tolist()
+    except:
+        raise Exception
 
-        search_result["statistics"].append({
-            "term": term,
-            "count": len(result_without_nan),
-        })
-    
+    finally:
+        search_result["total"] = total
+        search_result["duration"] = 99
+        search_result["docs"] = docs
+
     return search_result

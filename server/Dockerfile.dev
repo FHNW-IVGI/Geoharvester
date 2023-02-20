@@ -1,0 +1,11 @@
+FROM python:3.9
+WORKDIR /server
+RUN mkdir app
+COPY ./app/requirements.txt /server/app/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /server/app/requirements.txt
+COPY ./app server/app
+EXPOSE 8000
+RUN cd /server
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-config", "/server/app/logging.yaml" ,"--reload"]
+# Backend will be available in browser with http://localhost:8000/
+

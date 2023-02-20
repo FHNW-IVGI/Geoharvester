@@ -5,7 +5,8 @@ const BASEURL = "http://localhost:8000"; // Adjust to port where backend is runn
 
 const routes = {
     getServerStatus: `${BASEURL}/`,
-    getData: `${BASEURL}/getData`,
+    getDataFromPandas: `${BASEURL}/getDataFromPandas`,
+    getDataFromRedis: `${BASEURL}/getDataFromRedis`,
 }
 
 export const getServerStatus = async () => {
@@ -14,8 +15,7 @@ export const getServerStatus = async () => {
     return message
 }
 export const getData = async (query: string) => {
-    console.log(query)
-    const result = await axios(routes.getData, { params: { query } });
+    const result = await axios(routes.getDataFromRedis, { params: { query } });
     const { data } = result;
     return data
 }
