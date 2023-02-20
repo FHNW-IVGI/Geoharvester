@@ -3,10 +3,11 @@ Work in progress
 """
 
 from string import punctuation
+import re
+import itertools
+import spacy
 import numpy as np
 import pandas as pd
-import spacy
-import re
 import matplotlib.pyplot as plt
 from langdetect import detect
 from nltk.corpus import stopwords
@@ -33,8 +34,26 @@ def detect_language(phrase):
         lang = 'english'
     return lang
 
-def stemming_sentence(sentence, output_list=True):
-    # WARNING The stemming and cleansing process is computationally expensive! (1421 lines in 36 s)
+def is_not_num(str) -> bool:
+    """
+    Tests if a str element contains a number and return True or False.
+    
+    Parameters
+    ----------
+    str : str
+          String element to be checked
+    Returns
+    -------
+    _ : False if numeric / True if text
+    """
+    try:
+        float(str)
+        return False
+    except ValueError:
+        return True
+
+def stemming_sentence(sentence):
+    # WARNING The stemming and cleansing process is computationally expensive, it could take a while to process 
     """
     sentences is a list of sentences [str, str]
     """
@@ -43,11 +62,8 @@ def stemming_sentence(sentence, output_list=True):
     words = (word_tokenize(sentence, language= lang))
     stop_words = stopwords.words(lang)
     words_cleaned_list = [stemmer.stem(word.lower()) for word in words if word.lower() not in stop_words
-                    and word.lower() not in list(punctuation)]
-    if output_list:
-        return words_cleaned_list
-    else:
-        return [' '.join(word) for word in [words_cleaned_list]][0]
+                    and word.lower() not in list(punctuation) and is_not_num(word)]
+    return words_cleaned_list
 
 def tokenize_abstract(text, output_scores=True):
     """
@@ -59,7 +75,7 @@ def tokenize_abstract(text, output_scores=True):
     negative_sentences = {'english':'not contained', 'german':'nicht enthalten',
                         'italian':'non contenuti', 'french':'non contenu'}
     # WARNING: The removal needs to be tested on the whole dataset, possible further negative forms could be contained!
-    sentences_cleaned = [stemming_sentence(sentence, output_list=True) for sentence in sentences
+    sentences_cleaned = [stemming_sentence(sentence) for sentence in sentences
                         if negative_sentences[detect_language(sentence)] not in sentence.lower()]
     if output_scores:
         vector = ranker.fit_transform(' '.join(words) for words in sentences_cleaned)
@@ -67,8 +83,9 @@ def tokenize_abstract(text, output_scores=True):
                     np.around(np.asarray(vector.sum(axis=0)).ravel(), decimals=2))
         output = pd.DataFrame(sorted(scores, key=lambda x: x[1], reverse=True), columns=['word', 'tfidf'])
     else:
-        output = [stemming_sentence(sentence, output_list=False) for sentence in sentences
+        output = [stemming_sentence(sentence) for sentence in sentences
                         if negative_sentences[detect_language(sentence)] not in sentence.lower()]
+        output = list(itertools.chain.from_iterable(output))
     return output
 
 
@@ -87,7 +104,6 @@ class TFIDF_BM25():
         self.index = np.array([])
 
     def cleansing_ranking(self, texts, column='ABSTRACT') -> None:
-        # TODO: We could integrate the cleaned results into the database with an additional column "keywords+"
         """
         texts is a pandas DF with at least a non empty "ABSTRACT" column
         """
@@ -192,7 +208,7 @@ class NLP_spacy():
 # https://www.datacamp.com/tutorial/discovering-hidden-topics-python
 class LSI():
     """
-    ...
+    ... tbd
     """
     def __init__(self) -> None:
         self.abstracts_tokenized = []
@@ -202,7 +218,7 @@ class LSI():
     def preprocess(self, texts, column='ABSTRACT'):
         self.index = texts.index.values
         self.abstracts_tokenized = [tokenize_abstract(text, output_scores=False) for text in texts[column].values.tolist()]
-        #return self.abstracts_tokenized
+        # return self.abstracts_tokenized
 
     def prepare_matrix(self):
         """
