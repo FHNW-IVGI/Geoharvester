@@ -58,9 +58,6 @@ def search_by_terms_dataframe(word_list: List[str], dataframe):
     docs = []
     total = 0
 
-    print("test")
-
-
     try:
         for term in word_list:
             result = dataframe[dataframe.apply(lambda dataset: dataset.astype(str).str.contains(term, case=False).any(), axis=1)]

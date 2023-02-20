@@ -129,11 +129,12 @@ async def get_data_from_redis(query: Union[str, None] = None):
         .return_field('MAX_ZOOM')
         .return_field('ABSTRACT'))
 
+    # Redis only returns the first 10 results by default. Either the limit needs to be overridden or pagination needs to be implemented
 
     search_result["docs"] = redis_data.docs
     search_result["fields"] = []
     search_result["duration"] = redis_data.duration
-    search_result["total"] = redis_data.total
+    search_result["total"] = len(redis_data.docs)
 
 
     return {"data": search_result}
