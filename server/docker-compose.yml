@@ -6,6 +6,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    depends_on:
+      redis:
+        condition: service_healthy
+    links:
+      - redis
     restart: always
 
     ports:
@@ -15,8 +20,6 @@ services:
     volumes:
     # Allow hot reloading on code changes for Docker. Uvicorn also requires --reload flag
       - ./app:/server/app
-    links:
-      - redis
     environment:
       # Required for Python to print to terminal
       PYTHONUNBUFFERED: 1
@@ -31,3 +34,5 @@ services:
     expose:
       - 6379
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]

@@ -44,7 +44,7 @@ def drop_redis_db(PREFIX):
         r.delete(key)
 
     remaining_records = r.dbsize()
-    fastapi_logger.info("--- Redis dropped with {} records remaining".format(remaining_records))
+    fastapi_logger.info("Redis dropped with {} records remaining".format(remaining_records))
 
     return remaining_records
 
@@ -64,10 +64,10 @@ def ingest_data(json, KEY):
 
     except:
         raise Exception("ERROR: Ingestion failed")
-        
+
 
     finally:    
         redis_size_after_ingest = r.dbsize()
-        fastapi_logger.info("--- Redis received {} additional records".format(redis_size_after_ingest - redis_size_before_ingest))
+        fastapi_logger.info("Redis received {} additional records".format(redis_size_after_ingest - redis_size_before_ingest))
     
     return redis_size_after_ingest

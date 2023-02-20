@@ -60,6 +60,7 @@ def search_by_terms_dataframe(word_list: List[str], dataframe):
 
     print("test")
 
+
     try:
         for term in word_list:
             result = dataframe[dataframe.apply(lambda dataset: dataset.astype(str).str.contains(term, case=False).any(), axis=1)]
@@ -70,6 +71,7 @@ def search_by_terms_dataframe(word_list: List[str], dataframe):
             # This does not handle duplicates at all:
             docs += truncated_dataframe.values.tolist()
             total += len(result_without_nan)
+            search_result["fields"] = truncated_dataframe.columns.tolist()
     except:
         raise Exception
 

@@ -5,12 +5,6 @@ from typing import Union
 
 import pandas as pd
 import redis
-from fastapi import FastAPI
-from fastapi.logger import logger as fastapi_logger
-from fastapi.middleware.cors import CORSMiddleware
-from redis import StrictRedis
-from redis.commands.search.query import Query
-
 from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
 from app.processing.methods import (import_csv_into_dataframe,
                                     search_by_terms_dataframe,
@@ -18,6 +12,11 @@ from app.processing.methods import (import_csv_into_dataframe,
 from app.redis.methods import create_index, drop_redis_db, ingest_data
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
+from fastapi import FastAPI
+from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
+from redis import StrictRedis
+from redis.commands.search.query import Query
 
 cache = StrictRedis()
 
@@ -45,7 +44,6 @@ gunicorn_logger = logging.getLogger('gunicorn.error')
 fastapi_logger.handlers = gunicorn_logger.handlers
 if __name__ != "main":
     fastapi_logger.setLevel("DEBUG")
-    # fastapi_logger.setLevel(gunicorn_logger.level)
 else:
     fastapi_logger.setLevel(logging.DEBUG)
 
@@ -57,49 +55,35 @@ async def startup_event():
     # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
     url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
     dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
-
+    
+    global datajson
+    datajson = json.loads(dataframe.to_json(orient='records'))
 
     try:
-        r.ping()
+        # Flush DB on startup
+        drop_redis_db(SVC_PREFIX)
+
+        create_index(SVC_PREFIX, SVC_INDEX_ID, geoservices_schema)
+
+        ingest_data(datajson, SVC_KEY)
+
     except:
-         raise Exception("ERROR: Cannot connect to redis, ping failed. Have you started redis?")
-    else:
-        global datajson
-        datajson = json.loads(dataframe.to_json(orient='records'))
-
-        try:
-            # Flush DB on startup
-            drop_redis_db(SVC_PREFIX)
-
-            create_index(SVC_PREFIX, SVC_INDEX_ID, geoservices_schema)
-
-            ingest_data(datajson, SVC_KEY)
-
-        except:
-             raise Exception("ERROR: Redis data import failed")
+            raise Exception("ERROR: Redis data import failed")
     finally:
         # Index Debugging:
         # print(r.ft(INDEX_KEY).info())
 
         # Verify database is up and running:
         total_keys = r.dbsize()
-        fastapi_logger.info("--- Redis initialized with {} records".format(total_keys))
-        logging.info("--- Redis initialized with {} records".format(total_keys))
-        print("blap")
-        logging.info("bla1")
-        logging.error("bla1b")
-        fastapi_logger.info("bla2")
-        fastapi_logger.error("bla2b")
+        fastapi_logger.info("Redis initialized with {} records".format(total_keys))
 
 
 
 @app.get("/")
 async def root():
     '''Root endpoint'''
-    fastapi_logger.error("bla2boooooooooo")
 
-    return {"message": "running"}
-
+    return {"message": "running1"}
 
 @app.get("/getServerStatus")
 async def get_server_status():
@@ -131,6 +115,8 @@ async def get_data_from_redis(query: Union[str, None] = None):
     if (query == None):
         return {"data": ""}
 
+
+    search_result = {}
     # word_list = split_search_string(query) # Needs proper handling - check if handled for other langs then ENG
 
     # Simple Search
@@ -138,11 +124,18 @@ async def get_data_from_redis(query: Union[str, None] = None):
 
     # Define return fields, search mutliple fields
     ## WIP: https://redis.io/docs/stack/search/reference/query_syntax/
-    search_result = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query))
+    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query))
         .return_field('NAME')
         .return_field('OWNER')
         .return_field('TITLE')
+        .return_field('MAX_ZOOM')
         .return_field('ABSTRACT'))
+
+
+    search_result["docs"] = redis_data.docs
+    search_result["fields"] = []
+    search_result["duration"] = redis_data.duration
+    search_result["total"] = redis_data.total
 
 
     return {"data": search_result}

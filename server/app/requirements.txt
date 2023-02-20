@@ -4,3 +4,4 @@ pandas
 uvicorn
 redis
 requests
+PyYAML

@@ -2,9 +2,7 @@
 
 NDGI Project Geoharvester
 
-## Deployment
-
-### A. Localhost deployment:
+### Deployment
 
 #### Frontend:
 
@@ -45,8 +43,8 @@ b) For a "single source of truth" approach, install the "dev containers" extensi
 
 - Check that you are starting the backend from the `server` folder (not server/apps). Is Docker running? You might need to start the daemon (Ubuntu: `sudo service docker start`) or Docker Desktop (Windows)
 
-## API Documentation
+### API Documentation
 
-### SwaggerUI
+#### SwaggerUI
 
 Fast API comes with Swagger UI preinstalled. If you have the backend running (see steps above), Swagger UI is available on http://localhost:8000/docs. See the wiki pages of this repo for the documentation of this project.
