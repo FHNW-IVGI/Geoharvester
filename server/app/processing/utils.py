@@ -92,6 +92,8 @@ def tokenize_abstract(text, output_scores=True):
 
 class TFIDF_BM25():
     """
+    https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
+
     Class for the extraction ranking of keywords in a text,
     with an additional function to search a query in the database.
     """
@@ -123,7 +125,7 @@ class TFIDF_BM25():
         """
         q is a str with a query (single word or multiple words)
         """
-        # FIXME: If the query contains more than one word, the abstract must contain all the words to be considered! (bug or feature)
+        # FIXME: If the query contains more than one word, the abstract must contain all the words to be considered! (bug or feature?)
         document = super(TfidfVectorizer, self.vectorizer).transform(self.abstracts)
         doc_lenght = document.sum(1).A1
         query_cleaned = stemming_sentence(q)
@@ -142,19 +144,25 @@ class TFIDF_BM25():
 
 class KeywordsRake():
     """
-    Keywords ranking with Rake
+    https://csurfer.github.io/rake-nltk/_build/html/index.html
+
+    Keywords extraction with Rake
     """
     def __init__(self) -> None:
         self.keywords = []
 
     def rake_keywords(self, text, score=False, keyword_length = 3):
-        text = re.sub(str([punctuation]), ' ', text) # Remove the punctuation
-        rake_nltk = Rake(language=detect_language(text), include_repeated_phrases=False, max_length=keyword_length)
+        lang = detect_language(text)
+        rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
         rake_nltk.extract_keywords_from_text(text)
         if score:
             keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
+            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
+                and w not in list(punctuation)]# remove stop words and punctuation
         else:
             keywords = rake_nltk.get_ranked_phrases()# limit by number of results [:5]
+            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
+                and w not in list(punctuation)]# remove stop words and punctuation
         return keywords
         
     def extract_keywords(self, texts, column='ABSTRACT', keyword_length=3, score=False):
@@ -164,50 +172,9 @@ class KeywordsRake():
         return self.keywords
 
 
-class NLP_spacy():
-    """
-    Keywords ranking with NLP models of spacy.
-    Do not remove punctuation, it is needed for the context extraction in NLP.
-    """
-    def __init__(self) -> None:
-        """
-        Diverese models are available on https://spacy.io/models/en
-        sm = small 15MB, md = middle 45MB, lg = large 500MB
-        """
-        self.nlp_en = spacy.load("en_core_web_sm")
-        self.nlp_fr = spacy.load("fr_core_news_sm")
-        self.nlp_de = spacy.load("de_core_news_sm")
-        self.nlp_it = spacy.load("it_core_news_sm")
-
-    def fit_nlp(self, text) -> list:
-        lang = detect_language(text)
-        if lang == 'english':
-            keywords = self.nlp_en(text).ents
-        elif lang == 'german':
-            keywords = self.nlp_de(text).ents
-        elif lang == 'french':
-            keywords = self.nlp_fr(text).ents
-        elif lang == 'italian':
-            keywords = self.nlp_it(text).ents
-        else:
-            print("The language model is not implemented for " + lang)
-            keywords = []
-        return list(keywords)
-
-
-    def extract_keywords(self, texts, column='ABSTRACT') -> list:
-        self.index = texts.index.values
-        keywords = [self.fit_nlp(text) for text in texts[column].values.tolist()]
-        return keywords
-
-
-# TODO implement NLP with clustering to divide the abstracts into topics
-
-
-# FIXME: The text input must be a list of words not a list of sentences!!
-# https://www.datacamp.com/tutorial/discovering-hidden-topics-python
 class LSI():
     """
+    # https://www.datacamp.com/tutorial/discovering-hidden-topics-python
     ... tbd
     """
     def __init__(self) -> None:
@@ -217,8 +184,10 @@ class LSI():
 
     def preprocess(self, texts, column='ABSTRACT'):
         self.index = texts.index.values
-        self.abstracts_tokenized = [tokenize_abstract(text, output_scores=False) for text in texts[column].values.tolist()]
-        # return self.abstracts_tokenized
+        # FIXME: just remove the punctuation but do not stem the words!!
+        self.abstracts_tokenized = [tokenize_abstract(text, output_scores=False) 
+                                    for text in texts[column].values.tolist()]
+        return self.abstracts_tokenized
 
     def prepare_matrix(self):
         """
@@ -260,3 +229,116 @@ class LSI():
         self.plot_graph(min_max_step[0], min_max_step[1], min_max_step[2])
 
 
+# WARNING spacy is not good in detecting topcis for geodata but it can be useful to summarize texts
+class NLP_spacy():
+    """
+    https://spacy.io/
+
+    Keywords ranking with NLP models of spacy.
+    Do not remove punctuation, it is needed for the context extraction in NLP.
+    """
+    def __init__(self) -> None:
+        """
+        Diverese models are available on https://spacy.io/models/en
+        sm = small 15MB, md = middle 45MB, lg = large 500MB
+        """
+        self.nlp_en = spacy.load("en_core_web_sm")
+        self.nlp_fr = spacy.load("fr_core_news_sm")
+        self.nlp_de = spacy.load("de_core_news_sm")
+        self.nlp_it = spacy.load("it_core_news_sm")
+        self.topics = set([])
+
+    def fit_nlp(self, text) -> list:
+        """
+        tbd ...
+        """
+        lang = detect_language(text)
+        if lang == 'english':
+            keywords = self.nlp_en(text).ents
+        elif lang == 'german':
+            keywords = self.nlp_de(text).ents
+        elif lang == 'french':
+            keywords = self.nlp_fr(text).ents
+        elif lang == 'italian':
+            keywords = self.nlp_it(text).ents
+        else:
+            print("The language model is not implemented for " + lang)
+            keywords = []
+        return list(keywords)
+
+    def extract_keywords(self, texts, column='ABSTRACT') -> list:
+        # WARNING: it doesen't work well on geodata!
+        """
+        tbd ...
+        """
+        self.index = texts.index.values
+        keywords = [self.fit_nlp(text) for text in texts[column].values.tolist()]
+        return keywords
+    
+    def extract_keywords_rake(self, text, score=False, keyword_length = 3):
+        lang = detect_language(text)
+        rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
+        rake_nltk.extract_keywords_from_text(text)
+        if score:
+            keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
+            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
+                and w not in list(punctuation)]# remove stop words and punctuation
+        else:
+            keywords = rake_nltk.get_ranked_phrases()# limit by number of results [:5]
+            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
+                and w not in list(punctuation)]# remove stop words and punctuation
+        return keywords
+    
+    # TODO implement NLP with clustering to divide the abstracts into topics (work in progress)
+    def extract_topics_from_keywords(self, texts, use_rake=True, column='ABSTRACT', keyword_length=3, num_keywords=10):
+        """
+        function description and parameters...
+        # possible topics list: https://wmts.geo.admin.ch/EPSG/2056/1.0.0/WMTSCapabilities.xml
+        # This function will uses rake to extrakt the keywords!
+
+        """
+        self.index = texts.index.values
+        # NOTE: score method not expected for the rake keywords
+        if use_rake:
+            datasets = [self.extract_keywords_rake(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
+            [self.topics.update(dataset[:num_keywords]) for dataset in datasets]
+            self.topics = list(self.topics)
+        else:
+            datasets = [self.fit_nlp(text) for text in texts[column].values.tolist()]
+            for dataset in datasets:
+                self.topics.update(dataset[:num_keywords])
+            translator = str.maketrans('','', punctuation) # remove puntuation with a translator
+            self.topics = [str(i).translate(translator) for i in list(self.topics) if len(i) > 2]
+        return self.topics
+    # TODO: implement the summarization!
+
+
+    def text_analysis(self, text):
+        SUBJECT = []
+        OBJECTS = []
+        lang = detect_language(text)
+        if lang == 'italian':
+            dataset = self.nlp_it(text)
+        elif lang == 'german':
+            dataset = self.nlp_de(text)
+        elif lang == 'french':
+            dataset = self.nlp_fr(text)
+        else:
+            dataset = self.nlp_en(text)
+
+        
+
+        doc_df = pd.DataFrame({"label": [token.label_ for token in dataset.ents],
+                               "text": [token.text for token in dataset.ents]})
+        doc_dependencies = pd.DataFrame({"text": [token.text for token in dataset if not 
+                                                  (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)],
+                                         "lemma": [token.lemma_ for token in dataset if not 
+                                                   (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)],
+                                         "grammar": [token.dep_ for token in dataset if not 
+                                                        (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)],
+                                         "dependency": [token.head.orth_ for token in dataset if not
+                                                        (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)],
+                                         "positional": [token.pos_ for token in dataset if not
+                                                        (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]})
+        
+        return doc_df, doc_dependencies
