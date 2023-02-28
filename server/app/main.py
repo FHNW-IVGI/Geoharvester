@@ -140,6 +140,4 @@ async def get_data_from_redis(query: Union[str, None] = None, lang: str = "germa
     search_result["duration"] = redis_data.duration
     search_result["total"] = len(redis_data.docs)
 
-    fastapi_logger.info(len(search_result["docs"]))
-
     return {"data": search_result}
