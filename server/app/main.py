@@ -108,24 +108,27 @@ async def get_data_from_pandas(query: Union[str, None] = None):
 
 
 @app.get("/getDataFromRedis")
-async def get_data_from_redis(query: Union[str, None] = None):
-    """Route for the get_data request (search by terms) targeted at redis"""
-
-    LIMIT = 100 # Limit the number of max results
-    LANGUAGE = "german"
+async def get_data_from_redis(query: Union[str, None] = None, lang: str = "german", limit: int = 100):
+    """Route for the get_data request (search by terms) targeted at redis
+        query: The query string used for searching
+        lang: Language parameter to optimize search
+        limit: Redis returns 10 results by default, allow more results to be returned
+    """
+    search_result = {
+        "docs": None,
+        "fields": [],
+        "duration": 0,
+        "total": 0
+    }
 
     if (query == None):
-        return {"data": ""}
+        return {"data": search_result}
 
-
-    search_result = {}
     # word_list = split_search_string(query) # Needs proper handling - check if handled for other langs then ENG
 
-
-    # Define return fields, search mutliple fields
     redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query))                     
-        .language(LANGUAGE)                                   
-        .paging(0, LIMIT)
+        .language(lang)                                   
+        .paging(0, limit) # offset, limit
         .return_field('NAME')
         .return_field('OWNER')
         .return_field('TITLE')
@@ -138,6 +141,5 @@ async def get_data_from_redis(query: Union[str, None] = None):
     search_result["total"] = len(redis_data.docs)
 
     fastapi_logger.info(len(search_result["docs"]))
-
 
     return {"data": search_result}
