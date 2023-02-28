@@ -5,6 +5,12 @@ from typing import Union
 
 import pandas as pd
 import redis
+from fastapi import FastAPI
+from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
+from redis import StrictRedis
+from redis.commands.search.query import Query
+
 from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
 from app.processing.methods import (import_csv_into_dataframe,
                                     search_by_terms_dataframe,
@@ -12,11 +18,6 @@ from app.processing.methods import (import_csv_into_dataframe,
 from app.redis.methods import create_index, drop_redis_db, ingest_data
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
-from fastapi import FastAPI
-from fastapi.logger import logger as fastapi_logger
-from fastapi.middleware.cors import CORSMiddleware
-from redis import StrictRedis
-from redis.commands.search.query import Query
 
 app = FastAPI(debug=True)
 
@@ -110,6 +111,9 @@ async def get_data_from_pandas(query: Union[str, None] = None):
 async def get_data_from_redis(query: Union[str, None] = None):
     """Route for the get_data request (search by terms) targeted at redis"""
 
+    LIMIT = 100 # Limit the number of max results
+    LANGUAGE = "german"
+
     if (query == None):
         return {"data": ""}
 
@@ -117,24 +121,23 @@ async def get_data_from_redis(query: Union[str, None] = None):
     search_result = {}
     # word_list = split_search_string(query) # Needs proper handling - check if handled for other langs then ENG
 
-    # Simple Search
-    simple = r.ft(SVC_INDEX_ID).search(query)
 
     # Define return fields, search mutliple fields
-    ## WIP: https://redis.io/docs/stack/search/reference/query_syntax/
-    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query))
+    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query))                     
+        .language(LANGUAGE)                                   
+        .paging(0, LIMIT)
         .return_field('NAME')
         .return_field('OWNER')
         .return_field('TITLE')
         .return_field('MAX_ZOOM')
         .return_field('ABSTRACT'))
 
-    # Redis only returns the first 10 results by default. Either the limit needs to be overridden or pagination needs to be implemented
-
     search_result["docs"] = redis_data.docs
     search_result["fields"] = []
     search_result["duration"] = redis_data.duration
     search_result["total"] = len(redis_data.docs)
+
+    fastapi_logger.info(len(search_result["docs"]))
 
 
     return {"data": search_result}
