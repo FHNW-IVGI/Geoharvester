@@ -115,10 +115,10 @@ async def get_data_from_redis(query: Union[str, None] = None, lang: str = "germa
         limit: Redis returns 10 results by default, allow more results to be returned
     """
     search_result = {
+        "total": 0,
         "docs": None,
         "fields": [],
         "duration": 0,
-        "total": 0
     }
 
     if (query == None):
@@ -132,7 +132,6 @@ async def get_data_from_redis(query: Union[str, None] = None, lang: str = "germa
         .return_field('NAME')
         .return_field('OWNER')
         .return_field('TITLE')
-        .return_field('MAX_ZOOM')
         .return_field('ABSTRACT'))
 
     search_result["docs"] = redis_data.docs
