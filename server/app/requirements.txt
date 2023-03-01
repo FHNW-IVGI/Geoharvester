@@ -2,6 +2,3 @@ fastapi
 geopandas
 pandas
 uvicorn
-redis
-requests
-PyYAML

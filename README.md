@@ -2,8 +2,12 @@
 
 ![Stack Diagram](https://user-images.githubusercontent.com/36440175/220350037-c8300e83-8d18-4962-b99a-54b75f5c886a.PNG)
 
+The Geohack version of Geoharvester differs from this diagram:
 
+- The backend is not containerized, Docker is not needed.
+- Pandas dataframe instead of Redis database.
 
+To compensate for the lower performance of pandas compared to reddit, a row limit (see main.py) is set.
 
 ## Deployment
 
@@ -19,6 +23,7 @@
 1. cd into frontend folder ("geoharvester_client")
 2. run `npm i` to install dependencies (from package.json)
 3. run `npm start` to start the fronted on localhost (`npm start` is defined in package.json)
+
 ---
 
 ### Backend / Database:
@@ -26,13 +31,13 @@
 ###### Requirements:
 
 - Your favorite terminal
-- Have docker and docker compose installed (https://docs.docker.com/compose/install/). Windows users need to install Docker Desktop (https://docs.docker.com/desktop/install/windows-install/)
+- Have a venv running and dependencies installed. Cd into server/app then run `python -m venv env &&  source ./env/bin/activate && pip install -r requirements.txt`
 
 ###### Run:
 
-1. cd into server folder
-2. Run `docker compose up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
-3. Check `localhost:8000`in your browser to verify that backend is running
+1. In a second terminal cd into server folder
+2. Run `uvicorn app.main:app --reload` to start the API
+3. Check `localhost:8000/docs`in your browser to verify that backend is running
 
 #### Troubleshooting:
 
@@ -51,8 +56,6 @@ Docker is set up to automatically copy code changes into the container. However,
 a) You can either set up a venv and install the dependencies from requirements.txt (cd into server/app, then run `python -m venv env &&  source ./env/bin/activate && pip install -r requirements.txt`), then point the Python interpreter of VSCode to it. Make sure to rerun `pip install` if you make changes to the requirements file.
 
 b) For a "single source of truth" approach, install the "dev containers" extension for VSCode (https://code.visualstudio.com/docs/devcontainers/containers), then attach to the container (https://code.visualstudio.com/docs/devcontainers/attach-container). Windows user: This requires Docker Desktop with WSL 2 set up.
-
-
 
 ---
 

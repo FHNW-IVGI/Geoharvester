@@ -16,7 +16,7 @@ type StatisticsProps = {
 };
 
 type TableProps = {
-  docs: Geoservice[];
+  docs: any[];
   fields: string[];
 };
 
@@ -53,10 +53,8 @@ export const ResultArea = ({ docs, fields }: TableProps) => {
           <TableBody>
             {docs.map((doc, index) => (
               <TableRow key={index}>
-                {columns.map((column, key) => (
-                  <TableCell key={key}>
-                    {doc[column as keyof Geoservice]}
-                  </TableCell>
+                {doc.map((column: string, key: number) => (
+                  <TableCell key={key}>{column}</TableCell>
                 ))}
               </TableRow>
             ))}

@@ -15,7 +15,7 @@ export const getServerStatus = async () => {
     return message
 }
 export const getData = async (query: string) => {
-    const result = await axios(routes.getDataFromRedis, { params: { query } });
+    const result = await axios(routes.getDataFromPandas, { params: { query } });
     const { data } = result;
     return data
 }

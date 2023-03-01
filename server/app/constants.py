@@ -1,6 +1,6 @@
 #---------------------------------------------------------------------------------------------------------------
 # Redis:
-REDIS_HOST = "redis" # See docker-compose, hostname
+REDIS_HOST = "localhost" # See docker-compose, hostname
 REDIS_PORT = 6379 # See docker-compose, port / expose
 
 #---------------------------------------------------------------------------------------------------------------  
