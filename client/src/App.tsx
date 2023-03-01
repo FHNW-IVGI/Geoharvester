@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchBar } from "./components/search/SearchBar";
+import { Footer } from "./components/footer/Footer";
 import { ResultArea, StatisticsBox } from "./components/results/ResultArea";
 import { getServerStatus } from "./requests";
 import { Geoservice } from "./types";
@@ -35,8 +36,11 @@ function App() {
       <main className="App-main">
         <SearchBar setSearchResult={setSearchResult} />
         <StatisticsBox total={total || 0}></StatisticsBox>
-        <ResultArea docs={docs || [[]]} headers={fields}></ResultArea>
+        <ResultArea docs={docs || [[]]} fields={fields}></ResultArea>
       </main>
+      <footer className="App-footer">
+        <Footer status={statusString} checkServerStatus={checkServerStatus} />
+      </footer>
     </>
   );
 }

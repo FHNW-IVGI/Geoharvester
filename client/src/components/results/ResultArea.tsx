@@ -9,7 +9,6 @@ import {
   Paper,
   Chip,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
 import { Geoservice } from "../../types";
 
 type StatisticsProps = {
@@ -17,8 +16,8 @@ type StatisticsProps = {
 };
 
 type TableProps = {
-  docs: any[];
-  headers: string[];
+  docs: Geoservice[];
+  fields: string[];
 };
 
 export const StatisticsBox = ({ total }: StatisticsProps) => (
@@ -27,49 +26,43 @@ export const StatisticsBox = ({ total }: StatisticsProps) => (
   </div>
 );
 
-export const ResultArea = ({ docs, headers }: TableProps) => {
-  if (docs.length < 1 || !headers) {
+export const ResultArea = ({ docs, fields }: TableProps) => {
+  if (docs.length < 1) {
     return <div>No Data</div>;
   }
 
-  // Add any columns that you don`t want to display in the table.
-  // Refer to src/types.ts for values
-
-  const columnsToIgnore: string[] = [
-    "MAX_ZOOM",
-    "KEYWORDS",
-    "BBOX",
-    "UPDATE",
-    "CENTER_LAT",
-    "CENTER_LON",
-    "MAPGEO",
-    "GROUP",
-    "id",
-  ];
-
-  const columns = headers
-    .map((header, key) => {
-      return header === "ABSTRACT" || header === "LEGEND"
-        ? { field: header, headerName: header.toLowerCase(), width: 500 }
-        : {
-            field: header,
-            headerName: header.toLowerCase(),
-            width: 140,
-          };
-    })
-    .filter((column) => !columnsToIgnore.includes(column.field));
-
-  console.log(columns);
+  // Pandas provide column headers, for Redis JSON Objects we have to get them from the JSON Object:
+  const columns =
+    fields && fields.length > 1
+      ? fields
+      : Object.keys(docs[0]).filter(
+          (key) => !["id", "payload"].includes(key)
+        ) || [];
 
   return (
-    <div id="results-table" style={{ height: 700 }}>
-      <DataGrid
-        rows={docs}
-        columns={columns}
-        pageSize={20}
-        rowsPerPageOptions={[10, 20, 50, 100]}
-        getRowHeight={() => "auto"}
-      />
+    <div id="results-table">
+      <TableContainer component={Paper} sx={{ maxHeight: "65vh" }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {columns.map((col_header, index) => (
+                <TableCell key={index}>{col_header}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {docs.map((doc, index) => (
+              <TableRow key={index}>
+                {columns.map((column, key) => (
+                  <TableCell key={key}>
+                    {doc[column as keyof Geoservice]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

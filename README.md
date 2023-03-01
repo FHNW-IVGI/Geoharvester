@@ -2,12 +2,8 @@
 
 ![Stack Diagram](https://user-images.githubusercontent.com/36440175/220350037-c8300e83-8d18-4962-b99a-54b75f5c886a.PNG)
 
-The Geohack version of Geoharvester differs from this diagram:
 
-- The backend is not containerized, Docker is not needed.
-- Pandas dataframe instead of Redis database.
 
-To compensate for the lower performance of pandas compared to reddit, a row limit (see main.py) is set.
 
 ## Deployment
 
@@ -15,7 +11,7 @@ To compensate for the lower performance of pandas compared to reddit, a row limi
 
 ###### Requirements:
 
-- Your favorite terminal (Recommendation for Windows: https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701?hl=de-ch&gl=ch&rtc=1)
+- Your favorite terminal
 - Have node and npm installed (https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
 ###### Run:
@@ -23,32 +19,42 @@ To compensate for the lower performance of pandas compared to reddit, a row limi
 1. cd into frontend folder ("geoharvester_client")
 2. run `npm i` to install dependencies (from package.json)
 3. run `npm start` to start the fronted on localhost (`npm start` is defined in package.json)
-
 ---
 
-### Backend:
+### Backend / Database:
 
 ###### Requirements:
 
-- Your favorite terminal (Recommendation for Windows: https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701?hl=de-ch&gl=ch&rtc=1)
-- Have a venv running and dependencies installed. Cd into server/app then run `python -m venv env &&  source ./env/bin/activate && pip install -r requirements.txt`
+- Your favorite terminal
+- Have docker and docker compose installed (https://docs.docker.com/compose/install/). Windows users need to install Docker Desktop (https://docs.docker.com/desktop/install/windows-install/)
 
 ###### Run:
 
-1. In terminal cd into the server folder
-2. Run `uvicorn app.main:app --reload` to start the API
-3. Check `localhost:8000/docs`in your browser to verify that backend is running
+1. cd into server folder
+2. Run `docker compose up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
+3. Check `localhost:8000`in your browser to verify that backend is running
 
 #### Troubleshooting:
 
-##### Cannot start the application
+##### Cannot start Docker from terminal
 
-- Check that you are starting the backend from the `server` folder (not server/apps).
-- Is the virtual environment up and running?
+- Error `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?` Start docker process with `sudo service docker start`
 
-##### VSCode complains about missing imports
+##### Cannot start application
 
-- Point the VSCode python compiler to your venv, so that it can pick up the dependencies from the virtual environment. (See/Click bottom right corner in VSCode )
+- Check that you are starting the backend from the `server` folder (not server/apps). Is Docker running? You might need to start the daemon (Ubuntu: `sudo service docker start`) or Docker Desktop (Windows)
+
+#### Development / VSCode Support:
+
+Docker is set up to automatically copy code changes into the container. However, when it comes to the Python interpreter and the management of dependencies on your local machine both (Docker and your local environment) are not in sync by default. VSCode might flag missing dependencies on your local environment, depending on which interpreter is selected. There are two approaches to solve this issue for development:
+
+a) You can either set up a venv and install the dependencies from requirements.txt (cd into server/app, then run `python -m venv env &&  source ./env/bin/activate && pip install -r requirements.txt`), then point the Python interpreter of VSCode to it. Make sure to rerun `pip install` if you make changes to the requirements file.
+
+b) For a "single source of truth" approach, install the "dev containers" extension for VSCode (https://code.visualstudio.com/docs/devcontainers/containers), then attach to the container (https://code.visualstudio.com/docs/devcontainers/attach-container). Windows user: This requires Docker Desktop with WSL 2 set up.
+
+
+
+---
 
 ## API Documentation
 
