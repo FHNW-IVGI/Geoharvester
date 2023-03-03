@@ -52,7 +52,7 @@ def is_not_num(str) -> bool:
     except ValueError:
         return True
 
-def stemming_sentence(sentence):
+def stemming_sentence(sentence, stem_words = True):
     # WARNING The stemming and cleansing process is computationally expensive, it could take a while to process 
     """
     sentences is a list of sentences [str, str]
@@ -61,11 +61,15 @@ def stemming_sentence(sentence):
     stemmer = SnowballStemmer(lang)
     words = (word_tokenize(sentence, language= lang))
     stop_words = stopwords.words(lang)
-    words_cleaned_list = [stemmer.stem(word.lower()) for word in words if word.lower() not in stop_words
-                    and word.lower() not in list(punctuation) and is_not_num(word)]
+    if stem_words:
+        words_cleaned_list = [stemmer.stem(word.lower()) for word in words if word.lower() not in stop_words
+                        and word.lower() not in list(punctuation) and is_not_num(word)]
+    else:
+        words_cleaned_list = [word.lower() for word in words if word.lower() not in stop_words
+                              and word.lower() not in list(punctuation) and is_not_num(word)]
     return words_cleaned_list
 
-def tokenize_abstract(text, output_scores=True):
+def tokenize_abstract(text, output_scores=True, stem_words=True):
     """
     text is a str, which is tokenized and stemmed,
     returning a pandas with the words and the scores
@@ -75,7 +79,7 @@ def tokenize_abstract(text, output_scores=True):
     negative_sentences = {'english':'not contained', 'german':'nicht enthalten',
                         'italian':'non contenuti', 'french':'non contenu'}
     # WARNING: The removal needs to be tested on the whole dataset, possible further negative forms could be contained!
-    sentences_cleaned = [stemming_sentence(sentence) for sentence in sentences
+    sentences_cleaned = [stemming_sentence(sentence, stem_words=stem_words) for sentence in sentences
                         if negative_sentences[detect_language(sentence)] not in sentence.lower()]
     if output_scores:
         vector = ranker.fit_transform(' '.join(words) for words in sentences_cleaned)
@@ -184,8 +188,7 @@ class LSI():
 
     def preprocess(self, texts, column='ABSTRACT'):
         self.index = texts.index.values
-        # FIXME: just remove the punctuation but do not stem the words!!
-        self.abstracts_tokenized = [tokenize_abstract(text, output_scores=False) 
+        self.abstracts_tokenized = [tokenize_abstract(text, output_scores=False, stem_words=False) 
                                     for text in texts[column].values.tolist()]
         return self.abstracts_tokenized
 
@@ -300,10 +303,12 @@ class NLP_spacy():
         self.index = texts.index.values
         # NOTE: score method not expected for the rake keywords
         if use_rake:
+            print('extracting keywords with RAKE')
             datasets = [self.extract_keywords_rake(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
             [self.topics.update(dataset[:num_keywords]) for dataset in datasets]
             self.topics = list(self.topics)
         else:
+            print('Extracting keywords with SpaCy')
             datasets = [self.fit_nlp(text) for text in texts[column].values.tolist()]
             for dataset in datasets:
                 self.topics.update(dataset[:num_keywords])
@@ -314,8 +319,8 @@ class NLP_spacy():
 
 
     def text_analysis(self, text):
-        SUBJECT = []
-        OBJECTS = []
+        # SUBJECT = []
+        # OBJECTS = []
         lang = detect_language(text)
         if lang == 'italian':
             dataset = self.nlp_it(text)
