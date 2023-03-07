@@ -2,11 +2,10 @@
 import uuid
 
 import redis
-from fastapi.logger import logger as fastapi_logger
-from redis.commands.search.indexDefinition import IndexDefinition, IndexType
-
 from app.constants import REDIS_HOST, REDIS_PORT
 from app.processing.stopwords import get_stopwords
+from fastapi.logger import logger as fastapi_logger
+from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
@@ -71,3 +70,8 @@ def ingest_data(json, KEY):
         fastapi_logger.info("Redis received {} additional records".format(redis_size_after_ingest - redis_size_before_ingest))
     
     return redis_size_after_ingest
+
+def transform_wordlist_to_query(wordlist: list[str]):
+    query_string = ""
+    query_string.join(["{} | ".format(word) for word in wordlist])
+    print(query_string)

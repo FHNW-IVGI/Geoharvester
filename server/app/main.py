@@ -5,19 +5,19 @@ from typing import Union
 
 import pandas as pd
 import redis
+from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
+from app.processing.methods import (import_csv_into_dataframe,
+                                    search_by_terms_dataframe,
+                                    split_search_string)
+from app.redis.methods import (create_index, drop_redis_db, ingest_data,
+                               transform_wordlist_to_query)
+from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
+                               geoservices_schema)
 from fastapi import FastAPI
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from redis import StrictRedis
 from redis.commands.search.query import Query
-
-from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
-from app.processing.methods import (import_csv_into_dataframe,
-                                    search_by_terms_dataframe,
-                                    split_search_string)
-from app.redis.methods import create_index, drop_redis_db, ingest_data
-from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
-                               geoservices_schema)
 
 app = FastAPI(debug=True)
 
@@ -92,7 +92,6 @@ async def get_server_status():
 @app.get("/getDataFromPandas")
 async def get_data_from_pandas(query: Union[str, None] = None):
     """Route for the get_data request (search by terms) targeted at pandas dataframe"""
-    print("panda")
 
     if (query == None):
         return {"data": ""}
@@ -124,7 +123,8 @@ async def get_data_from_redis(query: Union[str, None] = None, lang: str = "germa
     if (query == None):
         return {"data": search_result}
 
-    # word_list = split_search_string(query) # Needs proper handling - check if handled for other langs then ENG
+    word_list = split_search_string(query)
+    print(transform_wordlist_to_query(word_list))
 
     redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query))                     
         .language(lang)                                   
