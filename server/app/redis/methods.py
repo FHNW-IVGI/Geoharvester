@@ -24,6 +24,7 @@ def check_if_index_exists(INDEX_ID):
 
 
 def create_index(PREFIX, INDEX_ID, schema):
+    "Create index based on stopword, schema and index definition"
     index_def = IndexDefinition(
         index_type=IndexType.JSON,
         prefix = [PREFIX],
@@ -71,7 +72,12 @@ def ingest_data(json, KEY):
     
     return redis_size_after_ingest
 
+
 def transform_wordlist_to_query(wordlist: list[str]):
+    """Whitespaces in redis queries are parsed as AND, thus this method adds pipes (|) to force OR logic.
+       See: https://redis.io/docs/stack/search/reference/query_syntax/
+    """
     query_string = ""
-    query_string.join(["{} | ".format(word) for word in wordlist])
-    print(query_string)
+    for index, word in enumerate(wordlist):
+        query_string += "{} | ".format(word) if index < (len(wordlist)-1) else "{}".format(word)
+    return query_string

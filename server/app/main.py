@@ -82,7 +82,7 @@ async def startup_event():
 async def root():
     '''Root endpoint'''
 
-    return {"message": "running1"}
+    return {"message": "running"}
 
 @app.get("/getServerStatus")
 async def get_server_status():
@@ -124,9 +124,9 @@ async def get_data_from_redis(query: Union[str, None] = None, lang: str = "germa
         return {"data": search_result}
 
     word_list = split_search_string(query)
-    print(transform_wordlist_to_query(word_list))
+    query_string = transform_wordlist_to_query(word_list)
 
-    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query))                     
+    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query_string))                     
         .language(lang)                                   
         .paging(0, limit) # offset, limit
         .return_field('NAME')

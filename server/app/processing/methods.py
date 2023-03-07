@@ -3,7 +3,7 @@ import shlex
 from typing import List
 
 import pandas as pd
-from stopwords import get_stopwords
+from app.processing.stopwords import get_stopwords
 
 from ..constants import fields_to_output
 
