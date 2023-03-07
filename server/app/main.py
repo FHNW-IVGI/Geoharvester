@@ -9,7 +9,8 @@ from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
 from app.processing.methods import (import_csv_into_dataframe,
                                     search_by_terms_dataframe,
                                     split_search_string)
-from app.redis.methods import create_index, drop_redis_db, ingest_data
+from app.redis.methods import (create_index, drop_redis_db, ingest_data,
+                               transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
 from fastapi import FastAPI
@@ -81,7 +82,7 @@ async def startup_event():
 async def root():
     '''Root endpoint'''
 
-    return {"message": "running1"}
+    return {"message": "running"}
 
 @app.get("/getServerStatus")
 async def get_server_status():
@@ -91,7 +92,6 @@ async def get_server_status():
 @app.get("/getDataFromPandas")
 async def get_data_from_pandas(query: Union[str, None] = None):
     """Route for the get_data request (search by terms) targeted at pandas dataframe"""
-    print("panda")
 
     if (query == None):
         return {"data": ""}
@@ -107,34 +107,36 @@ async def get_data_from_pandas(query: Union[str, None] = None):
 
 
 @app.get("/getDataFromRedis")
-async def get_data_from_redis(query: Union[str, None] = None):
-    """Route for the get_data request (search by terms) targeted at redis"""
+async def get_data_from_redis(query: Union[str, None] = None, lang: str = "german", limit: int = 100):
+    """Route for the get_data request (search by terms) targeted at redis
+        query: The query string used for searching
+        lang: Language parameter to optimize search
+        limit: Redis returns 10 results by default, allow more results to be returned
+    """
+    search_result = {
+        "total": 0,
+        "docs": None,
+        "fields": [],
+        "duration": 0,
+    }
 
     if (query == None):
-        return {"data": ""}
+        return {"data": search_result}
 
+    word_list = split_search_string(query)
+    query_string = transform_wordlist_to_query(word_list)
 
-    search_result = {}
-    # word_list = split_search_string(query) # Needs proper handling - check if handled for other langs then ENG
-
-    # Simple Search
-    simple = r.ft(SVC_INDEX_ID).search(query)
-
-    # Define return fields, search mutliple fields
-    ## WIP: https://redis.io/docs/stack/search/reference/query_syntax/
-    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query))
+    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query_string))                     
+        .language(lang)                                   
+        .paging(0, limit) # offset, limit
         .return_field('NAME')
         .return_field('OWNER')
         .return_field('TITLE')
-        .return_field('MAX_ZOOM')
         .return_field('ABSTRACT'))
-
-    # Redis only returns the first 10 results by default. Either the limit needs to be overridden or pagination needs to be implemented
 
     search_result["docs"] = redis_data.docs
     search_result["fields"] = []
     search_result["duration"] = redis_data.duration
     search_result["total"] = len(redis_data.docs)
-
 
     return {"data": search_result}

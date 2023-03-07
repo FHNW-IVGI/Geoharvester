@@ -2,11 +2,10 @@
 import uuid
 
 import redis
-from fastapi.logger import logger as fastapi_logger
-from redis.commands.search.indexDefinition import IndexDefinition, IndexType
-
 from app.constants import REDIS_HOST, REDIS_PORT
 from app.processing.stopwords import get_stopwords
+from fastapi.logger import logger as fastapi_logger
+from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
@@ -25,6 +24,7 @@ def check_if_index_exists(INDEX_ID):
 
 
 def create_index(PREFIX, INDEX_ID, schema):
+    "Create index based on stopword, schema and index definition"
     index_def = IndexDefinition(
         index_type=IndexType.JSON,
         prefix = [PREFIX],
@@ -71,3 +71,13 @@ def ingest_data(json, KEY):
         fastapi_logger.info("Redis received {} additional records".format(redis_size_after_ingest - redis_size_before_ingest))
     
     return redis_size_after_ingest
+
+
+def transform_wordlist_to_query(wordlist: list[str]):
+    """Whitespaces in redis queries are parsed as AND, thus this method adds pipes (|) to force OR logic.
+       See: https://redis.io/docs/stack/search/reference/query_syntax/
+    """
+    query_string = ""
+    for index, word in enumerate(wordlist):
+        query_string += "{} | ".format(word) if index < (len(wordlist)-1) else "{}".format(word)
+    return query_string

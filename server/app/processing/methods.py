@@ -3,6 +3,7 @@ import shlex
 from typing import List
 
 import pandas as pd
+from app.processing.stopwords import get_stopwords
 
 from ..constants import fields_to_output
 
@@ -18,7 +19,6 @@ def import_csv_into_dataframe(url, column_limit=None):
 
 def split_search_string(query: str) -> List[str]:
     """Split the incoming request by delimiter to create a list of terms"""
-    # Do splitting
     word_list_with_delimiters = shlex.split(query)
 
     def split_delimiters(word_list_with_delimiters: List[str]) -> List[str]:
@@ -40,8 +40,9 @@ def split_search_string(query: str) -> List[str]:
     # Also split terms with delimiters
     word_list_without_delimiters = split_delimiters(word_list_with_delimiters)
 
-    # Filter out blanks and other leftovers:
-    strings_to_remove = [""]
+    # Filter out blanks, stopwords and other leftovers:
+    stopwords = get_stopwords()
+    strings_to_remove = ["", *stopwords]
     filtered_word_list = list(filter(lambda string: string not in strings_to_remove, word_list_without_delimiters))
 
     # Trim whitespaces of terms which may originate from splitting:
