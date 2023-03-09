@@ -1,4 +1,5 @@
 server/.vscode
+server/.pylintrc
 server/app/env
 
 __pycache__

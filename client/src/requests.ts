@@ -5,17 +5,27 @@ const BASEURL = "http://localhost:8000"; // Adjust to port where backend is runn
 
 const routes = {
     getServerStatus: `${BASEURL}/`,
-    getData: `${BASEURL}/getData`,
+    getDataFromPandas: `${BASEURL}/getDataFromPandas`,
+    getDataFromRedis: `${BASEURL}/getDataFromRedis`,
 }
+
+enum LANG {
+    GER = "german",
+    ENG = "english",
+    FR = "french",
+    IT = "italian"
+}
+
+// Redit returns 10 results by default, use this fallback instead when no value is given
+const LIMIT = 100
 
 export const getServerStatus = async () => {
     const result = await axios(routes.getServerStatus, {});
     const { message } = result.data;
     return message
 }
-export const getData = async (query: string) => {
-    console.log(query)
-    const result = await axios(routes.getData, { params: { query } });
+export const getData = async (query: string, lang: string = LANG.GER, resultLimit: number = LIMIT) => {
+    const result = await axios(routes.getDataFromRedis, { params: { query, lang, resultLimit } });
     const { data } = result;
     return data
 }

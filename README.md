@@ -1,12 +1,13 @@
-# Geoharvester
+# NDGI Project Geoharvester
 
-NDGI Project Geoharvester
+![Stack Diagram](https://user-images.githubusercontent.com/36440175/220350037-c8300e83-8d18-4962-b99a-54b75f5c886a.PNG)
+
+
+
 
 ## Deployment
 
-### A. Localhost deployment:
-
-#### Frontend:
+### Frontend:
 
 ###### Requirements:
 
@@ -18,39 +19,45 @@ NDGI Project Geoharvester
 1. cd into frontend folder ("geoharvester_client")
 2. run `npm i` to install dependencies (from package.json)
 3. run `npm start` to start the fronted on localhost (`npm start` is defined in package.json)
+---
 
-#### Backend:
+### Backend / Database:
 
 ###### Requirements:
 
 - Your favorite terminal
-- Have anaconda installed (see: [Docs](https://docs.anaconda.com/anaconda/install/index.html) or [WSL specific](https://gist.github.com/kauffmanes/5e74916617f9993bc3479f401dfec7da) )
-- Run `conda config --add channels conda-forge` to have conda install packages from conda-forge as default doesn`t have all packages (IMPORTANT!)
-- Run `conda create --name geoharvester --file requirements.txt` to install required libraries.
+- Have docker and docker compose installed (https://docs.docker.com/compose/install/). Windows users need to install Docker Desktop (https://docs.docker.com/desktop/install/windows-install/)
 
 ###### Run:
 
-1. cd into backend folder ("server")
-2. run `conda activate geoharvester` to activate environment (replace "geoharvester" with name of your environment if it differs)
-3. run `uvicorn app.main:app --reload` to start server on localhost (from `server` folder)
-4. Check `localhost:8000`in your browser to verify that backend is running
+1. cd into server folder
+2. Run `docker compose up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
+3. Check `localhost:8000`in your browser to verify that backend is running
 
 #### Troubleshooting:
 
+##### Cannot start Docker from terminal
+
+- Error `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?` Start docker process with `sudo service docker start`
+
 ##### Cannot start application
 
-- Check if conda environment is set up and running by typing `conda info --envs` (active environment with asterik \*)
-- Check that you are starting the backend from the `server` folder (not server/apps) and use `uvicorn app.main:...` (NOT `uvicorn main:...`) - this is required for relative imports (see: https://fastapi.tiangolo.com/tutorial/bigger-applications/)
+- Check that you are starting the backend from the `server` folder (not server/apps). Is Docker running? You might need to start the daemon (Ubuntu: `sudo service docker start`) or Docker Desktop (Windows)
 
-##### Can`t resolve dependencies
+#### Development / VSCode Support:
 
-- Is the package installed? (run `conda list` in your activated conda env)
-- Close and reopen VSCode, sometimes it gets stuck on changes in the terminal
-- You might need to switch your Python interpreter in VS Code (bottom right corner, click on it, select anaconda version "geoharvester")
-- This might happen because of the old env version still being there, delete env folder as we now rely on conda instead
+Docker is set up to automatically copy code changes into the container. However, when it comes to the Python interpreter and the management of dependencies on your local machine both (Docker and your local environment) are not in sync by default. VSCode might flag missing dependencies on your local environment, depending on which interpreter is selected. There are two approaches to solve this issue for development:
+
+a) You can either set up a venv and install the dependencies from requirements.txt (cd into server/app, then run `python -m venv env &&  source ./env/bin/activate && pip install -r requirements.txt`), then point the Python interpreter of VSCode to it. Make sure to rerun `pip install` if you make changes to the requirements file.
+
+b) For a "single source of truth" approach, install the "dev containers" extension for VSCode (https://code.visualstudio.com/docs/devcontainers/containers), then attach to the container (https://code.visualstudio.com/docs/devcontainers/attach-container). Windows user: This requires Docker Desktop with WSL 2 set up.
+
+
+
+---
 
 ## API Documentation
 
-### SwaggerUI
+#### SwaggerUI
 
 Fast API comes with Swagger UI preinstalled. If you have the backend running (see steps above), Swagger UI is available on http://localhost:8000/docs. See the wiki pages of this repo for the documentation of this project.
