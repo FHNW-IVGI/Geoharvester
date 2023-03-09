@@ -14,7 +14,6 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { getData } from "../../requests";
 import "./search.css";
 import SearchIcon from "@mui/icons-material/Search";
-import { fontStyle, fontWeight } from "@mui/system";
 
 type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
