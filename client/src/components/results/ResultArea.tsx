@@ -66,3 +66,4 @@ export const ResultArea = ({ docs, fields }: TableProps) => {
     </div>
   );
 };
+// }
