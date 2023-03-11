@@ -3,7 +3,8 @@ Work in progress
 """
 
 from string import punctuation
-import re
+import openai
+import os
 import itertools
 import spacy
 import numpy as np
@@ -19,6 +20,7 @@ from scipy import sparse
 from gensim import corpora
 from gensim.models import LsiModel
 from gensim.models.coherencemodel import CoherenceModel
+from summarizer.sbert import SBertSummarizer
 
 
 
@@ -232,7 +234,7 @@ class LSI():
         self.plot_graph(min_max_step[0], min_max_step[1], min_max_step[2])
 
 
-# WARNING spacy is not good in detecting topcis for geodata but it can be useful to summarize texts
+# WARNING spacy is not good in detecting topcis for geodata but it can be useful to summarize texts or analyse the grammar
 class NLP_spacy():
     """
     https://spacy.io/
@@ -269,16 +271,19 @@ class NLP_spacy():
             keywords = []
         return list(keywords)
 
-    def extract_keywords(self, texts, column='ABSTRACT') -> list:
+    '''def extract_keywords(self, texts, column='ABSTRACT') -> list:
         # WARNING: it doesen't work well on geodata!
         """
-        tbd ...
+        DEPRECATED!
         """
         self.index = texts.index.values
         keywords = [self.fit_nlp(text) for text in texts[column].values.tolist()]
-        return keywords
+        return keywords'''
     
     def extract_keywords_rake(self, text, score=False, keyword_length = 3):
+        """
+        return a list of kewords list
+        """
         lang = detect_language(text)
         rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
         rake_nltk.extract_keywords_from_text(text)
@@ -287,40 +292,22 @@ class NLP_spacy():
             keywords = [w for w in keywords if w not in list(stopwords.words(lang))
                 and w not in list(punctuation)]# remove stop words and punctuation
         else:
+            new_kws = []
             keywords = rake_nltk.get_ranked_phrases()# limit by number of results [:5]
-            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]# remove stop words and punctuation
+            for keyword in keywords:
+                # remove stop words and punctuation
+                new_kw = [w for w in word_tokenize(keyword) if w not in list(stopwords.words(lang)) and w not in list(punctuation)]
+                if len(new_kw) != 0:
+                    new_kws.append(new_kw)
+                else:
+                    continue
+            keywords = new_kws
         return keywords
     
-    # TODO implement NLP with clustering to divide the abstracts into topics (work in progress)
-    def extract_topics_from_keywords(self, texts, use_rake=True, column='ABSTRACT', keyword_length=3, num_keywords=10):
+    def analyse_text_keywords(self, text, keyword_length=3):
         """
-        function description and parameters...
-        # possible topics list: https://wmts.geo.admin.ch/EPSG/2056/1.0.0/WMTSCapabilities.xml
-        # This function will uses rake to extrakt the keywords!
-
+        ...............
         """
-        self.index = texts.index.values
-        # NOTE: score method not expected for the rake keywords
-        if use_rake:
-            print('extracting keywords with RAKE')
-            datasets = [self.extract_keywords_rake(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
-            [self.topics.update(dataset[:num_keywords]) for dataset in datasets]
-            self.topics = list(self.topics)
-        else:
-            print('Extracting keywords with SpaCy')
-            datasets = [self.fit_nlp(text) for text in texts[column].values.tolist()]
-            for dataset in datasets:
-                self.topics.update(dataset[:num_keywords])
-            translator = str.maketrans('','', punctuation) # remove puntuation with a translator
-            self.topics = [str(i).translate(translator) for i in list(self.topics) if len(i) > 2]
-        return self.topics
-    # TODO: implement the summarization!
-
-
-    def text_analysis(self, text):
-        # SUBJECT = []
-        # OBJECTS = []
         lang = detect_language(text)
         if lang == 'italian':
             dataset = self.nlp_it(text)
@@ -331,19 +318,68 @@ class NLP_spacy():
         else:
             dataset = self.nlp_en(text)
 
-        
+        keywords = self.extract_keywords_rake (text, keyword_length=keyword_length)
+        words = [token.text.lower() for token in dataset if not
+                 (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
+        positionals = [token.pos_ for token in dataset if not 
+                      (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
+        # refine the keywords using just the relevant ones
+        print('Finalizing the keywords with SpaCy...')
+        pos_dict = dict(zip(words, positionals))
+        cleaned_keywords = {' '.join(kw) for kw in keywords if any(pos_dict.get(w) in ['NOUN', 'PROPN', 'NUM'] for w in kw)}
+        return list(cleaned_keywords)
+    
+    def extract_refined_keywords(self, texts, use_rake=True, column='ABSTRACT', keyword_length=3, num_keywords=10):
+        """
+        function description and parameters...
+        # This function will uses rake to extrakt the keywords and will refine them with spacy!
 
-        doc_df = pd.DataFrame({"label": [token.label_ for token in dataset.ents],
-                               "text": [token.text for token in dataset.ents]})
-        doc_dependencies = pd.DataFrame({"text": [token.text for token in dataset if not 
-                                                  (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)],
-                                         "lemma": [token.lemma_ for token in dataset if not 
-                                                   (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)],
-                                         "grammar": [token.dep_ for token in dataset if not 
-                                                        (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)],
-                                         "dependency": [token.head.orth_ for token in dataset if not
-                                                        (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)],
-                                         "positional": [token.pos_ for token in dataset if not
-                                                        (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]})
+        """
+        self.index = texts.index.values
+        # NOTE: score method not expected for the rake keywords
+        if use_rake:
+            print('Wxtracting keywords with RAKE...')
+            keywords = [self.analyse_text_keywords(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
+            # [self.topics.update(dataset[:num_keywords]) for dataset in datasets]
+            # self.topics = list(self.topics)
+            self.topics = keywords
+        else:
+            print('Extracting keywords with SpaCy...')
+            datasets = [self.fit_nlp(text) for text in texts[column].values.tolist()]
+            for dataset in datasets:
+                self.topics.update(dataset[:num_keywords])
+            translator = str.maketrans('','', punctuation) # remove puntuation with a translator
+            self.topics = [str(i).translate(translator) for i in list(self.topics) if len(i) > 2]
+        return self.topics
+
+    def summarize(self, text, use_GPT=False):
+        """
         
-        return doc_df, doc_dependencies
+        """
+        lang = detect_language(text)
+        if use_GPT:
+            if lang == 'german':
+                prompt='Diesen Text zusammenfassen'
+            elif lang == 'french':
+                prompt='Résumez ce texte'
+            elif lang == 'italian':
+                prompt='Riassumi questo testo'
+            else:
+                prompt='Summarize this text'
+            print('Summarizing with openai. There is a limit of token for the free version!')
+            openai.api_key = os.getenv('OPENAI_KEY') # WARNING: limits of tokens for free version!
+            summarized_text = openai.Completion.create(model='text-davinci-003', prompt=f"{prompt}: {text}",
+                                                       temperature=.2, max_tokens=1000,)["choices"][0]['text']
+        else:
+            print('Summarizing text with Bert')
+            if lang == 'english':
+                model = SBertSummarizer('all-MiniLM-L12-v2')
+            else:
+                model = SBertSummarizer('paraphrase-multilingual-mpnet-base-v2')
+            summarized_text = model(text, num_sentences=4)
+        return summarized_text
+    
+    def summarize_texts(self, texts, column='ABSTRACT', use_GPT=False):
+        self.index = texts.index.values
+        summaries = [self.summarize(text, use_GPT=use_GPT) for text in texts[column].values.tolist()]
+        return summaries
