@@ -280,6 +280,8 @@ class NLP_spacy():
         keywords = [self.fit_nlp(text) for text in texts[column].values.tolist()]
         return keywords'''
     
+
+    # KEYWORDS EXTRACTION
     def extract_keywords_rake(self, text, score=False, keyword_length = 3):
         """
         return a list of kewords list
@@ -352,6 +354,8 @@ class NLP_spacy():
             self.topics = [str(i).translate(translator) for i in list(self.topics) if len(i) > 2]
         return self.topics
 
+
+    # SUMMARIZATION
     def summarize(self, text, use_GPT=False):
         """
         
