@@ -1,12 +1,11 @@
 
 import axios from "axios";
 
-const BASEURL = "http://localhost:8000"; // Adjust to port where backend is running
 
 const routes = {
-    getServerStatus: `${BASEURL}/`,
-    getDataFromPandas: `${BASEURL}/getDataFromPandas`,
-    getDataFromRedis: `${BASEURL}/getDataFromRedis`,
+    getServerStatus: `/`,
+    getDataFromPandas: `/getDataFromPandas`,
+    getDataFromRedis: `/getDataFromRedis`,
 }
 
 enum LANG {
