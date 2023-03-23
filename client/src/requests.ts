@@ -3,9 +3,9 @@ import axios from "axios";
 
 
 const routes = {
-    getServerStatus: `/`,
-    getDataFromPandas: `/getDataFromPandas`,
-    getDataFromRedis: `/getDataFromRedis`,
+    getServerStatus: `/api`,
+    getDataFromPandas: `/api/getDataFromPandas`,
+    getDataFromRedis: `/api/getDataFromRedis`,
 }
 
 enum LANG {

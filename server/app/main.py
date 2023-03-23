@@ -19,7 +19,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from redis import StrictRedis
 from redis.commands.search.query import Query
 
-app = FastAPI(debug=True)
+app = FastAPI(
+    debug=True,
+    version="0.2.0",
+    docs_url='/api/docs',
+    redoc_url='/api/redoc',
+    openapi_url='/api/openapi.json'
+)
 
 dataframe=None
 datajson=None
@@ -78,18 +84,18 @@ async def startup_event():
 
 
 
-@app.get("/")
+@app.get("/api")
 async def root():
     '''Root endpoint'''
 
     return {"message": "running"}
 
-@app.get("/getServerStatus")
+@app.get("/api/getServerStatus")
 async def get_server_status():
     '''Helper method for client'''
     return {"message": "running"}
 
-@app.get("/getDataFromPandas")
+@app.get("/api/getDataFromPandas")
 async def get_data_from_pandas(query: Union[str, None] = None):
     """Route for the get_data request (search by terms) targeted at pandas dataframe"""
 
@@ -106,7 +112,7 @@ async def get_data_from_pandas(query: Union[str, None] = None):
     return {"data": payload}
 
 
-@app.get("/getDataFromRedis")
+@app.get("/api/getDataFromRedis")
 async def get_data_from_redis(query: Union[str, None] = None, lang: str = "german", limit: int = 100):
     """Route for the get_data request (search by terms) targeted at redis
         query: The query string used for searching
