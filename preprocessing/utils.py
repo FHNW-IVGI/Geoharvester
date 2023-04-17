@@ -30,15 +30,16 @@ import pyLDAvis.gensim_models as genvis
 
 def detect_language(phrase):
     """
-    Detect the language of a str using langdetect.
+    Detects the language of a str using langdetect.
 
     Parameters
     ----------
     phrase : str
-        String element to be translated
+        String element to be elaborated
     Returns
     -------
-    
+    _ : str
+        Detected language.
     """
     language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
     try:
@@ -49,7 +50,20 @@ def detect_language(phrase):
 
 def translate(text, lang='de', translator='deepl'):
     """
-    translate string, lang is a 2-chars string
+    Translates a text str from the detected language to another.
+
+    Parameters
+    ----------
+    text : str
+        String element to be translated
+    lang : str
+        2 chars output language
+    translator : str
+        Translator to be used ('google', 'deepl', etc)
+    Returns
+    -------
+    _ : str
+        Translated textt.
     """
     return ts.translate_text(text, translator=translator, to_language=lang)
 
@@ -72,7 +86,6 @@ def is_not_num(str) -> bool:
         return True
 
 def stemming_sentence(sentence, stem_words = True):
-    # WARNING The stemming and cleansing process is computationally expensive, it could take a while to process 
     """
     sentences is a list of sentences [str, str]
     """
