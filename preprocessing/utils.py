@@ -10,24 +10,35 @@ import spacy
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import translators as ts
 from langdetect import detect
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
+from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem import SnowballStemmer, PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from rake_nltk import Rake
 from scipy import sparse
 from gensim import corpora
 from gensim.models import LsiModel
+from gensim.models.ldamodel import LdaModel
 from gensim.models.coherencemodel import CoherenceModel
 from summarizer.sbert import SBertSummarizer
+import pyLDAvis.gensim_models as genvis
 
 
 
 
 def detect_language(phrase):
     """
-    Test function for language detection!
+    Detect the language of a str using langdetect.
+
+    Parameters
+    ----------
+    phrase : str
+        String element to be translated
+    Returns
+    -------
+    
     """
     language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
     try:
@@ -35,6 +46,12 @@ def detect_language(phrase):
     except:
         lang = 'english'
     return lang
+
+def translate(text, lang='de', translator='deepl'):
+    """
+    translate string, lang is a 2-chars string
+    """
+    return ts.translate_text(text, translator=translator, to_language=lang)
 
 def is_not_num(str) -> bool:
     """
@@ -73,14 +90,14 @@ def stemming_sentence(sentence, stem_words = True):
 
 def tokenize_abstract(text, output_scores=True, stem_words=True):
     """
-    text is a str, which is tokenized and stemmed,
-    returning a pandas with the words and the scores
+    text is a str, which will be tokenized and stemmed,
+    returning a pandas with the words and the scores(if selected)
     """
     ranker = TfidfVectorizer(norm='l2')
     sentences = sent_tokenize(text, language=detect_language(text))
     negative_sentences = {'english':'not contained', 'german':'nicht enthalten',
                         'italian':'non contenuti', 'french':'non contenu'}
-    # WARNING: The removal needs to be tested on the whole dataset, possible further negative forms could be contained!
+    # WARNING: The removal needs to be tested on the whole dataset, further negative forms could be possible contained!
     sentences_cleaned = [stemming_sentence(sentence, stem_words=stem_words) for sentence in sentences
                         if negative_sentences[detect_language(sentence)] not in sentence.lower()]
     if output_scores:
@@ -133,17 +150,17 @@ class TFIDF_BM25():
         """
         # FIXME: If the query contains more than one word, the abstract must contain all the words to be considered! (bug or feature?)
         document = super(TfidfVectorizer, self.vectorizer).transform(self.abstracts)
-        doc_lenght = document.sum(1).A1
+        doc_length = document.sum(1).A1
         query_cleaned = stemming_sentence(q)
         query, = super(TfidfVectorizer, self.vectorizer).transform([' '.join(word) for word in [query_cleaned]])
         assert sparse.isspmatrix_csr(query)
 
         document = document.tocsc()[:, query.indices]
-        # denom = document + (self.k1 * (1 - self.b + self.b * doc_lenght / self.avd1))[:, None]
+        # denom = document + (self.k1 * (1 - self.b + self.b * doc_length / self.avd1))[:, None]
         idf = self.vectorizer._tfidf.idf_[None, query.indices] - 1.
         # numer = document.multiply(np.broadcast_to(idf, document.shape)) * (self.k1 + 1)
         scores = (document.multiply(np.broadcast_to(idf, document.shape)) * (self.k1 + 1)/
-                document + (self.k1 * (1 - self.b + self.b * doc_lenght / self.avd1))[:, None]).sum(1).A1
+                document + (self.k1 * (1 - self.b + self.b * doc_length / self.avd1))[:, None]).sum(1).A1
         scores_idx = [self.index[i] for i in range(0, len(scores)) if scores[i] > 0]
         return scores_idx
 
@@ -178,7 +195,7 @@ class KeywordsRake():
         return self.keywords
 
 
-class LSI():
+class LSI_LDA():
     """
     # https://www.datacamp.com/tutorial/discovering-hidden-topics-python
     ... tbd
@@ -212,6 +229,22 @@ class LSI():
         lsamodel = LsiModel(doc_term_matrix, num_topics=number_of_topics, id2word=dictionary)
         print(lsamodel.print_topics(num_topics=number_of_topics, num_words=number_of_words))
         return lsamodel
+    
+    def create_gensim_lda_model(self, categories = 'eCH', alpha='auto'):# eCH=27 and INSPIRE=34
+        self.dictionary, self.doc_term_matrix = self.prepare_matrix()
+        if categories == 'eCH':
+            cat = 27+1 # one more for empty fields
+        elif categories == 'INSPIRE':
+            cat = 34+1 # one more for empty fields
+        else:
+            print('The categories must be <eCH> or <INSPIRE>')
+            cat = 0
+        self.main_topics_lda = LdaModel(corpus=self.doc_term_matrix, id2word=self.dictionary, num_topics=cat, alpha=alpha, passes=100)
+        return self.main_topics_lda
+    
+    def prepare_plot_lda(self):
+        vis = genvis.prepare(self.main_topics_lda, self.doc_term_matrix, self.dictionary)
+        return vis
 
     def plot_graph(self, min, max, step):
         x = range(min, max, step)
@@ -221,7 +254,7 @@ class LSI():
         # plt.legend(("coherence_values"), loc="best")
         plt.show();
 
-    def compute_coherence_values(self, min_max_step):
+    def compute_coherence_values_LSI(self, min_max_step):
         """
         Computes the optimal number of topics
         """
@@ -358,7 +391,10 @@ class NLP_spacy():
     # SUMMARIZATION
     def summarize(self, text, use_GPT=False):
         """
-        
+        Summarization of a text using SBert model or in alternative
+        using ChatGPT API.
+
+
         """
         lang = detect_language(text)
         if use_GPT:
@@ -387,3 +423,6 @@ class NLP_spacy():
         self.index = texts.index.values
         summaries = [self.summarize(text, use_GPT=use_GPT) for text in texts[column].values.tolist()]
         return summaries
+    
+    # INSPIRE / eCH classification
+    # TODO
