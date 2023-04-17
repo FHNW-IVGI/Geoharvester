@@ -87,7 +87,18 @@ def is_not_num(str) -> bool:
 
 def stemming_sentence(sentence, stem_words = True):
     """
-    sentences is a list of sentences [str, str]
+    Stems and cleans the words in a sentence returning a list
+    of cleaned words.
+
+    Parameters
+    ----------
+    sentence : [str, str]
+        List of str to be stemmed
+    stem_words : bool
+        In addition to words cleaning apply stemming.
+    Returns
+    -------
+    _ : list
     """
     lang = detect_language(sentence)
     stemmer = SnowballStemmer(lang)
@@ -103,8 +114,20 @@ def stemming_sentence(sentence, stem_words = True):
 
 def tokenize_abstract(text, output_scores=True, stem_words=True):
     """
-    text is a str, which will be tokenized and stemmed,
-    returning a pandas with the words and the scores(if selected)
+    Tokenizes, cleans and stems a text returning a list or a pandas dataframe.
+
+    Parameters
+    ----------
+    text : str
+        Text to be tokenized
+    output_scores : bool
+        Output words and word's importance score as pandas dataframe, otherwise
+        it outputs a list of words ordered by score.
+    stem_words : bool
+        In addition to words cleaning apply stemming.
+    Returns
+    -------
+    _ : list or pandas.dataframe
     """
     ranker = TfidfVectorizer(norm='l2')
     sentences = sent_tokenize(text, language=detect_language(text))
@@ -128,10 +151,8 @@ def tokenize_abstract(text, output_scores=True, stem_words=True):
 
 class TFIDF_BM25():
     """
+    This class contains all the functions for keyword extraction and search with TF-IDF and BM25.
     https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
-
-    Class for the extraction ranking of keywords in a text,
-    with an additional function to search a query in the database.
     """
     def __init__(self, b=0.75, k1=1.6, avd1=0.1) -> None:
         self.vectorizer = TfidfVectorizer(norm=None, smooth_idf=False)
@@ -143,14 +164,22 @@ class TFIDF_BM25():
 
     def cleansing_ranking(self, texts, column='ABSTRACT') -> None:
         """
-        texts is a pandas DF with at least a non empty "ABSTRACT" column
+        It saves the index of the pandas.dataframe and apply the tokenize function to one column.
+        
+        Parameters
+        ----------
+        texts : pandas.dataframe
+            Dataframe with a text column
+        column : str
+            name of the text column, default "ABSTRACT"
+        
         """
         self.index = texts.index.values
         self.results = [tokenize_abstract(text) for text in texts[column].values.tolist()]
     
     def fit(self) -> None:
         """
-        Texts is a list of pandas from cleansing_ranking.
+        Fits a TF-IDF vector to the resulting data from cleansing_ranking function.
         """
         self.abstracts = [' '.join(abstract['word'].tolist()) for abstract in self.results]
         self.vectorizer.fit(self.abstracts)
@@ -159,7 +188,16 @@ class TFIDF_BM25():
     
     def search(self, q):
         """
-        q is a str with a query (single word or multiple words)
+        Uses the best match 25 method to execute a query on the fitted dataset.
+
+        Parameters
+        ----------
+        q : str
+            Query text.
+        Returns
+        -------
+        _ : list, list
+            Index of the dataset with positive score and the score list
         """
         # FIXME: If the query contains more than one word, the abstract must contain all the words to be considered! (bug or feature?)
         document = super(TfidfVectorizer, self.vectorizer).transform(self.abstracts)
@@ -174,20 +212,26 @@ class TFIDF_BM25():
         # numer = document.multiply(np.broadcast_to(idf, document.shape)) * (self.k1 + 1)
         scores = (document.multiply(np.broadcast_to(idf, document.shape)) * (self.k1 + 1)/
                 document + (self.k1 * (1 - self.b + self.b * doc_length / self.avd1))[:, None]).sum(1).A1
+        scores = [round(score, 2) for score in scores if score != 0.0 and not np.isnan(score)]
         scores_idx = [self.index[i] for i in range(0, len(scores)) if scores[i] > 0]
-        return scores_idx
+        return scores_idx, scores
 
 
-class KeywordsRake():
+'''class KeywordsRake():
     """
-    https://csurfer.github.io/rake-nltk/_build/html/index.html
+    DEPRECATED!
 
-    Keywords extraction with Rake
+    The class contains all the functions to extract keywords from a text
+    using RAKE https://csurfer.github.io/rake-nltk/_build/html/index.html
+
     """
     def __init__(self) -> None:
         self.keywords = []
 
     def rake_keywords(self, text, score=False, keyword_length = 3):
+        """
+        Extracts the keywords from a text, returning 
+        """
         lang = detect_language(text)
         rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
         rake_nltk.extract_keywords_from_text(text)
@@ -205,13 +249,14 @@ class KeywordsRake():
         self.index = texts.index.values
         self.keywords = [self.rake_keywords(text, score=score, keyword_length=keyword_length)
                         for text in texts[column].values.tolist()]
-        return self.keywords
+        return self.keywords'''
 
 
 class LSI_LDA():
     """
-    # https://www.datacamp.com/tutorial/discovering-hidden-topics-python
-    ... tbd
+    The class contains all the functions to summarize the text with Latent Semantic Analysis
+    and Latent Dirchlet Allocation.
+    https://www.datacamp.com/tutorial/discovering-hidden-topics-python
     """
     def __init__(self) -> None:
         self.abstracts_tokenized = []
@@ -219,6 +264,20 @@ class LSI_LDA():
         self.model_list = []
 
     def preprocess(self, texts, column='ABSTRACT'):
+        """
+        Preprocess a set of texts in a pandas dataframe cleaning and tokenizing the texts.
+
+        Parameters
+        ----------
+        texts : pandas.dataframe
+            Dataframe with a text column
+        column : str
+            name of the text column, default "ABSTRACT"
+        Returns
+        -------
+        _ : [list, list]
+            List of lists containing the elaborated words.
+        """
         self.index = texts.index.values
         self.abstracts_tokenized = [tokenize_abstract(text, output_scores=False, stem_words=False) 
                                     for text in texts[column].values.tolist()]
@@ -227,49 +286,47 @@ class LSI_LDA():
     def prepare_matrix(self):
         """
         Prepares the text, creating a document-term matrix and
-        a dictionary of terms to read the values in the matrix
+        a dictionary of terms to read the values in the matrix.
+
+        Returns
+        -------
+        _ : dict
+            dictionary used to read the matrix values.
+        _ : list
+            matrix values for the LSA model
         """
         dictionary = corpora.Dictionary(self.abstracts_tokenized)
         doc_term_matrix = [dictionary.doc2bow(abstract) for abstract in self.abstracts_tokenized]
         return dictionary, doc_term_matrix
-
-    def create_gensim_lsa_model(self, number_of_topics, number_of_words):
-        """
-        Generates a model using LSA
-        """
-        dictionary, doc_term_matrix = self.prepare_matrix()
-        # Generate LAS model with training data
-        lsamodel = LsiModel(doc_term_matrix, num_topics=number_of_topics, id2word=dictionary)
-        print(lsamodel.print_topics(num_topics=number_of_topics, num_words=number_of_words))
-        return lsamodel
     
-    def create_gensim_lda_model(self, categories = 'eCH', alpha='auto'):# eCH=27 and INSPIRE=34
-        self.dictionary, self.doc_term_matrix = self.prepare_matrix()
-        if categories == 'eCH':
-            cat = 27+1 # one more for empty fields
-        elif categories == 'INSPIRE':
-            cat = 34+1 # one more for empty fields
-        else:
-            print('The categories must be <eCH> or <INSPIRE>')
-            cat = 0
-        self.main_topics_lda = LdaModel(corpus=self.doc_term_matrix, id2word=self.dictionary, num_topics=cat, alpha=alpha, passes=100)
-        return self.main_topics_lda
-    
-    def prepare_plot_lda(self):
-        vis = genvis.prepare(self.main_topics_lda, self.doc_term_matrix, self.dictionary)
-        return vis
-
     def plot_graph(self, min, max, step):
+        """
+        Plots the graph for the coherence values of a LSA model.
+
+        Parameters
+        ----------
+        min : int
+            Min number of topics
+        max : int
+            Max number of topics
+        stepp : int
+            Increment between min and max
+        """
         x = range(min, max, step)
         plt.plot(x, self.coherence_values)
         plt.xlabel("Number of topics")
         plt.ylabel("Coherence score")
         # plt.legend(("coherence_values"), loc="best")
         plt.show();
-
+    
     def compute_coherence_values_LSI(self, min_max_step):
         """
-        Computes the optimal number of topics
+        Computes the optimal number of topics for the LSA model using the LSI score
+
+        Parameters
+        ----------
+        min_max_step : (int, int, int)
+            Min, max and increment for the different number of topcs
         """
         dictionary, doc_term_matrix = self.prepare_matrix()
         for num_topics in range(min_max_step[0], min_max_step[1], min_max_step[2]):
@@ -279,17 +336,79 @@ class LSI_LDA():
             self.coherence_values.append(coherencemodel.get_coherence())
         self.plot_graph(min_max_step[0], min_max_step[1], min_max_step[2])
 
+    def create_gensim_lsa_model(self, number_of_topics, number_of_words):
+        """
+        Generates a model using LSA with predefined number of classes.
+
+        Parameters
+        ----------
+        texts : pandas.dataframe
+            Dataframe with a text column
+        column : str
+            name of the text column, default "ABSTRACT"
+        Returns
+        -------
+        _ : [list, list]
+            List of lists containing the elaborated words.
+        """
+        dictionary, doc_term_matrix = self.prepare_matrix()
+        # Generate LAS model with training data
+        lsamodel = LsiModel(doc_term_matrix, num_topics=number_of_topics, id2word=dictionary)
+        print(lsamodel.print_topics(num_topics=number_of_topics, num_words=number_of_words))
+        return lsamodel
+    
+    def create_gensim_lda_model(self, categories = 'eCH'):
+        """
+        Creates a LDA model with a predefined number of categories (27) eCH or (34) INSPIRE,
+        trained on the data from the preporcessing function.
+
+        Parameters
+        ----------
+        categories : pandas.dataframe
+            Dataframe with a text column
+        column : str
+            name of the text column, default "ABSTRACT"
+        Returns
+        -------
+        _ : list
+            List of scored topics from the LDA model.
+        """
+        self.dictionary, self.doc_term_matrix = self.prepare_matrix()
+        if categories == 'eCH':
+            cat = 27+1 # one more for empty fields
+        elif categories == 'INSPIRE':
+            cat = 34+1 # one more for empty fields
+        else:
+            print('The categories must be <eCH> or <INSPIRE>')
+            cat = 0
+        self.main_topics_lda = LdaModel(corpus=self.doc_term_matrix, id2word=self.dictionary, num_topics=cat,
+                                        alpha='auto', eta='auto', passes=100, eval_every=None, chunksize=2000)
+        return self.main_topics_lda
+    
+    def prepare_plot_lda(self):
+        """
+        Prepares the data from the LDA model for an interactive visualisation
+        with pyLDAvis (pyLDAvis.display(vis)).
+
+        Returns
+        -------
+        _ : genvis.dataset
+                Parameters for the dataset's visualisation
+        """
+        vis = genvis.prepare(self.main_topics_lda, self.doc_term_matrix, self.dictionary)
+        return vis
+
 
 # WARNING spacy is not good in detecting topcis for geodata but it can be useful to summarize texts or analyse the grammar
 class NLP_spacy():
     """
+    The class uses Spacy and RAKE to extract and refine the keywords of a text using NLP.
     https://spacy.io/
-
-    Keywords ranking with NLP models of spacy.
-    Do not remove punctuation, it is needed for the context extraction in NLP.
+    Do not remove punctuation, it is needed for the context extraction in NLP!
     """
     def __init__(self) -> None:
         """
+        Initialises pretrained spacy models.
         Diverese models are available on https://spacy.io/models/en
         sm = small 15MB, md = middle 45MB, lg = large 500MB
         """
@@ -301,7 +420,17 @@ class NLP_spacy():
 
     def fit_nlp(self, text) -> list:
         """
-        tbd ...
+        Fits a DL model based on the detected language and extract the keeywords
+        using spacy.
+
+        Parameters
+        ----------
+        text : str
+            Text for the keyword extraction
+        Returns
+        -------
+        _ : list
+            list of keywords
         """
         lang = detect_language(text)
         if lang == 'english':
@@ -317,20 +446,23 @@ class NLP_spacy():
             keywords = []
         return list(keywords)
 
-    '''def extract_keywords(self, texts, column='ABSTRACT') -> list:
-        # WARNING: it doesen't work well on geodata!
-        """
-        DEPRECATED!
-        """
-        self.index = texts.index.values
-        keywords = [self.fit_nlp(text) for text in texts[column].values.tolist()]
-        return keywords'''
-    
-
-    # KEYWORDS EXTRACTION
     def extract_keywords_rake(self, text, score=False, keyword_length = 3):
         """
-        return a list of kewords list
+        Extracts the keywords from a text using
+        RAKE https://csurfer.github.io/rake-nltk/_build/html/index.html
+
+        Parameters
+        ----------
+        text : str
+            Text for the keyword extraction
+        score : bool
+            Output the score for the extracted keywords
+        keyword_length : int
+            number of words each keyword
+        Returns
+        -------
+        _ : list
+            list of keywords
         """
         lang = detect_language(text)
         rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
@@ -354,7 +486,19 @@ class NLP_spacy():
     
     def analyse_text_keywords(self, text, keyword_length=3):
         """
-        ...............
+        applies the keyword extraction with RAKE and clean the resulting keywords analysing the grammar
+        with the DL model from spacy.
+
+        Parameters
+        ----------
+        text : str
+            Text for the keyword extraction
+        keyword_length : int
+            number of words each keyword
+        Returns
+        -------
+        _ : list
+            list of cleaned keywords
         """
         lang = detect_language(text)
         if lang == 'italian':
@@ -379,9 +523,22 @@ class NLP_spacy():
     
     def extract_refined_keywords(self, texts, use_rake=True, column='ABSTRACT', keyword_length=3, num_keywords=10):
         """
-        function description and parameters...
-        # This function will uses rake to extrakt the keywords and will refine them with spacy!
-
+        Applies the keyword extraction and cleansing to a whole dataset of texts
+        
+        Parameters
+        ----------
+        texts : pandas.dataframe
+            Dataframe containing the texts to be elaborated
+        use_rake : bool
+            Use RAKE to extract the keywords otherwise uses Spacy
+        keyword_length : int
+            number of words each keyword
+        num_keywords : int
+            Number of keywords each text (Only for Spacy)
+        Returns
+        -------
+        _ : list
+            list of keywords
         """
         self.index = texts.index.values
         # NOTE: score method not expected for the rake keywords
@@ -404,10 +561,18 @@ class NLP_spacy():
     # SUMMARIZATION
     def summarize(self, text, use_GPT=False):
         """
-        Summarization of a text using SBert model or in alternative
-        using ChatGPT API.
-
-
+        Summarizes a text using SBert model or in alternative using a GPT model (API-key needed)
+        
+        Parameters
+        ----------
+        text : str
+            Text to be summarized
+        use_GPT : bool
+            Use a GPT model oterwise a Sbert model
+        Returns
+        -------
+        _ : str
+            summarized text
         """
         lang = detect_language(text)
         if use_GPT:
@@ -433,9 +598,26 @@ class NLP_spacy():
         return summarized_text
     
     def summarize_texts(self, texts, column='ABSTRACT', use_GPT=False):
+        """
+        Applies the summariation function to a pandas dataframe
+        
+        Parameters
+        ----------
+        texts : pandas.dataframe
+            Dataframe with a text column
+        use_GPT : bool
+            Use a GPT model oterwise a Sbert model
+        column : str
+            Text column, default "ABSTRACT"
+        Returns
+        -------
+        _ : list
+            lists of summarized texts
+        """
         self.index = texts.index.values
         summaries = [self.summarize(text, use_GPT=use_GPT) for text in texts[column].values.tolist()]
         return summaries
     
-    # INSPIRE / eCH classification
+    # INSPIRE / eCH classification with pytorch model...
+    # More trainingsdata needed!
     # TODO
