@@ -619,5 +619,7 @@ class NLP_spacy():
         return summaries
     
     # INSPIRE / eCH classification with pytorch model...
-    # More trainingsdata needed!
+    # More trainingsdata needed! (one possibility is to use the data from Wmts.geo.admi.ch … WMTSCapabilities.xml)
+    # To find the category we will have to check the link to geocatalog (geocat) and use the id  of the link to 
+    # automate a search in geocat and retrieve the class.
     # TODO
