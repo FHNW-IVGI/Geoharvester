@@ -1,5 +1,5 @@
 """
-Work in progress
+Utilities for the elaboration of texts with NLP and TF-IDF
 """
 
 from string import punctuation
