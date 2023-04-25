@@ -90,31 +90,20 @@ async def root():
 
     return {"message": "running"}
 
-@app.get("/api/getServerStatus")
-async def get_server_status():
-    '''Helper method for client'''
-    return {"message": "running"}
-
-@app.get("/api/getDataFromPandas")
-async def get_data_from_pandas(query: Union[str, None] = None):
-    """Route for the get_data request (search by terms) targeted at pandas dataframe"""
-
-    if (query == None):
-        return {"data": ""}
-
-    word_list = split_search_string(query)
-
-    dataframe_some_cols = import_csv_into_dataframe(url_geoservices_CH_csv, csv_row_limit)
-    search_result = search_by_terms_dataframe(word_list, dataframe_some_cols)
-    fastapi_logger.info(search_result)
-    payload = search_result
-
-    return {"data": payload}
+@app.get("/api/getDataById/{id}")
+async def get_data_by_id(id: str):
+    """Get a single dataset by its id
+    """
+    if(id == None):
+        return
+    dataset_id = id.strip().removeprefix('"').removesuffix('"')
+    redis_data = r.json().get(dataset_id)
+    return redis_data
 
 
-@app.get("/api/getDataFromRedis")
-async def get_data_from_redis(query: Union[str, None] = None, lang: str = "german", limit: int = 100):
-    """Route for the get_data request (search by terms) targeted at redis
+@app.get("/api/getData")
+async def get_data(query: Union[str, None] = None, lang: str = "german", limit: int = 100):
+    """Route for the get_data request
         query: The query string used for searching
         lang: Language parameter to optimize search
         limit: Redis returns 10 results by default, allow more results to be returned
@@ -134,11 +123,8 @@ async def get_data_from_redis(query: Union[str, None] = None, lang: str = "germa
 
     redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query_string))                     
         .language(lang)                                   
-        .paging(0, limit) # offset, limit
-        .return_field('NAME')
-        .return_field('OWNER')
-        .return_field('TITLE')
-        .return_field('ABSTRACT'))
+        .paging(0, limit)) # offset, limit
+
 
     search_result["docs"] = redis_data.docs
     search_result["fields"] = []
