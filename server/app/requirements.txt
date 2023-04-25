@@ -2,7 +2,6 @@ fastapi
 geopandas
 pandas
 uvicorn
-numpy
-nltk
-sklearn
-langdetect
+redis
+requests
+PyYAML

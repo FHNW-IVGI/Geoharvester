@@ -1,4 +1,5 @@
 server/.vscode
+server/.pylintrc
 server/app/env
 
 __pycache__
@@ -27,4 +28,3 @@ yarn-debug.log*
 yarn-error.log*
 
 .vscode
-.streamlit

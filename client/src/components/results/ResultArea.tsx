@@ -9,63 +9,61 @@ import {
   Paper,
   Chip,
 } from "@mui/material";
+import { Geoservice } from "../../types";
 
 type StatisticsProps = {
-  stats: {
-    term: string;
-    count: number;
-  }[];
+  total: number;
 };
 
-type ResultProps = {
-  data: string[][];
+type TableProps = {
+  docs: Geoservice[];
   fields: string[];
 };
 
-export const StatisticsBox = ({ stats }: StatisticsProps) =>
-  stats && stats.length ? (
-    <div id="results-statisticsarea">
-      {stats.map((entry) => (
-        <Chip label={`${entry.term}: ${entry.count}`} variant="outlined" />
-      ))}
-    </div>
-  ) : (
-    <div></div>
-  );
+export const StatisticsBox = ({ total }: StatisticsProps) => (
+  <div id="results-statisticsarea">
+    <Chip label={`Results: ${total}`} variant="outlined" />
+  </div>
+);
 
-export const ResultArea = ({ data, fields }: ResultProps) => {
-  if (data.length < 2) {
+export const ResultArea = ({ docs, fields }: TableProps) => {
+  if (docs.length < 1) {
     return <div>No Data</div>;
   }
 
+  // Pandas provide column headers, for Redis JSON Objects we have to get them from the JSON Object:
+  const columns =
+    fields && fields.length > 1
+      ? fields
+      : Object.keys(docs[0]).filter(
+          (key) => !["id", "payload"].includes(key)
+        ) || [];
+
   return (
     <div id="results-table">
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <TableContainer component={Paper} sx={{ maxHeight: "65vh" }}>
+        <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {fields.length ? (
-                fields.map((field) => <TableCell>{field}</TableCell>)
-              ) : (
-                <TableCell>.</TableCell>
-              )}
+              {columns.map((col_header, index) => (
+                <TableCell key={index}>{col_header}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.length ? (
-              data.map((row, index) => (
-                <TableRow key={index}>
-                  {row.map((cell) => (
-                    <TableCell>{cell}</TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow />
-            )}
+            {docs.map((doc, index) => (
+              <TableRow key={index}>
+                {columns.map((column, key) => (
+                  <TableCell key={key}>
+                    {doc[column as keyof Geoservice]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
     </div>
   );
 };
+// }
