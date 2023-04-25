@@ -121,10 +121,27 @@ async def get_data(query: Union[str, None] = None, lang: str = "german", limit: 
     word_list = split_search_string(query)
     query_string = transform_wordlist_to_query(word_list)
 
-    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query_string))                     
+    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query_string))             
         .language(lang)                                   
-        .paging(0, limit)) # offset, limit
-
+        .paging(0, limit) # offset, limit
+        .return_field('OWNER')
+        .return_field('TITLE')
+        .return_field('NAME')
+        .return_field('MAPGEO')
+        .return_field('TREE')
+        .return_field('GROUP')
+        .return_field('ABSTRACT')
+        .return_field('KEYWORDS')
+        .return_field('LEGEND')
+        .return_field('CONTACT')
+        .return_field('SERVICELINK')
+        .return_field('METADATA')
+        .return_field('SERVICETYPE')
+        .return_field('MAX_ZOOM')
+        .return_field('CENTER_LAT')
+        .return_field('CENTER_LON')
+        .return_field('BBOX')
+        )
 
     search_result["docs"] = redis_data.docs
     search_result["fields"] = []
