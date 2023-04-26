@@ -118,6 +118,10 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         "duration": 0,
     }
 
+    # Until pagination is implemented we need to safeguard against extensive limits to avoid server crashes:
+    if (limit > 1000):
+        limit = 1000
+
     query_string = ""
 
     if (query != None):
@@ -125,7 +129,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         query_string = transform_wordlist_to_query(word_list)
 
     redis_query = redis_query_from_parameters(query_string, service, owner)
-    fastapi_logger.info("Redis queried with {}".format(redis_query))
+    fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
     redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   

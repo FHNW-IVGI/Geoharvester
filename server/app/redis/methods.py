@@ -105,7 +105,8 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
         )
 
     if (len(queryable_parameters) < 1):
-        return ""
+        # In this case all available datasets should be returned:
+        return '@SERVICETYPE:(WMS | WMTS | WFS)'
     elif (len(queryable_parameters) == 1):
         return queryable_parameters[0]
     else:
