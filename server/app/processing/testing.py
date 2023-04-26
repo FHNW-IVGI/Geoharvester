@@ -2,6 +2,8 @@ import shlex
 import re
 import pandas as pd
 from typing import List
+#from .utils import translate, rank_results_LSI, rank_results_TFIDF
+from nltk.tokenize import word_tokenize, sent_tokenize
 
 
 def split_delimiters(word_list_with_delimiters: List[str]) -> List[str]:
@@ -30,16 +32,20 @@ def load_data():
     dataframe = pd.read_csv(url_geoservices_CH_csv, usecols=fields_to_include)
     return dataframe
 
-a = 'road assessment menagment system'
+a = 'road asset management system'
 res = split_delimiters(shlex.split(a))
 
 dataframe_some_cols = load_data()
 result = dataframe_some_cols[dataframe_some_cols.apply(lambda dataset: dataset.astype(str).str.contains(res[0], case=False).any(), axis=1)]
 result =result.fillna("")
-search_res = {
-    "fields": [],
-    "layers": [],
-    "statistics": [],}
-search_res["layers"] = result.values.tolist()
 
-print(search_res)
+abstract = result[result['SERVICETYPE'] == 'WMTS']['ABSTRACT'].values.tolist()[0]
+abstract = word_tokenize(abstract, language='german')
+
+# search_res = {
+#     "fields": [],
+#     "layers": [],
+#     "statistics": [],}
+# search_res["layers"] = result.values.tolist()
+
+print(type(abstract))
