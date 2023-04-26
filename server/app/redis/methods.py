@@ -1,8 +1,9 @@
 
 import uuid
+from typing import Union
 
 import redis
-from app.constants import REDIS_HOST, REDIS_PORT
+from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
 from app.processing.stopwords import get_stopwords
 from fastapi.logger import logger as fastapi_logger
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
@@ -81,3 +82,31 @@ def transform_wordlist_to_query(wordlist: list[str]):
     for index, word in enumerate(wordlist):
         query_string += "{} | ".format(word) if index < (len(wordlist)-1) else "{}".format(word)
     return query_string
+
+
+def redis_query_from_parameters(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = ""):
+    """Build a query string based on the parameters provided.
+    """
+    queryable_parameters = []
+
+    if (bool(query_string)):
+        queryable_parameters.append(
+            '@TITLE|ABSTRACT:({})'.format(query_string)
+        )
+
+    if (bool(service)):
+        queryable_parameters.append(
+            '@SERVICETYPE:({})'.format(service)
+        )
+
+    if (bool(owner)):
+        queryable_parameters.append(
+            '@OWNER:({})'.format(owner)
+        )
+
+    if (len(queryable_parameters) < 1):
+        return ""
+    elif (len(queryable_parameters) == 1):
+        return queryable_parameters[0]
+    else:
+       return "&".join(queryable_parameters)

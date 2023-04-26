@@ -5,11 +5,11 @@ from typing import Union
 
 import pandas as pd
 import redis
-from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
+from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
-                                    search_by_terms_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
+                               redis_query_from_parameters,
                                transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
@@ -102,11 +102,14 @@ async def get_data_by_id(id: str):
 
 
 @app.get("/api/getData")
-async def get_data(query: Union[str, None] = None, lang: str = "german", limit: int = 100):
+async def get_data(query: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", limit: int = 100):
     """Route for the get_data request
         query: The query string used for searching
+        service: Service filter - wms, wmts, wfs
+        owner: Owner filter
         lang: Language parameter to optimize search
         limit: Redis returns 10 results by default, allow more results to be returned
+        service: Service enum, either WMS, WMTS, WFS
     """
     search_result = {
         "total": 0,
@@ -115,13 +118,16 @@ async def get_data(query: Union[str, None] = None, lang: str = "german", limit: 
         "duration": 0,
     }
 
-    if (query == None):
-        return {"data": search_result}
+    query_string = ""
 
-    word_list = split_search_string(query)
-    query_string = transform_wordlist_to_query(word_list)
+    if (query != None):
+        word_list = split_search_string(query)
+        query_string = transform_wordlist_to_query(word_list)
 
-    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query_string))             
+    redis_query = redis_query_from_parameters(query_string, service, owner)
+    fastapi_logger.info("Redis queried with {}".format(redis_query))
+
+    redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   
         .paging(0, limit) # offset, limit
         .return_field('OWNER')
