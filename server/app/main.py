@@ -5,11 +5,11 @@ from typing import Union
 
 import pandas as pd
 import redis
-from app.constants import REDIS_HOST, REDIS_PORT, url_geoservices_CH_csv
+from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
-                                    search_by_terms_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
+                               redis_query_from_parameters,
                                transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
@@ -90,34 +90,26 @@ async def root():
 
     return {"message": "running"}
 
-@app.get("/api/getServerStatus")
-async def get_server_status():
-    '''Helper method for client'''
-    return {"message": "running"}
-
-@app.get("/api/getDataFromPandas")
-async def get_data_from_pandas(query: Union[str, None] = None):
-    """Route for the get_data request (search by terms) targeted at pandas dataframe"""
-
-    if (query == None):
-        return {"data": ""}
-
-    word_list = split_search_string(query)
-
-    dataframe_some_cols = import_csv_into_dataframe(url_geoservices_CH_csv, csv_row_limit)
-    search_result = search_by_terms_dataframe(word_list, dataframe_some_cols)
-    fastapi_logger.info(search_result)
-    payload = search_result
-
-    return {"data": payload}
+@app.get("/api/getDataById/{id}")
+async def get_data_by_id(id: str):
+    """Get a single dataset by its id
+    """
+    if(id == None):
+        return
+    dataset_id = id.strip().removeprefix('"').removesuffix('"')
+    redis_data = r.json().get(dataset_id)
+    return redis_data
 
 
-@app.get("/api/getDataFromRedis")
-async def get_data_from_redis(query: Union[str, None] = None, lang: str = "german", limit: int = 100):
-    """Route for the get_data request (search by terms) targeted at redis
+@app.get("/api/getData")
+async def get_data(query: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", limit: int = 100):
+    """Route for the get_data request
         query: The query string used for searching
+        service: Service filter - wms, wmts, wfs
+        owner: Owner filter
         lang: Language parameter to optimize search
         limit: Redis returns 10 results by default, allow more results to be returned
+        service: Service enum, either WMS, WMTS, WFS
     """
     search_result = {
         "total": 0,
@@ -126,19 +118,40 @@ async def get_data_from_redis(query: Union[str, None] = None, lang: str = "germa
         "duration": 0,
     }
 
-    if (query == None):
-        return {"data": search_result}
+    # Until pagination is implemented we need to safeguard against extensive limits to avoid server crashes:
+    if (limit > 1000):
+        limit = 1000
 
-    word_list = split_search_string(query)
-    query_string = transform_wordlist_to_query(word_list)
+    query_string = ""
 
-    redis_data = r.ft(SVC_INDEX_ID).search(Query('@TITLE|ABSTRACT:({})'.format(query_string))                     
+    if (query != None):
+        word_list = split_search_string(query)
+        query_string = transform_wordlist_to_query(word_list)
+
+    redis_query = redis_query_from_parameters(query_string, service, owner)
+    fastapi_logger.info("Redis queried with: {}".format(redis_query))
+
+    redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   
         .paging(0, limit) # offset, limit
-        .return_field('NAME')
         .return_field('OWNER')
         .return_field('TITLE')
-        .return_field('ABSTRACT'))
+        .return_field('NAME')
+        .return_field('MAPGEO')
+        .return_field('TREE')
+        .return_field('GROUP')
+        .return_field('ABSTRACT')
+        .return_field('KEYWORDS')
+        .return_field('LEGEND')
+        .return_field('CONTACT')
+        .return_field('SERVICELINK')
+        .return_field('METADATA')
+        .return_field('SERVICETYPE')
+        .return_field('MAX_ZOOM')
+        .return_field('CENTER_LAT')
+        .return_field('CENTER_LON')
+        .return_field('BBOX')
+        )
 
     search_result["docs"] = redis_data.docs
     search_result["fields"] = []
