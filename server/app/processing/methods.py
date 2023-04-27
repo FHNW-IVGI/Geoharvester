@@ -16,6 +16,11 @@ def import_csv_into_dataframe(url, column_limit=None):
         dataframe = pd.read_csv(url)
     return dataframe
 
+def import_pkl_into_dataframe(url):
+    """
+    Load a pickle into a data frame
+    """
+    return pd.read_pickle(url)
 
 def split_search_string(query: str) -> List[str]:
     """Split the incoming request by delimiter to create a list of terms"""

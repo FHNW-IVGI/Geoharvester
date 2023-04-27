@@ -58,8 +58,10 @@ async def startup_event():
     global dataframe
 
     # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
-    url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
-    dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
+    # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
+    # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
+    url_geoservices_CH_pkl = "'../preprocessing/rawdata_scraper.pkl" # preprocessed data with NLP
+    dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
     
     global datajson
     datajson = json.loads(dataframe.to_json(orient='records'))
