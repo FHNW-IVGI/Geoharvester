@@ -18,6 +18,7 @@ geoservices_schema = (
     TextField('$.GROUP', as_name='GROUP', no_stem=True),
     TextField('$.ABSTRACT', as_name='ABSTRACT'),
     TagField('$.KEYWORDS', as_name='KEYWORDS'),
+    TagField('$.KEYWORDS_NLP', as_name='KEYWORDS_NLP'),
     TextField('$.LEGEND', as_name='LEGEND', no_stem=True),
     TextField('$.CONTACT', as_name='CONTACT', no_stem=True),
     TextField('$.SERVICELINK', as_name='SERVICELINK', no_stem=True),
@@ -27,7 +28,10 @@ geoservices_schema = (
     NumericField('$.MAX_ZOOM', as_name='MAX_ZOOM'),
     NumericField('$.CENTER_LAT', as_name='CENTER_LAT'),
     NumericField('$.CENTER_LON', as_name='CENTER_LON'),
-    TextField('$.BBOX', as_name='BBOX', no_stem=True)
+    TextField('$.BBOX', as_name='BBOX', no_stem=True),
+    TextField('$.SUMMARY', as_name='SUMMARY', no_stem=True),
+    TagField('$.LANG_3', as_name='LANG_3'),
+    TagField('$.LANG_2', as_name='LANG_2')
 )
 
 ### Geodata

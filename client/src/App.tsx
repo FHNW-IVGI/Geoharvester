@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SearchBar } from "./components/search/SearchBar";
-import { Footer } from "./components/footer/Footer";
 import { ResultArea, StatisticsBox } from "./components/results/ResultArea";
-import { getServerStatus } from "./requests";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuBar } from "./components/menu/MenuBar";
 import { Geoservice } from "./types";
@@ -21,7 +19,7 @@ const theme = createTheme({
       // main: "#ffbe92",
       main: "#e69138",
       contrastText: "#000000",
-    }
+    },
   },
 });
 
@@ -33,28 +31,16 @@ export type SearchResult = {
 };
 
 function App() {
-  const [statusString, setStatusString] = useState("not connected");
   const [searchResult, setSearchResult] = useState({} as SearchResult);
-
-  const checkServerStatus = () =>
-    getServerStatus()
-      .then((res) => {
-        setStatusString(res ? res : "error");
-      })
-      .catch((e) => console.error(e));
-
-  useEffect(() => {
-    checkServerStatus();
-  }, []);
 
   const { docs, total, fields } = searchResult;
 
   return (
     <ThemeProvider theme={theme}>
-    {/* <ThemeProvider theme={theme}> */}
+      {/* <ThemeProvider theme={theme}> */}
       <header className="App-header">
         {/* NDGI Project Geoharvester */}
-        <MenuBar/>
+        <MenuBar />
       </header>
       {/* <div>
       <FilterAltIcon variant="contained">Hello World</FilterAltIcon>
@@ -64,9 +50,6 @@ function App() {
         <StatisticsBox total={total || 0}></StatisticsBox>
         <ResultArea docs={docs || [[]]} fields={fields}></ResultArea>
       </main>
-      <footer className="App-footer">
-        <Footer status={statusString} checkServerStatus={checkServerStatus} />
-      </footer>
     </ThemeProvider>
   );
 }
