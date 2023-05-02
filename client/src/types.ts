@@ -33,7 +33,7 @@ export interface Geodata {
     abstract: string;
     keywords: string;
     contact: string;
-    WMSGetCap: string;
-    WMTSGetCap: string;
-    WFSGetCap: string;
+    wmsGetCap: string;
+    wmtsGetCap: string;
+    wfsGetCap: string;
 }
