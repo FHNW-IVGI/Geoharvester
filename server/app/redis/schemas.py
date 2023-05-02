@@ -45,7 +45,7 @@ geodata_schema = (
     TextField('$.abstract', as_name='abstract'),
     TagField('$.keywords', as_name='keywords'),
     TextField('$.contact', as_name='contact', no_stem=True),
-    TextField('$.WMSGetCap', as_name='WMSGetCap', no_stem=True),
-    TextField('$.WMTSGetCap', as_name='WMTSGetCap', no_stem=True),
-    TextField('$.WFSGetCap', as_name='WFSGetCap', no_stem=True)
+    TextField('$.wmsGetCap', as_name='wmsGetCap', no_stem=True),
+    TextField('$.wmtsGetCap', as_name='wmtsGetCap', no_stem=True),
+    TextField('$.wfsGetCap', as_name='wfsGetCap', no_stem=True)
 )
