@@ -2,30 +2,29 @@
 Utilities for the elaboration of texts with NLP and TF-IDF
 """
 
-from string import punctuation
-import openai
-import os
 import itertools
-import spacy
-import numpy as np
-import pandas as pd
+import os
+from string import punctuation
+
 import matplotlib.pyplot as plt
+import numpy as np
+import openai
+import pandas as pd
+import pyLDAvis.gensim_models as genvis
+import spacy
 import translators as ts
-from langdetect import detect
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize, sent_tokenize
-from nltk.stem import SnowballStemmer, PorterStemmer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from rake_nltk import Rake
-from scipy import sparse
 from gensim import corpora
 from gensim.models import LsiModel
-from gensim.models.ldamodel import LdaModel
 from gensim.models.coherencemodel import CoherenceModel
+from gensim.models.ldamodel import LdaModel
+from langdetect import detect
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, SnowballStemmer
+from nltk.tokenize import sent_tokenize, word_tokenize
+from rake_nltk import Rake
+from scipy import sparse
+from sklearn.feature_extraction.text import TfidfVectorizer
 from summarizer.sbert import SBertSummarizer
-import pyLDAvis.gensim_models as genvis
-
-
 
 
 def detect_language(phrase):
@@ -162,7 +161,7 @@ class TFIDF_BM25():
         self.abstracts, self.results = [], []
         self.index = np.array([])
 
-    def cleansing_ranking(self, texts, column='ABSTRACT') -> None:
+    def cleansing_ranking(self, texts, column='abstract') -> None:
         """
         It saves the index of the pandas.dataframe and apply the tokenize function to one column.
         
