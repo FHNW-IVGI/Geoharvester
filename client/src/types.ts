@@ -5,34 +5,34 @@
  */
 
 export interface Geoservice {
-    OWNER: string;
-    TITLE: string;
-    NAME: string;
-    MAPGEO: string;
-    TREE: string;
-    GROUP: string;
-    ABSTRACT: string;
-    KEYWORDS: string;
-    LEGEND: string;
-    CONTACT: string;
-    SERVICELINK: string;
-    METADATA: string;
-    UPDATE: string;
-    SERVICETYPE: string;
-    MAX_ZOOM: number;
-    CENTER_LAT: string;
-    CENTER_LON: string;
-    BBOX: string;
+    provider: string;
+    title: string;
+    name: string;
+    preview: string;
+    tree: string;
+    group: string;
+    abstract: string;
+    keywords: string;
+    legend: string;
+    contact: string;
+    endpoint: string;
+    metadata: string;
+    update: string;
+    service: string;
+    maxZoom: number;
+    centerLat: string;
+    centerLon: string;
+    bbox: string;
 }
 
 export interface Geodata {
-    OWNER: string;
-    TITLE: string;
-    NAME: string;
-    MAPGEO: string;
-    ABSTRACT: string;
-    KEYWORDS: string;
-    CONTACT: string;
+    provider: string;
+    title: string;
+    name: string;
+    preview: string;
+    abstract: string;
+    keywords: string;
+    contact: string;
     WMSGetCap: string;
     WMTSGetCap: string;
     WFSGetCap: string;
