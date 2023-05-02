@@ -10,7 +10,7 @@ from app.processing.methods import (import_csv_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters,
-                               transform_wordlist_to_query)
+                               transform_wordlist_to_query, simple_ranking)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
 from fastapi import FastAPI
@@ -145,6 +145,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         .return_field('TREE')
         .return_field('GROUP')
         .return_field('KEYWORDS')
+        .return_field('KEYWORDS_NLP')
         .return_field('LEGEND')
         .return_field('CONTACT')
         .return_field('SERVICELINK')
@@ -153,11 +154,15 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         .return_field('CENTER_LAT')
         .return_field('CENTER_LON')
         .return_field('BBOX')
+        .return_field('SUMMARY')
+        .return_field('LANG_3')
         )
 
     search_result["docs"] = redis_data.docs
     search_result["fields"] = []
     search_result["duration"] = redis_data.duration
     search_result["total"] = len(redis_data.docs)
+
+    simple_ranking(redis_data.docs)
 
     return {"data": search_result}

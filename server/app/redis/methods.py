@@ -80,7 +80,7 @@ def transform_wordlist_to_query(wordlist: list[str]):
     """
     query_string = ""
     for index, word in enumerate(wordlist):
-        query_string += "{} | ".format(word) if index < (len(wordlist)-1) else "{}".format(word)
+        query_string += "{} | ".format(word+'*') if index < (len(wordlist)-1) else "{}".format(word+'*') # the * allows the contain opt
     return query_string
 
 
@@ -91,7 +91,7 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
 
     if (bool(query_string)):
         queryable_parameters.append(
-            '@TITLE|ABSTRACT:({})'.format(query_string)
+            '@TITLE|ABSTRACT|KEYWORDS|KEYWORDS_NLP|SUMMARY:({})'.format(query_string)
         )
 
     if (bool(service)):
@@ -111,3 +111,13 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
         return queryable_parameters[0]
     else:
        return "&".join(queryable_parameters)
+
+######################################################################################################################################
+import pandas as pd
+import json as js
+
+def simple_ranking(redis_output):
+    doc = str(redis_output[0]).replace("'", '"')
+    doc = doc.replace("None", '"None"')
+    parsed = js.loads(doc.replace("Document", ""))
+    print(parsed)
