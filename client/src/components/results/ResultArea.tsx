@@ -1,5 +1,7 @@
-import "./results.css";
+import { useEffect, useState } from "react";
+
 import {
+  IconButton,
   TableContainer,
   Table,
   TableBody,
@@ -10,6 +12,9 @@ import {
   Chip,
 } from "@mui/material";
 import { Geoservice } from "../../types";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import "./results.css";
 
 type StatisticsProps = {
   total: number;
@@ -25,6 +30,28 @@ export const StatisticsBox = ({ total }: StatisticsProps) => (
     <Chip label={`Results: ${total}`} variant="outlined" />
   </div>
 );
+
+const ResultRow = ({ row, index }: { row: Geoservice; index: number }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <TableRow key={index}>
+      <TableCell>
+        <IconButton
+          aria-label="expand row"
+          size="small"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </IconButton>
+      </TableCell>
+      <TableCell>{row.TITLE}</TableCell>
+      <TableCell>{row.ABSTRACT}</TableCell>
+      <TableCell>{row.OWNER}</TableCell>
+      <TableCell>{row.SERVICETYPE}</TableCell>
+    </TableRow>
+  );
+};
 
 export const ResultArea = ({ docs, fields }: TableProps) => {
   if (docs.length < 1) {
@@ -45,20 +72,15 @@ export const ResultArea = ({ docs, fields }: TableProps) => {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
+              <TableCell />
               {columns.map((col_header, index) => (
                 <TableCell key={index}>{col_header}</TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {docs.map((doc, index) => (
-              <TableRow key={index}>
-                {columns.map((column, key) => (
-                  <TableCell key={key}>
-                    {doc[column as keyof Geoservice]}
-                  </TableCell>
-                ))}
-              </TableRow>
+            {docs.map((row, index) => (
+              <ResultRow row={row} index={index} />
             ))}
           </TableBody>
         </Table>
