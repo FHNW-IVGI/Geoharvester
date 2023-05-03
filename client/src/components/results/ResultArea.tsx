@@ -61,25 +61,36 @@ const CollapsibleRow = ({
       <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box sx={{ margin: 1 }}>
-            <Grid container>
+            <div style={{ display: "flex", flexDirection: "column" }}>
               {rowsToInclude.map((prop, index) => (
-                <>
-                  <Grid xs={2} key={index}>
-                    <p style={{ marginLeft: 60, color: "#909090" }}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{}}>
+                    <p
+                      style={{
+                        width: 140,
+                        color: "#909090",
+                        margin: "0 50px 0 78px",
+                      }}
+                    >
                       {`${
                         prop.charAt(0).toUpperCase() +
                         prop.slice(1).toLocaleLowerCase()
                       }:`}
                     </p>
-                  </Grid>
-                  <Grid xs={10}>
-                    <p style={{ marginLeft: -24, color: "#909090" }}>
-                      {row[prop as keyof Geoservice]}
-                    </p>
-                  </Grid>
-                </>
+                  </div>
+
+                  <div
+                    style={{
+                      color: "#909090",
+                      display: "flex",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    <p style={{ margin: 2 }}>{row[prop as keyof Geoservice]}</p>
+                  </div>
+                </div>
               ))}
-            </Grid>
+            </div>
           </Box>
         </Collapse>
       </TableCell>

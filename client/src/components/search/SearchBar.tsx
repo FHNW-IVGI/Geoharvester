@@ -8,7 +8,7 @@ import {
   Button,
   Stack,
   Tooltip,
-  Divider
+  Divider,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { getData } from "../../requests";
@@ -35,7 +35,11 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
 
   return (
     <div id="search">
-      <Stack mt={0} direction="row" divider={<Divider orientation="vertical" flexItem />}>
+      <Stack
+        mt={0}
+        direction="row"
+        divider={<Divider orientation="vertical" flexItem />}
+      >
         <FormControl sx={{ m: 1, width: "100ch" }} variant="outlined">
           <InputLabel htmlFor="search-bar">Webservices durchsuchen</InputLabel>
           <OutlinedInput
@@ -44,42 +48,42 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && triggerSearch()}
-            startAdornment={<SearchIcon color="disabled"/>}
+            startAdornment={<SearchIcon color="disabled" />}
             endAdornment={
               <InputAdornment position="end">
-              <Tooltip title="Suche zurücksetzen" placement="top">            
-                <IconButton
-                  aria-label="trigger-cancel"
-                  onClick={() => setSearchString("")}
-                  edge="end"
-                >
-                  <CancelIcon />
-                </IconButton>
+                <Tooltip title="Suche zurücksetzen" placement="top">
+                  <IconButton
+                    aria-label="trigger-cancel"
+                    onClick={() => setSearchString("")}
+                    edge="end"
+                  >
+                    <CancelIcon />
+                  </IconButton>
                 </Tooltip>
               </InputAdornment>
             }
             label="Webservices durchsuchen"
           />
         </FormControl>
-        <Button id="search-button" size="small" onClick={triggerSearch}
-              sx={{
-                marginLeft: "-5px",
-                marginBottom: "10px",
-                marginTop: "8px",
-                // borderTopLeftRadius: 0,
-                // borderBottomLeftRadius: 0,
-                fontSize: 14,
-                fontWeight: 'bold'
-              }}
-              type="submit"
-              variant="contained"
-              aria-label="search"
-              color="primary"
-
-            >
-              {"Suchen"}
+        <Button
+          id="search-button"
+          size="small"
+          onClick={triggerSearch}
+          sx={{
+            marginLeft: "-5px",
+            marginBottom: "10px",
+            marginTop: "8px",
+            fontSize: 14,
+            fontWeight: "bold",
+          }}
+          type="submit"
+          variant="contained"
+          aria-label="search"
+          color="primary"
+        >
+          {"Suchen"}
         </Button>
-     </Stack>
+      </Stack>
     </div>
   );
 };
