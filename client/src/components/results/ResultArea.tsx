@@ -35,8 +35,8 @@ export const ResultArea = ({ docs, fields }: TableProps) => {
   const columns =
     fields && fields.length > 1
       ? fields
-      : Object.keys(docs[0]).filter(
-          (key) => !["id", "payload"].includes(key)
+      : Object.keys(docs[0]).filter((key) =>
+          ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE"].includes(key)
         ) || [];
 
   return (

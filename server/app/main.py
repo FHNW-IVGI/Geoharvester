@@ -5,6 +5,12 @@ from typing import Union
 
 import pandas as pd
 import redis
+from fastapi import FastAPI
+from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
+from redis import StrictRedis
+from redis.commands.search.query import Query
+
 from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
                                     split_search_string)
@@ -13,11 +19,6 @@ from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
-from fastapi import FastAPI
-from fastapi.logger import logger as fastapi_logger
-from fastapi.middleware.cors import CORSMiddleware
-from redis import StrictRedis
-from redis.commands.search.query import Query
 
 app = FastAPI(
     debug=True,
@@ -134,19 +135,19 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
     redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   
         .paging(0, limit) # offset, limit
-        .return_field('OWNER')
         .return_field('TITLE')
+        .return_field('ABSTRACT')
+        .return_field('OWNER')
+        .return_field('SERVICETYPE')
         .return_field('NAME')
         .return_field('MAPGEO')
         .return_field('TREE')
         .return_field('GROUP')
-        .return_field('ABSTRACT')
         .return_field('KEYWORDS')
         .return_field('LEGEND')
         .return_field('CONTACT')
         .return_field('SERVICELINK')
         .return_field('METADATA')
-        .return_field('SERVICETYPE')
         .return_field('MAX_ZOOM')
         .return_field('CENTER_LAT')
         .return_field('CENTER_LON')
