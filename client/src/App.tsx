@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { SearchBar } from "./components/search/SearchBar";
 import { ResultArea } from "./components/results/ResultArea";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuBar } from "./components/menu/MenuBar";
@@ -34,9 +33,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <div id="wrapper">
         <header className="App-header">
-          <MenuBar />
+          <MenuBar setSearchResult={setSearchResult} />
         </header>
-        <SearchBar setSearchResult={setSearchResult} />
         <ResultArea
           docs={docs || []}
           fields={fields}

@@ -9,11 +9,9 @@ import {
   TableCell,
   TableSortLabel,
   Paper,
-  Chip,
   Collapse,
   Box,
 } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
 import { styled } from "@mui/material/styles";
 
 import { Geoservice } from "../../types";
@@ -126,8 +124,45 @@ const ResultRow = ({ row, index }: { row: Geoservice; index: number }) => {
 export const ResultArea = ({ docs, fields, total }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    "&": {
+      backgroundColor: "#F7F7F7",
+    },
+  }));
+
   if (docs.length < 1) {
-    return <div />;
+    return (
+      <div
+        style={{
+          // flex: "1 1 auto",
+          // display: "flex",
+          margin: "10px 40px 0 40px",
+        }}
+      >
+        <TableContainer
+          component={Paper}
+          sx={{ maxHeight: "80vh", cursor: "pointer" }}
+        >
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {[1, 2, 3, 4, 5].map((item) => (
+                  <StyledTableCell></StyledTableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((item) => (
+                <TableRow style={{ height: 30 }}>
+                  <TableCell colSpan={5} />
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    );
   }
 
   const handleRequestSort = (
@@ -161,23 +196,16 @@ export const ResultArea = ({ docs, fields, total }: TableProps) => {
           ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE"].includes(key)
         ) || [];
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    "&": {
-      backgroundColor: "#F7F7F7",
-    },
-  }));
-
   return (
     <div
       style={{
-        flex: "1 1 auto",
-        display: "flex",
+        marginTop: 1,
       }}
     >
-      {docs.length > 0 ? (
+      {docs.length > 0 && (
         <TableContainer
           component={Paper}
-          sx={{ maxHeight: "80vh", cursor: "pointer" }}
+          sx={{ maxHeight: "88vh", cursor: "pointer" }}
         >
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -198,8 +226,8 @@ export const ResultArea = ({ docs, fields, total }: TableProps) => {
                         sortDirection={orderBy === col_header ? order : false}
                       >
                         <TableSortLabel
-                          active={orderBy === col_header}
-                          direction={orderBy === col_header ? order : "asc"}
+                          active={true}
+                          direction={orderBy === col_header ? order : "desc"}
                           onClick={createSortHandler(col_header)}
                         >
                           {commonCasedHeader}
@@ -224,8 +252,6 @@ export const ResultArea = ({ docs, fields, total }: TableProps) => {
             </TableBody>
           </Table>
         </TableContainer>
-      ) : (
-        <div />
       )}
     </div>
   );
