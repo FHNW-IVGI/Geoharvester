@@ -1,5 +1,7 @@
 
 import uuid
+import pandas as pd
+import json as js
 from typing import Union
 
 import redis
@@ -113,11 +115,53 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
        return "&".join(queryable_parameters)
 
 ######################################################################################################################################
-import pandas as pd
-import json as js
 
-def simple_ranking(redis_output):
-    doc = str(redis_output[0]).replace("'", '"')
-    doc = doc.replace("None", '"None"')
-    parsed = js.loads(doc.replace("Document", ""))
-    print(parsed)
+def json_to_pandas(redis_output):
+    """
+    Transforms the json-like output from redis into a pandas df.
+    # TODO: This function will be integrated into a class with different ranking methods
+
+    Parameters
+    redis_output
+
+    Output
+    """
+    query_results = pd.DataFrame()
+    for i, output in enumerate(redis_output):
+        # Cleaning the string
+        doc = str(output).replace("'", '"')
+        doc = doc.replace("None", '"None"')
+        # Append results to a pandas df
+        df = pd.read_json(doc.replace("Document ", ""), orient='index').T
+        query_results = pd.concat([query_results, df], axis=0)
+        # print(len(redis_output)-i)
+    return query_results
+
+def pandas_to_dict(ranked_results_df, timing):
+    """
+    # TODO: This function will be integrated into a class with different ranking methods
+    """
+    ranked_results = {
+        "total": 0,
+        "docs": None,
+        "duration": 0, }
+    
+    ranked_results_dict = ranked_results_df.to_dict(orient='records') # after ranking we will have an index -> orient='index' https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
+    #parsed_results = js.loads(ranked_results_js)
+    #js.dumps(parsed_results, indent=4)
+    ranked_results["docs"] = ranked_results_dict
+    ranked_results["total"] = len(ranked_results_df)
+    ranked_results["duration"] = timing # it will be calculated from the ranking function
+    return ranked_results
+
+def simple_ranking(query_results_df):
+    """
+    Ranks the results according to different methods.
+    # TODO: This function will be integrated into a class with different ranking methods
+
+    Parameters
+    query_results_df
+
+    Output
+    """
+    pass
