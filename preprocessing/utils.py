@@ -2,30 +2,29 @@
 Utilities for the elaboration of texts with NLP and TF-IDF
 """
 
-from string import punctuation
-import openai
-import os
 import itertools
-import spacy
-import numpy as np
-import pandas as pd
+import os
+from string import punctuation
+
 import matplotlib.pyplot as plt
+import numpy as np
+import openai
+import pandas as pd
+import pyLDAvis.gensim_models as genvis
+import spacy
 import translators as ts
-from langdetect import detect
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize, sent_tokenize
-from nltk.stem import SnowballStemmer, PorterStemmer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from rake_nltk import Rake
-from scipy import sparse
 from gensim import corpora
 from gensim.models import LsiModel
-from gensim.models.ldamodel import LdaModel
 from gensim.models.coherencemodel import CoherenceModel
+from gensim.models.ldamodel import LdaModel
+from langdetect import detect
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, SnowballStemmer
+from nltk.tokenize import sent_tokenize, word_tokenize
+from rake_nltk import Rake
+from scipy import sparse
+from sklearn.feature_extraction.text import TfidfVectorizer
 from summarizer.sbert import SBertSummarizer
-import pyLDAvis.gensim_models as genvis
-
-
 
 
 def detect_language(phrase):
@@ -162,7 +161,7 @@ class TFIDF_BM25():
         self.abstracts, self.results = [], []
         self.index = np.array([])
 
-    def cleansing_ranking(self, texts, column='ABSTRACT') -> None:
+    def cleansing_ranking(self, texts, column='abstract') -> None:
         """
         It saves the index of the pandas.dataframe and apply the tokenize function to one column.
         
@@ -171,7 +170,7 @@ class TFIDF_BM25():
         texts : pandas.dataframe
             Dataframe with a text column
         column : str
-            name of the text column, default "ABSTRACT"
+            name of the text column, default "abstract"
         
         """
         self.index = texts.index.values
@@ -245,7 +244,7 @@ class TFIDF_BM25():
                 and w not in list(punctuation)]# remove stop words and punctuation
         return keywords
         
-    def extract_keywords(self, texts, column='ABSTRACT', keyword_length=3, score=False):
+    def extract_keywords(self, texts, column='abstract', keyword_length=3, score=False):
         self.index = texts.index.values
         self.keywords = [self.rake_keywords(text, score=score, keyword_length=keyword_length)
                         for text in texts[column].values.tolist()]
@@ -263,7 +262,7 @@ class LSI_LDA():
         self.coherence_values = []
         self.model_list = []
 
-    def preprocess(self, texts, column='ABSTRACT'):
+    def preprocess(self, texts, column='abstract'):
         """
         Preprocess a set of texts in a pandas dataframe cleaning and tokenizing the texts.
 
@@ -272,7 +271,7 @@ class LSI_LDA():
         texts : pandas.dataframe
             Dataframe with a text column
         column : str
-            name of the text column, default "ABSTRACT"
+            name of the text column, default "abstract"
         Returns
         -------
         _ : [list, list]
@@ -345,7 +344,7 @@ class LSI_LDA():
         texts : pandas.dataframe
             Dataframe with a text column
         column : str
-            name of the text column, default "ABSTRACT"
+            name of the text column, default "abstract"
         Returns
         -------
         _ : [list, list]
@@ -367,7 +366,7 @@ class LSI_LDA():
         categories : pandas.dataframe
             Dataframe with a text column
         column : str
-            name of the text column, default "ABSTRACT"
+            name of the text column, default "abstract"
         Returns
         -------
         _ : list
@@ -521,7 +520,7 @@ class NLP_spacy():
         cleaned_keywords = {' '.join(kw) for kw in keywords if any(pos_dict.get(w) in ['NOUN', 'PROPN', 'NUM'] for w in kw)}
         return list(cleaned_keywords)
     
-    def extract_refined_keywords(self, texts, use_rake=True, column='ABSTRACT', keyword_length=3, num_keywords=10):
+    def extract_refined_keywords(self, texts, use_rake=True, column='abstract', keyword_length=3, num_keywords=10):
         """
         Applies the keyword extraction and cleansing to a whole dataset of texts
         
@@ -597,7 +596,7 @@ class NLP_spacy():
             summarized_text = model(text, num_sentences=4)
         return summarized_text
     
-    def summarize_texts(self, texts, column='ABSTRACT', use_GPT=False):
+    def summarize_texts(self, texts, column='abstract', use_GPT=False):
         """
         Applies the summariation function to a pandas dataframe
         
@@ -608,7 +607,7 @@ class NLP_spacy():
         use_GPT : bool
             Use a GPT model oterwise a Sbert model
         column : str
-            Text column, default "ABSTRACT"
+            Text column, default "abstract"
         Returns
         -------
         _ : list

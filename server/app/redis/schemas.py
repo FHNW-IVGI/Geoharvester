@@ -10,24 +10,24 @@ SVC_KEY = SVC_PREFIX + '{}'
 SVC_INDEX_ID = "py_{}_idx".format(SVC_PREFIX)
 
 geoservices_schema = (
-    TextField('$.OWNER', as_name='OWNER', no_stem=True),
-    TextField('$.TITLE', as_name='TITLE'),
-    TextField('$.NAME', as_name='NAME'),
-    TextField('$.MAPGEO', as_name='MAPGEO'),
-    TextField('$.TREE', as_name='TREE', no_stem=True),
-    TextField('$.GROUP', as_name='GROUP', no_stem=True),
-    TextField('$.ABSTRACT', as_name='ABSTRACT'),
-    TagField('$.KEYWORDS', as_name='KEYWORDS'),
-    TextField('$.LEGEND', as_name='LEGEND', no_stem=True),
-    TextField('$.CONTACT', as_name='CONTACT', no_stem=True),
-    TextField('$.SERVICELINK', as_name='SERVICELINK', no_stem=True),
-    TextField('$.METADATA', as_name='METADATA', no_stem=True),
-    TextField('$.UPDATE', as_name='UPDATE', no_stem=True),
-    TextField('$.SERVICETYPE', as_name='SERVICETYPE', no_stem=True),
-    NumericField('$.MAX_ZOOM', as_name='MAX_ZOOM'),
-    NumericField('$.CENTER_LAT', as_name='CENTER_LAT'),
-    NumericField('$.CENTER_LON', as_name='CENTER_LON'),
-    TextField('$.BBOX', as_name='BBOX', no_stem=True)
+    TextField('$.provider', as_name='provider', no_stem=True),
+    TextField('$.title', as_name='title'),
+    TextField('$.name', as_name='name'),
+    TextField('$.preview', as_name='preview'),
+    TextField('$.tree', as_name='tree', no_stem=True),
+    TextField('$.group', as_name='group', no_stem=True),
+    TextField('$.abstract', as_name='abstract'),
+    TagField('$.keywords', as_name='keywords'),
+    TextField('$.legend', as_name='legend', no_stem=True),
+    TextField('$.contact', as_name='contact', no_stem=True),
+    TextField('$.endpoint', as_name='endpoint', no_stem=True),
+    TextField('$.metadata', as_name='metadata', no_stem=True),
+    TextField('$.update', as_name='update', no_stem=True),
+    TextField('$.service', as_name='service', no_stem=True),
+    NumericField('$.maxZoom', as_name='maxZoom'),
+    NumericField('$.centerLat', as_name='centerLat'),
+    NumericField('$.centerLon', as_name='centerLon'),
+    TextField('$.bbox', as_name='bbox', no_stem=True)
 )
 
 ### Geodata
@@ -38,14 +38,14 @@ DTA_KEY = DTA_PREFIX + '{}'
 DTA_INDEX_ID = "py_{}_idx".format(DTA_PREFIX)
 
 geodata_schema = (
-    TextField('$.OWNER', as_name='OWNER', no_stem=True),
-    TextField('$.TITLE', as_name='TITLE'),
-    TextField('$.NAME', as_name='NAME'),
-    TextField('$.MAPGEO', as_name='MAPGEO'),
-    TextField('$.ABSTRACT', as_name='ABSTRACT'),
-    TagField('$.KEYWORDS', as_name='KEYWORDS'),
-    TextField('$.CONTACT', as_name='CONTACT', no_stem=True),
-    TextField('$.WMSGetCap', as_name='WMSGetCap', no_stem=True),
-    TextField('$.WMTSGetCap', as_name='WMTSGetCap', no_stem=True),
-    TextField('$.WFSGetCap', as_name='WFSGetCap', no_stem=True)
+    TextField('$.provider', as_name='provider', no_stem=True),
+    TextField('$.title', as_name='title'),
+    TextField('$.name', as_name='name'),
+    TextField('$.preview', as_name='preview'),
+    TextField('$.abstract', as_name='abstract'),
+    TagField('$.keywords', as_name='keywords'),
+    TextField('$.contact', as_name='contact', no_stem=True),
+    TextField('$.wmsGetCap', as_name='wmsGetCap', no_stem=True),
+    TextField('$.wmtsGetCap', as_name='wmtsGetCap', no_stem=True),
+    TextField('$.wfsGetCap', as_name='wfsGetCap', no_stem=True)
 )
