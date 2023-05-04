@@ -7,5 +7,4 @@ requests
 PyYAML
 numpy
 nltk
-sklearn
 langdetect

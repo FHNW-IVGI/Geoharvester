@@ -11,7 +11,7 @@ from app.processing.methods import (import_csv_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters,
-                               transform_wordlist_to_query, json_to_pandas, pandas_to_dict)
+                               transform_wordlist_to_query, results_ranking)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
 from fastapi import FastAPI
@@ -166,8 +166,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
 
     ############################################################################################################################
     # Testing
-    query_results_df = json_to_pandas(redis_data.docs) 
-    search_result = pandas_to_dict(query_results_df, 10)
+    search_result = results_ranking(redis_data.docs, redis_data.duration)
     ############################################################################################################################ 
 
     return {"data": search_result}

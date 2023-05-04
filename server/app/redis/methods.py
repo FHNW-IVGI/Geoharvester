@@ -1,7 +1,7 @@
 
 import uuid
 import pandas as pd
-import json as js
+from time import time
 from typing import Union
 
 import redis
@@ -154,7 +154,7 @@ def pandas_to_dict(ranked_results_df, timing):
     ranked_results["duration"] = timing # it will be calculated from the ranking function
     return ranked_results
 
-def simple_ranking(query_results_df):
+def results_ranking(redis_output, redis_et):
     """
     Ranks the results according to different methods.
     # TODO: This function will be integrated into a class with different ranking methods
@@ -164,4 +164,18 @@ def simple_ranking(query_results_df):
 
     Output
     """
+    query_results_df = json_to_pandas(redis_output)
+    t0 = time()
+    print('ranking...')
+    t1 = time()
+    ranked_results = pandas_to_dict(query_results_df, round(redis_et + (t1-t0), 4))
+    print(f'Redis query takes {round(redis_et, 4)} seconds while pandas ranking takes {round(t1-t0, 4)} seconds')
+    return ranked_results
+
+def ranks_results_1(df):
+    index = df.index()
+    #df['SCORE'] = df.apply(lambda row: , axis=1)
+    pass
+
+def exact_match_scoring():
     pass
