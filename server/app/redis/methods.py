@@ -91,22 +91,22 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
 
     if (bool(query_string)):
         queryable_parameters.append(
-            '@title|abstract:({})'.format(query_string)
+            '@TITLE|ABSTRACT:({})'.format(query_string)
         )
 
     if (bool(service)):
         queryable_parameters.append(
-            '@service:({})'.format(service)
+            '@SERVICETYPE:({})'.format(service)
         )
 
     if (bool(owner)):
         queryable_parameters.append(
-            '@provider:({})'.format(owner)
+            '@OWNER:({})'.format(owner)
         )
 
     if (len(queryable_parameters) < 1):
         # In this case all available datasets should be returned:
-        return '@service:(WMS | WMTS | WFS)'
+        return '@SERVICETYPE:(WMS | WMTS | WFS)'
     elif (len(queryable_parameters) == 1):
         return queryable_parameters[0]
     else:
