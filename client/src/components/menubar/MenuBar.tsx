@@ -1,16 +1,16 @@
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
 import { SearchBar, SearchBarProps } from "./SearchBar";
-
-import "./menu.css";
+import "../../styles.css";
 
 const geoharvesterLogo = require("../../img/geoharvester_logo.png");
 
-export const MenuBar = ({ setSearchResult }: SearchBarProps) => {
+export const MenuBar = ({
+  setSearchResult,
+  setPlaceholderText,
+}: SearchBarProps) => {
   return (
     <AppBar position="static">
       <Toolbar style={{ borderBottom: "1px solid grey" }} variant="dense">
@@ -33,7 +33,10 @@ export const MenuBar = ({ setSearchResult }: SearchBarProps) => {
         </a>
       </Toolbar>
 
-      <SearchBar setSearchResult={setSearchResult} />
+      <SearchBar
+        setSearchResult={setSearchResult}
+        setPlaceholderText={setPlaceholderText}
+      />
     </AppBar>
   );
 };

@@ -11,6 +11,7 @@ import {
   Paper,
   Collapse,
   Box,
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -23,6 +24,7 @@ type TableProps = {
   docs: Geoservice[];
   fields: string[];
   total: number;
+  placeholderText: string;
 };
 
 type Order = "asc" | "desc";
@@ -50,16 +52,28 @@ const CollapsibleRow = ({
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&": {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: "#FCFCFC",
     },
   }));
 
   return (
     <StyledTableRow key={index}>
-      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+      <TableCell
+        style={{
+          paddingBottom: 0,
+          paddingTop: 0,
+          boxShadow: "inset 0px 0px 10px 0px rgba(0, 0, 0, 0.15)",
+        }}
+        colSpan={5}
+      >
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box sx={{ margin: 1 }}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               {rowsToInclude.map((prop, index) => (
                 <div style={{ display: "flex", flexDirection: "row" }}>
                   <div style={{}}>
@@ -121,13 +135,19 @@ const ResultRow = ({ row, index }: { row: Geoservice; index: number }) => {
   );
 };
 
-export const ResultArea = ({ docs, fields, total }: TableProps) => {
+export const ResultArea = ({
+  docs,
+  fields,
+  total,
+  placeholderText,
+}: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  const StyledTableCell = styled(TableCell)(({}) => ({
     "&": {
-      backgroundColor: "#F7F7F7",
+      backgroundColor: "#FFFFF",
+      borderBottom: "1px solid #909090",
     },
   }));
 
@@ -135,32 +155,16 @@ export const ResultArea = ({ docs, fields, total }: TableProps) => {
     return (
       <div
         style={{
-          // flex: "1 1 auto",
-          // display: "flex",
-          margin: "10px 40px 0 40px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          minHeight: "86vh",
         }}
       >
-        <TableContainer
-          component={Paper}
-          sx={{ maxHeight: "80vh", cursor: "pointer" }}
-        >
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {[1, 2, 3, 4, 5].map((item) => (
-                  <StyledTableCell></StyledTableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((item) => (
-                <TableRow style={{ height: 30 }}>
-                  <TableCell colSpan={5} />
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Typography variant="h3" component="h3" color="#C0C0C0">
+          {placeholderText}
+        </Typography>
       </div>
     );
   }
@@ -205,7 +209,7 @@ export const ResultArea = ({ docs, fields, total }: TableProps) => {
       {docs.length > 0 && (
         <TableContainer
           component={Paper}
-          sx={{ maxHeight: "88vh", cursor: "pointer" }}
+          sx={{ maxHeight: "89vh", cursor: "pointer" }}
         >
           <Table stickyHeader aria-label="sticky table">
             <TableHead>

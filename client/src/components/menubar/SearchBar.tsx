@@ -9,17 +9,21 @@ import {
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { getData } from "../../requests";
-import "./search.css";
 import SearchIcon from "@mui/icons-material/Search";
+import "../../styles.css";
 
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
+  setPlaceholderText: (text: string) => void;
 };
 
-export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
+export const SearchBar = ({
+  setSearchResult,
+  setPlaceholderText,
+}: SearchBarProps) => {
   const [searchString, setSearchString] = useState("");
 
-  const triggerSearch = async () =>
+  const triggerSearch = async () => {
     await getData(searchString)
       .then((res) => {
         const { data } = res;
@@ -29,17 +33,19 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
         console.error(e);
         setSearchResult([]); // Fallback on error
       });
+    setPlaceholderText("Keine Treffer :(");
+  };
 
   return (
     <Toolbar
       variant="dense"
       style={{
-        backgroundColor: "white",
+        backgroundColor: "#ffdcc5",
         borderBottom: " 1px solid rgb(189, 189, 189)",
       }}
     >
       <div id="search">
-        <div style={{ width: "15vw", backgroundColor: "red" }}></div>
+        <div style={{ width: "15vw" }}></div>
         <div style={{ width: "70vw" }}>
           <FormControl
             sx={{
@@ -48,15 +54,23 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",
+
+              backgroundColor: "#ffdcc5",
             }}
             variant="standard"
           >
             <OutlinedInput
+              autoFocus
+              autoComplete="off"
               id="webservicesearch"
               type="outlined"
               placeholder="Webservice suchen..."
               value={searchString}
-              style={{ width: 600, height: 40 }}
+              style={{
+                width: 600,
+                height: 40,
+                backgroundColor: "white",
+              }}
               onChange={(e) => setSearchString(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && triggerSearch()}
               startAdornment={
@@ -79,7 +93,7 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
               onClick={triggerSearch}
               sx={{
                 fontSize: 14,
-                color: "#808080",
+                backgroundColor: "white",
               }}
               type="submit"
               variant="outlined"
@@ -90,10 +104,8 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
             </Button>
           </FormControl>
         </div>
-        <div
-          style={{ backgroundColor: "#F0F0F0", fontSize: 12, width: "15vw" }}
-        >
-          Dropdown Placeholder
+        <div style={{ backgroundColor: "#F0F0F0", fontSize: 14 }}>
+          __Dropdown Placeholder
         </div>
       </div>
     </Toolbar>
