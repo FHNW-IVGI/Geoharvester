@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { SearchBar } from "./components/search/SearchBar";
-import { ResultArea, StatisticsBox } from "./components/results/ResultArea";
+import { useState } from "react";
+import { ResultArea } from "./components/results/ResultArea";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { MenuBar } from "./components/menu/MenuBar";
+import { MenuBar } from "./components/menubar/MenuBar";
 import { Geoservice } from "./types";
 import "./App.css";
 
 const theme = createTheme({
   palette: {
     primary: {
-      // main: "#ED7D31",
-      main: "#ffbe92",
-      // main: "#e69138",
+      main: "#ffa05f",
       contrastText: "#000000",
     },
     secondary: {
-      // main: "#ED7D31",
-      // main: "#ffbe92",
       main: "#e69138",
       contrastText: "#000000",
     },
@@ -32,24 +27,27 @@ export type SearchResult = {
 
 function App() {
   const [searchResult, setSearchResult] = useState({} as SearchResult);
-
   const { docs, total, fields } = searchResult;
+  const [placeholderText, setPlaceholderText] = useState(
+    "Webservice suchen..."
+  );
 
   return (
     <ThemeProvider theme={theme}>
-      {/* <ThemeProvider theme={theme}> */}
-      <header className="App-header">
-        {/* NDGI Project Geoharvester */}
-        <MenuBar />
-      </header>
-      {/* <div>
-      <FilterAltIcon variant="contained">Hello World</FilterAltIcon>
-      </div> */}
-      <main className="App-main">
-        <SearchBar setSearchResult={setSearchResult} />
-        <StatisticsBox total={total || 0}></StatisticsBox>
-        <ResultArea docs={docs || [[]]} fields={fields}></ResultArea>
-      </main>
+      <div id="wrapper">
+        <header className="App-header">
+          <MenuBar
+            setSearchResult={setSearchResult}
+            setPlaceholderText={setPlaceholderText}
+          />
+        </header>
+        <ResultArea
+          docs={docs || []}
+          fields={fields}
+          total={total}
+          placeholderText={placeholderText}
+        ></ResultArea>
+      </div>
     </ThemeProvider>
   );
 }
