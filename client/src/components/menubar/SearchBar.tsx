@@ -6,6 +6,7 @@ import {
   InputAdornment,
   Button,
   Toolbar,
+  styled,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { getData } from "../../requests";
@@ -35,6 +36,14 @@ export const SearchBar = ({
       });
     setPlaceholderText("Keine Treffer :(");
   };
+
+  const SearchButton = styled(Button)(({}) => ({
+    color: "#101010",
+    backgroundColor: "white",
+    "&:hover": {
+      backgroundColor: "#F0F0F0",
+    },
+  }));
 
   return (
     <Toolbar
@@ -87,7 +96,7 @@ export const SearchBar = ({
                 </InputAdornment>
               }
             />
-            <Button
+            <SearchButton
               id="search-button"
               size="small"
               onClick={triggerSearch}
@@ -98,10 +107,10 @@ export const SearchBar = ({
               type="submit"
               variant="outlined"
               aria-label="search"
-              color="inherit"
+              // color="white"
             >
               {"Suchen"}
-            </Button>
+            </SearchButton>
           </FormControl>
         </div>
         <div style={{ backgroundColor: "#F0F0F0", fontSize: 14 }}>
