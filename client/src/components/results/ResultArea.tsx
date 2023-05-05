@@ -19,7 +19,15 @@ import { Geoservice } from "../../types";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { visuallyHidden } from "@mui/utils";
-import { getArcgisproWFS } from "../../requests";
+import {
+  getArcgisproWFS,
+  getArcgisproWMS,
+  getArcgisproWMTS,
+  getQgisWFS,
+  getQgisWMS,
+  getQgisWMTS,
+} from "../../requests";
+import DownloadIcon from "@mui/icons-material/Download";
 
 type TableProps = {
   docs: Geoservice[];
@@ -50,6 +58,32 @@ const CollapsibleRow = ({
     "MAPGEO",
     "LEGEND",
   ];
+
+  const routeObjectBuilder = () => {
+    if (!row || !row.SERVICETYPE) {
+      return {
+        arcgis_handler: () => "error",
+        qgis_handler: () => "error",
+      };
+    }
+
+    const title = row.TITLE || "dataset";
+
+    return row.SERVICETYPE.includes("WFS")
+      ? {
+          arcgis_handler: () => getArcgisproWFS(title),
+          qgis_handler: () => getQgisWFS(title),
+        }
+      : row.SERVICETYPE.includes("WMS")
+      ? {
+          arcgis_handler: () => getArcgisproWMS(title),
+          qgis_handler: () => getQgisWMS(title),
+        }
+      : {
+          arcgis_handler: () => getArcgisproWMTS(title),
+          qgis_handler: () => getQgisWMTS(title),
+        };
+  };
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&": {
@@ -103,9 +137,31 @@ const CollapsibleRow = ({
                   </div>
                 </div>
               ))}
-              <Button onClick={() => getArcgisproWFS(row.TITLE)}>
-                DL Test
-              </Button>
+              <div
+                style={{
+                  marginLeft: 270,
+                  marginTop: 16,
+                  marginBottom: 10,
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  style={{ marginRight: 30 }}
+                  onClick={routeObjectBuilder().arcgis_handler}
+                  startIcon={<DownloadIcon />}
+                >
+                  Download for ArcGIS
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={routeObjectBuilder().qgis_handler}
+                  startIcon={<DownloadIcon />}
+                >
+                  Download for QGIS
+                </Button>
+              </div>
             </div>
           </Box>
         </Collapse>
