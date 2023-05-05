@@ -14,12 +14,36 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { getData } from "../../requests";
 import SearchIcon from "@mui/icons-material/Search";
 import "../../styles.css";
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-const ProviderList = ["KT_AI", "KT_AR", "KT_AG", "KT_BL", "KT_BS", "KT_BE", "KT_GE", "KT_GL", "KT_GR", "KT_JU", "KT_SG", "KT_SH", 
-"KT_SO", "KT_SZ", "KT_TG", "KT_TI", "KT_UR", "KT_ZG", "KT_ZH", "KT_VD", "KT_FR", "FL_LI", "Geodienste", "Bund"]
-const ServiceList = ["wfs", "wms", "wmts"]
+const ProviderList = [
+  "KT_AI",
+  "KT_AR",
+  "KT_AG",
+  "KT_BL",
+  "KT_BS",
+  "KT_BE",
+  "KT_GE",
+  "KT_GL",
+  "KT_GR",
+  "KT_JU",
+  "KT_SG",
+  "KT_SH",
+  "KT_SO",
+  "KT_SZ",
+  "KT_TG",
+  "KT_TI",
+  "KT_UR",
+  "KT_ZG",
+  "KT_ZH",
+  "KT_VD",
+  "KT_FR",
+  "FL_LI",
+  "Geodienste",
+  "Bund",
+];
+const ServiceList = ["wfs", "wms", "wmts"];
 
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
@@ -49,7 +73,7 @@ export const SearchBar = ({
   };
 
   useEffect(() => {
-    if (render < 1 ) {
+    if (render < 1) {
       setRender(render + 1);
       return;
     }
@@ -57,7 +81,7 @@ export const SearchBar = ({
   }, [servicetype]);
 
   useEffect(() => {
-    if (render < 1 ) {
+    if (render < 1) {
       setRender(render + 1);
       return;
     }
@@ -79,7 +103,7 @@ export const SearchBar = ({
       backgroundColor: "#F0F0F0",
     },
   }));
-  
+
   return (
     <Toolbar
       variant="dense"
@@ -142,14 +166,12 @@ export const SearchBar = ({
               type="submit"
               variant="outlined"
               aria-label="search"
-              // color="white"
             >
               {"Suchen"}
             </SearchButton>
           </FormControl>
         </div>
         <div id="filter">
-          {/* <Stack direction="row"> */}
           <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="input-service-label">Service Type</InputLabel>
             <Select
@@ -166,15 +188,14 @@ export const SearchBar = ({
               </MenuItem>
               {ServiceList.map((servicetype) => {
                 return (
-                  <MenuItem 
-                    key={servicetype}
-                    value={servicetype}>{servicetype}
+                  <MenuItem key={servicetype} value={servicetype}>
+                    {servicetype}
                   </MenuItem>
-                  );
-                })}
+                );
+              })}
             </Select>
-        </FormControl>
-        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+          </FormControl>
+          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="input-provider-label">Provider</InputLabel>
             <Select
               autoComplete="off"
@@ -190,15 +211,13 @@ export const SearchBar = ({
               </MenuItem>
               {ProviderList.map((provider) => {
                 return (
-                  <MenuItem 
-                    key={provider}
-                    value={provider}>{provider}
+                  <MenuItem key={provider} value={provider}>
+                    {provider}
                   </MenuItem>
-                  );
-                })}
+                );
+              })}
             </Select>
-        </FormControl>
-        {/* </Stack>   */}
+          </FormControl>
         </div>
       </div>
     </Toolbar>
