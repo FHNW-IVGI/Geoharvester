@@ -27,6 +27,7 @@ export const SearchBar = ({ setSearchResult }: SearchBarProps) => {
       .then((res) => {
         const { data } = res;
         setSearchResult(data);
+        
       })
       .catch((e) => {
         console.error(e);

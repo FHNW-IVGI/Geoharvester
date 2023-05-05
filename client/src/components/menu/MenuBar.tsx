@@ -22,7 +22,6 @@ export function MenuBar() {
             height="45"
           />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-          {/* <Button color="inherit" onClick={routeChange}>Docs</Button> */}
           <a id="menu-text" href="/api/docs#/" target="_blank">
             <Button color="inherit">
               <span style={{ fontWeight: "bold" }}>Docs</span>
@@ -33,17 +32,6 @@ export function MenuBar() {
               <span style={{ fontWeight: "bold" }}>Help</span>
             </Button>
           </a>
-          {/* <Button color="inherit">Help</Button> */}
-
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 0 }}
-          >
-            <MenuIcon />
-          </IconButton> */}
         </Toolbar>
       </AppBar>
     </Box>

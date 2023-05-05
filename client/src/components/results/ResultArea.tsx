@@ -20,9 +20,9 @@ type TableProps = {
   fields: string[];
 };
 
-export const StatisticsBox = ({ total }: StatisticsProps) => (
+export const StatisticsBox = ({ total}: StatisticsProps) => (
   <div id="results-statisticsarea">
-    <Chip label={`Results: ${total}`} variant="outlined" />
+    <Chip label={`Anzahl Ergebnisse: ${total}`} variant="outlined" />
   </div>
 );
 
