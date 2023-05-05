@@ -1,18 +1,8 @@
 .App-header {
-  height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: left;
   justify-content: center;
   font-size: calc(12px + 2vmin);
   color: white;
-}
-
-.App-main {
-  height: 80vh;
-  width: 100%;
-}
-
-.App-footer {
-  height: 5vh;
 }
