@@ -5,12 +5,6 @@ from typing import Union
 
 import pandas as pd
 import redis
-from fastapi import FastAPI
-from fastapi.logger import logger as fastapi_logger
-from fastapi.middleware.cors import CORSMiddleware
-from redis import StrictRedis
-from redis.commands.search.query import Query
-
 from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
                                     split_search_string)
@@ -19,6 +13,11 @@ from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
+from fastapi import FastAPI
+from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
+from redis import StrictRedis
+from redis.commands.search.query import Query
 
 app = FastAPI(
     debug=True,
