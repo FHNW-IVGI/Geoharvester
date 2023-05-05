@@ -67,21 +67,19 @@ const CollapsibleRow = ({
       };
     }
 
-    const title = row.TITLE || "dataset";
-
     return row.SERVICETYPE.includes("WFS")
       ? {
-          arcgis_handler: () => getArcgisproWFS(title),
-          qgis_handler: () => getQgisWFS(title),
+          arcgis_handler: () => getArcgisproWFS(row),
+          qgis_handler: () => getQgisWFS(row),
         }
       : row.SERVICETYPE.includes("WMS")
       ? {
-          arcgis_handler: () => getArcgisproWMS(title),
-          qgis_handler: () => getQgisWMS(title),
+          arcgis_handler: () => getArcgisproWMS(row),
+          qgis_handler: () => getQgisWMS(row),
         }
       : {
-          arcgis_handler: () => getArcgisproWMTS(title),
-          qgis_handler: () => getQgisWMTS(title),
+          arcgis_handler: () => getArcgisproWMTS(row),
+          qgis_handler: () => getQgisWMTS(row),
         };
   };
 

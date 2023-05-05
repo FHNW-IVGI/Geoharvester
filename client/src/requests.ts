@@ -1,5 +1,8 @@
 
 import axios from "axios";
+import { Geoservice } from "./types";
+import { parseQgisWFS, parseQgisWMS, parseQgisWMTS } from "./templateParser/qgisParser";
+import { parseArcgisWFS, parseArcgisWMS, parseArcgisWMTS } from "./templateParser/arcgisParser";
 
 
 const routes = {
@@ -35,6 +38,8 @@ export const getData = async (query: string, service: string = SERVICETYPE.NONE,
     return data
 }
 
+
+
 const linkBuilder = (blob: any, fileName: string, fileExtension: string) => {
     const url = window.URL.createObjectURL(
         new Blob([blob]),
@@ -52,39 +57,39 @@ const linkBuilder = (blob: any, fileName: string, fileExtension: string) => {
     link && link.parentNode && link.parentNode.removeChild(link);
 }
 
-export const getArcgisproWFS = async (fileName: string) => {
+export const getArcgisproWFS = async (data: Geoservice) => {
     await fetch(routes.getArcgisproWFS)
-        .then((response) => response.blob())
-        .then((blob) => linkBuilder(blob, fileName, "lyrx")
+        .then((response) => parseArcgisWMS(data, response))
+        .then((blob) => linkBuilder(blob, data.TITLE || "filename", "lyrx")
         )
 }
-export const getArcgisproWMS = async (fileName: string) => {
+export const getArcgisproWMS = async (data: Geoservice) => {
     await fetch(routes.getArcgisproWMS)
-        .then((response) => response.blob())
-        .then((blob) => linkBuilder(blob, fileName, "lyrx")
+        .then((response) => parseArcgisWMS(data, response.text()))
+        .then((blob) => linkBuilder(blob, data.TITLE || "filename", "lyrx")
         )
 }
-export const getArcgisproWMTS = async (fileName: string) => {
+export const getArcgisproWMTS = async (data: Geoservice) => {
     await fetch(routes.getArcgisproWMTS)
-        .then((response) => response.blob())
-        .then((blob) => linkBuilder(blob, fileName, "lyrx")
+        .then((response) => parseArcgisWMTS(data, response.text()))
+        .then((blob) => linkBuilder(blob, data.TITLE || "filename", "lyrx")
         )
 }
-export const getQgisWFS = async (fileName: string) => {
+export const getQgisWFS = async (data: Geoservice) => {
     await fetch(routes.getQgisWFS)
-        .then((response) => response.blob())
-        .then((blob) => linkBuilder(blob, fileName, "qlr")
-        )
+        .then((response) => parseQgisWFS(data, response.blob())
+            .then((blob) => linkBuilder(blob, data.TITLE || "filename", "qlr")
+            )
 }
-export const getQgisWMS = async (fileName: string) => {
+export const getQgisWMS = async (data: Geoservice) => {
     await fetch(routes.getQgisWMS)
-        .then((response) => response.blob())
-        .then((blob) => linkBuilder(blob, fileName, "qlr")
-        )
+        .then((response) => parseQgisWMS(data, response.blob())
+            .then((blob) => linkBuilder(blob, data.TITLE || "filename", "qlr")
+            )
 }
-export const getQgisWMTS = async (fileName: string) => {
+export const getQgisWMTS = async (data: Geoservice) => {
     await fetch(routes.getQgisWMTS)
-        .then((response) => response.blob())
-        .then((blob) => linkBuilder(blob, fileName, "qlr")
-        )
+        .then((response) => parseQgisWMTS(data, response.blob())
+            .then((blob) => linkBuilder(blob, data.TITLE || "filename", "qlr")
+            )
 }
