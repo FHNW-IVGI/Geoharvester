@@ -7,6 +7,9 @@ const routes = {
     getArcgisproWFS: "/templates/arcgispro_wfs_template.lyrx",
     getArcgisproWMS: "/templates/arcgispro_wms_template.lyrx",
     getArcgisproWMTS: "/templates/arcgispro_wmts_template.lyrx",
+    getQgisWFS: "/templates/qgis_wfs_template.qlr",
+    getQgisWMS: "/templates/qgis_wms_template.qlr",
+    getQgisWMTS: "/templates/qgis_wmts_template.qlr",
 }
 
 enum LANG {
@@ -65,5 +68,23 @@ export const getArcgisproWMTS = async (fileName: string) => {
     await fetch(routes.getArcgisproWMTS)
         .then((response) => response.blob())
         .then((blob) => linkBuilder(blob, fileName, "lyrx")
+        )
+}
+export const getQgisWFS = async (fileName: string) => {
+    await fetch(routes.getQgisWFS)
+        .then((response) => response.blob())
+        .then((blob) => linkBuilder(blob, fileName, "qlr")
+        )
+}
+export const getQgisWMS = async (fileName: string) => {
+    await fetch(routes.getQgisWMS)
+        .then((response) => response.blob())
+        .then((blob) => linkBuilder(blob, fileName, "qlr")
+        )
+}
+export const getQgisWMTS = async (fileName: string) => {
+    await fetch(routes.getQgisWMTS)
+        .then((response) => response.blob())
+        .then((blob) => linkBuilder(blob, fileName, "qlr")
         )
 }

@@ -11,6 +11,7 @@ import {
   Paper,
   Collapse,
   Box,
+  Button,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -18,6 +19,7 @@ import { Geoservice } from "../../types";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { visuallyHidden } from "@mui/utils";
+import { getArcgisproWFS } from "../../requests";
 
 type TableProps = {
   docs: Geoservice[];
@@ -101,6 +103,9 @@ const CollapsibleRow = ({
                   </div>
                 </div>
               ))}
+              <Button onClick={() => getArcgisproWFS(row.TITLE)}>
+                DL Test
+              </Button>
             </div>
           </Box>
         </Collapse>
