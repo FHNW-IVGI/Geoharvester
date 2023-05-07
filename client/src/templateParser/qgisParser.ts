@@ -1,8 +1,7 @@
 import { Geoservice } from "../types";
 
-export const parseQgisWFS = async (data: Geoservice, response: any) => {
+export const parseQgisTemplate = async (data: Geoservice, response: any) => {
     let projectXml = await response.text()
-    console.log(projectXml)
     const bboxArray = data.BBOX.split(" ");
     const xmin = bboxArray[0];
     const ymin = bboxArray[1];
@@ -19,9 +18,8 @@ export const parseQgisWFS = async (data: Geoservice, response: any) => {
     projectXml = projectXml.replace("{{YMIN}}", ymin);
     projectXml = projectXml.replace("{{XMIN}}", xmin);
 
-    console.log(projectXml)
     return new Blob([projectXml], {
-        type: "application/json"
+        type: "application/xml"
     });
 
 }

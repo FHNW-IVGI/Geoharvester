@@ -150,14 +150,14 @@ const CollapsibleRow = ({
                   onClick={routeObjectBuilder().arcgis_handler}
                   startIcon={<DownloadIcon />}
                 >
-                  Download for ArcGIS
+                  For ArcGIS Pro
                 </Button>
                 <Button
                   variant="outlined"
                   onClick={routeObjectBuilder().qgis_handler}
                   startIcon={<DownloadIcon />}
                 >
-                  Download for QGIS
+                  For QGIS
                 </Button>
               </div>
             </div>
