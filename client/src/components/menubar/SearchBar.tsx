@@ -170,22 +170,28 @@ export const SearchBar = ({
             </SearchButton>
           </FormControl>
         </div>
-        <div id="filter" style={{}}>
+        <div id="filter">
           <FormControl
             variant="filled"
-            sx={{ m: 1, minWidth: 160, backgroundColor: "white" }}
-            size="small"
+            sx={{
+              minWidth: 140,
+              marginRight: 2,
+              borderBottom: "0px solid white",
+            }}
           >
-            <InputLabel id="input-provider-label">Provider</InputLabel>
+            <InputLabel id="select-provider-label">Provider</InputLabel>
             <Select
               autoComplete="off"
-              defaultValue={""}
               labelId="select-provider-label"
               id="select-provider"
               value={provider}
               onChange={handleChangeProvider}
-              label="Provider"
-              style={{ backgroundColor: "white" }}
+              style={{
+                backgroundColor: "white",
+                textAlign: "center",
+                height: 45,
+                margin: "auto 0",
+              }}
             >
               <MenuItem value="">
                 <em>None</em>
@@ -199,10 +205,7 @@ export const SearchBar = ({
               })}
             </Select>
           </FormControl>
-          <FormControl
-            variant="filled"
-            sx={{ m: 1, minWidth: 160, backgroundColor: "white" }}
-          >
+          <FormControl variant="filled" sx={{ minWidth: 140, marginRight: 2 }}>
             <InputLabel id="input-service-label">Service Type</InputLabel>
             <Select
               autoComplete="off"
@@ -212,7 +215,12 @@ export const SearchBar = ({
               value={servicetype}
               onChange={handleChangeService}
               label="Service Type"
-              style={{ backgroundColor: "white" }}
+              style={{
+                backgroundColor: "white",
+                textAlign: "center",
+                height: 45,
+                margin: "auto 0",
+              }}
             >
               <MenuItem value="">
                 <em>None</em>
