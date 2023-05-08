@@ -13,6 +13,8 @@ import {
   Box,
   Button,
   Typography,
+  Icon,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
@@ -28,6 +30,8 @@ import {
   getQgisWMTS,
 } from "../../requests";
 import DownloadIcon from "@mui/icons-material/Download";
+
+const ju = "/cantonIcons/ju.svg";
 
 type TableProps = {
   docs: Geoservice[];
@@ -107,7 +111,7 @@ const CollapsibleRow = ({
                 flexDirection: "column",
               }}
             >
-              {rowsToInclude.map((prop, index) => (
+              {rowsToInclude.map((prop) => (
                 <div style={{ display: "flex", flexDirection: "row" }}>
                   <div style={{}}>
                     <p
@@ -171,6 +175,12 @@ const CollapsibleRow = ({
 const ResultRow = ({ row, index }: { row: Geoservice; index: number }) => {
   const [open, setOpen] = useState(false);
 
+  const getIcon = () => {
+    const target =
+      row.OWNER === "Bund" ? "ch" : row.OWNER.slice(3, 5).toLocaleLowerCase();
+    return `/cantonIcons/${target}.svg`;
+  };
+
   return (
     <>
       <TableRow key={index} onClick={() => setOpen(!open)}>
@@ -185,7 +195,13 @@ const ResultRow = ({ row, index }: { row: Geoservice; index: number }) => {
         </TableCell>
         <TableCell>{row.TITLE}</TableCell>
         <TableCell>{row.ABSTRACT}</TableCell>
-        <TableCell>{row.OWNER}</TableCell>
+        <TableCell>
+          <Tooltip title={row.OWNER}>
+            <Icon>
+              <img src={getIcon()} height={25} width={25} />
+            </Icon>
+          </Tooltip>
+        </TableCell>
         <TableCell>{row.SERVICETYPE}</TableCell>
       </TableRow>
       <CollapsibleRow row={row} open={open} index={index} />
@@ -242,7 +258,7 @@ export const ResultArea = ({
     };
 
   const sortedData = docs.sort((a: Geoservice, b: Geoservice) =>
-    order == "asc"
+    order === "asc"
       ? a[orderBy as keyof Geoservice] > b[orderBy as keyof Geoservice]
         ? 1
         : -1

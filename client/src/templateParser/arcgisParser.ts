@@ -6,10 +6,11 @@ export const parseArcgisWFS = async (data: Geoservice, response: any) => {
 
     name = name.replace(/ms:/g, ''); // removes all occurrences of "ms:"
     name = name.replace(/\./g, '_'); // replaces all "." with "_"
-    name = name.replace(/\-/g, '_'); // replaces all "-" with "_"
+    name = name.replace(/-/g, '_'); // replaces all "-" with "_"
 
     const urlParts = data.SERVICELINK.split("/")
     const serviceSnippet = `${urlParts[0]}//${urlParts[2]}/`.trim()
+    projectJson = projectJson.replace("{{SERVICELINK}}", serviceSnippet);
     projectJson = projectJson.replace("{{NAME}}", name);
     projectJson = projectJson.replace("{{NAME}}", name);
     projectJson = projectJson.replace("{{TITLE}}", data.TITLE);
