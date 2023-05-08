@@ -17,9 +17,9 @@ enum LANG {
 const LIMIT = 100
 
 enum SERVICETYPE {
-    WFS = "WFS",
-    WMS = "WMS",
-    WMTS = "WMTS",
+    WFS = "wfs",
+    WMS = "wms",
+    WMTS = "wmts",
     NONE = ""
 }
 
