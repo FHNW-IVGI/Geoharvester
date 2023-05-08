@@ -6,7 +6,6 @@ import {
   FormControl,
   InputAdornment,
   Button,
-  Stack,
   Toolbar,
   styled,
 } from "@mui/material";
@@ -110,11 +109,12 @@ export const SearchBar = ({
       style={{
         backgroundColor: "#ffdcc5",
         borderBottom: " 1px solid rgb(189, 189, 189)",
+        padding: 0,
       }}
     >
       <div id="search">
-        <div style={{ width: "15vw" }}></div>
-        <div style={{ width: "70vw" }}>
+        <div style={{ width: 350 }}></div>
+        <div>
           <FormControl
             sx={{
               m: 1,
@@ -122,7 +122,6 @@ export const SearchBar = ({
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",
-
               backgroundColor: "#ffdcc5",
             }}
             variant="standard"
@@ -135,7 +134,7 @@ export const SearchBar = ({
               placeholder="Webservice suchen..."
               value={searchString}
               style={{
-                width: 600,
+                width: 500,
                 height: 40,
                 backgroundColor: "white",
               }}
@@ -171,31 +170,12 @@ export const SearchBar = ({
             </SearchButton>
           </FormControl>
         </div>
-        <div id="filter">
-          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel id="input-service-label">Service Type</InputLabel>
-            <Select
-              autoComplete="off"
-              defaultValue={""}
-              labelId="select-service-label"
-              id="select-service"
-              value={servicetype}
-              onChange={handleChangeService}
-              label="Service Type"
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              {ServiceList.map((servicetype) => {
-                return (
-                  <MenuItem key={servicetype} value={servicetype}>
-                    {servicetype}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <div id="filter" style={{}}>
+          <FormControl
+            variant="filled"
+            sx={{ m: 1, minWidth: 160, backgroundColor: "white" }}
+            size="small"
+          >
             <InputLabel id="input-provider-label">Provider</InputLabel>
             <Select
               autoComplete="off"
@@ -205,6 +185,7 @@ export const SearchBar = ({
               value={provider}
               onChange={handleChangeProvider}
               label="Provider"
+              style={{ backgroundColor: "white" }}
             >
               <MenuItem value="">
                 <em>None</em>
@@ -213,6 +194,33 @@ export const SearchBar = ({
                 return (
                   <MenuItem key={provider} value={provider}>
                     {provider}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+          <FormControl
+            variant="filled"
+            sx={{ m: 1, minWidth: 160, backgroundColor: "white" }}
+          >
+            <InputLabel id="input-service-label">Service Type</InputLabel>
+            <Select
+              autoComplete="off"
+              defaultValue={""}
+              labelId="select-service-label"
+              id="select-service"
+              value={servicetype}
+              onChange={handleChangeService}
+              label="Service Type"
+              style={{ backgroundColor: "white" }}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {ServiceList.map((servicetype) => {
+                return (
+                  <MenuItem key={servicetype} value={servicetype}>
+                    {servicetype}
                   </MenuItem>
                 );
               })}

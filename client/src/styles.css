@@ -7,8 +7,9 @@
 #search {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
 #search-bar {
@@ -17,4 +18,10 @@
 
 #search-button {
     margin-left: 10px;
+}
+
+#filter {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
 }
