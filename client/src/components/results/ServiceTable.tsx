@@ -98,7 +98,7 @@ export const ServiceTable = ({
       {docs.length > 0 && (
         <TableContainer
           component={Paper}
-          sx={{ maxHeight: "89vh", cursor: "pointer" }}
+          sx={{ maxHeight: "95vh", cursor: "pointer" }}
         >
           <Table stickyHeader aria-label="sticky table">
             <TableHead>

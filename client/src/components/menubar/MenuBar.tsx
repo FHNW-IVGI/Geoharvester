@@ -1,21 +1,27 @@
 import { useState, useEffect } from "react";
+
 import {
   IconButton,
   OutlinedInput,
-  InputLabel,
+  Menu,
   FormControl,
   InputAdornment,
   Button,
   Toolbar,
   styled,
   Paper,
+  Divider,
 } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { getData } from "../../requests";
+import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
-import "../../styles.css";
+import MenuIcon from "@mui/icons-material/Menu";
+import DescriptionIcon from "@mui/icons-material/Description";
 import MenuItem from "@mui/material/MenuItem";
+import TerminalIcon from "@mui/icons-material/Terminal";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import "../../styles.css";
+
 const geoharvesterLogo = require("../../img/geoharvester_logo.png");
 
 const ProviderList = [
@@ -60,6 +66,7 @@ export const MenuBar = ({
   const [servicetype, setService] = useState("Alle");
   const [provider, setProvider] = useState("Alle");
   const [render, setRender] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const triggerSearch = async () => {
     const svc = servicetype === "Alle" ? "" : servicetype;
@@ -101,6 +108,14 @@ export const MenuBar = ({
     setProvider(event.target.value);
   };
 
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const SearchButton = styled(Button)(({}) => ({
     color: "#101010",
     backgroundColor: "white",
@@ -121,13 +136,52 @@ export const MenuBar = ({
           backgroundColor: "#ffcdac",
         }}
       >
-        <div style={{ width: "30%" }}>
+        <div style={{ width: "30%", display: "flex", alignItems: "center" }}>
+          <IconButton
+            size="large"
+            edge="end"
+            aria-label="menu"
+            sx={{ mr: 1, color: "#606060" }}
+            onClick={handleClick}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            style={{ marginLeft: -16 }}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                setAnchorEl(null);
+                window.open("https://github.com/FHNW-IVGI/Geoharvester");
+              }}
+            >
+              <DescriptionIcon style={{ marginRight: 14 }} />
+              Documentation
+            </MenuItem>
+            <Divider />
+            <MenuItem
+              onClick={() => {
+                setAnchorEl(null);
+                window.location.replace("/api/docs/");
+              }}
+            >
+              <TerminalIcon style={{ marginRight: 14 }} />
+              API
+            </MenuItem>
+          </Menu>
           <img
             alt="geoharvester-logo"
             src={String(geoharvesterLogo)}
-            width="320"
-            height="45"
-            style={{ marginLeft: 8 }}
+            width="220"
+            height="30"
+            style={{ marginLeft: 6 }}
           />
         </div>
         <div style={{ display: "flex", flex: "1 1 auto" }}>
@@ -149,8 +203,8 @@ export const MenuBar = ({
               placeholder="Webservice suchen..."
               value={searchString}
               style={{
-                width: 500,
-                height: 30,
+                width: 600,
+                height: 32,
                 backgroundColor: "white",
               }}
               onChange={(e) => setSearchString(e.target.value)}

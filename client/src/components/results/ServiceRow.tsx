@@ -49,7 +49,7 @@ export const ServiceRow = ({
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell>{row.TITLE}</TableCell>
+        <TableCell style={{ textAlign: "center" }}>{row.TITLE}</TableCell>
         <TableCell>{row.ABSTRACT}</TableCell>
         <StyledTableCell>
           <Tooltip title={row.OWNER}>
