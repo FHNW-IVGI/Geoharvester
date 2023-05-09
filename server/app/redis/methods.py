@@ -1,7 +1,6 @@
 
 import uuid
 import pandas as pd
-import re
 from time import time
 from typing import Union
 
