@@ -189,10 +189,10 @@ def results_ranking(redis_output, redis_et, query_words_list):
     # initialize ranking score
     query_results_df['score'] = 0
     # Calculate the scores
-    query_results_df = contains_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_words_list, 80)
-    query_results_df = contains_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_words_list, 25)
-    query_results_df = exact_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_words_list, 100)
-    query_results_df = exact_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_words_list, 50)
+    query_results_df = contains_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_words_list, 8)
+    query_results_df = contains_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_words_list, 2)
+    query_results_df = exact_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_words_list, 10)
+    query_results_df = exact_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_words_list, 5)
     query_results_df.sort_values(by=['score', 'TITLE'], axis=0, inplace=True, ascending=False)
     t1 = time() # end time
     # output the elapsed times for testing purposes
