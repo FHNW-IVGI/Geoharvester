@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
-  IconButton,
   TableContainer,
   Table,
   TableBody,
@@ -9,15 +8,18 @@ import {
   TableCell,
   TableSortLabel,
   Paper,
-  Collapse,
   Box,
   Typography,
+  Zoom,
+  Fab,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { visuallyHidden } from "@mui/utils";
+import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
+
+import { ServiceRow } from "./ServiceRow";
 
 type TableProps = {
   docs: Geoservice[];
@@ -28,113 +30,7 @@ type TableProps = {
 
 type Order = "asc" | "desc";
 
-const CollapsibleRow = ({
-  row,
-  open,
-  index,
-}: {
-  row: Geoservice;
-  open: boolean;
-  index: number;
-}) => {
-  const rowsToInclude = [
-    "NAME",
-    "CONTACT",
-    "TREE",
-    "GROUP",
-    "KEYWORDS",
-    "METADATA",
-    "SERVICELINK",
-    "MAPGEO",
-    "LEGEND",
-  ];
-
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    "&": {
-      backgroundColor: "#FCFCFC",
-    },
-  }));
-
-  return (
-    <StyledTableRow key={index}>
-      <TableCell
-        style={{
-          paddingBottom: 0,
-          paddingTop: 0,
-          boxShadow: "inset 0px 0px 10px 0px rgba(0, 0, 0, 0.15)",
-        }}
-        colSpan={5}
-      >
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <Box sx={{ margin: 1 }}>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {rowsToInclude.map((prop, index) => (
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div style={{}}>
-                    <p
-                      style={{
-                        width: 140,
-                        color: "#909090",
-                        margin: "0 50px 0 78px",
-                      }}
-                    >
-                      {`${
-                        prop.charAt(0).toUpperCase() +
-                        prop.slice(1).toLocaleLowerCase()
-                      }:`}
-                    </p>
-                  </div>
-
-                  <div
-                    style={{
-                      color: "#909090",
-                      display: "flex",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    <p style={{ margin: 2 }}>{row[prop as keyof Geoservice]}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Box>
-        </Collapse>
-      </TableCell>
-    </StyledTableRow>
-  );
-};
-
-const ResultRow = ({ row, index }: { row: Geoservice; index: number }) => {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <TableRow key={index} onClick={() => setOpen(!open)}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell>{row.TITLE}</TableCell>
-        <TableCell>{row.ABSTRACT}</TableCell>
-        <TableCell>{row.OWNER}</TableCell>
-        <TableCell>{row.SERVICETYPE}</TableCell>
-      </TableRow>
-      <CollapsibleRow row={row} open={open} index={index} />
-    </>
-  );
-};
-
-export const ResultArea = ({
+export const ServiceTable = ({
   docs,
   fields,
   total,
@@ -142,11 +38,16 @@ export const ResultArea = ({
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
+  const [tableRef, setTableReference] = useState<any>();
 
-  const StyledTableCell = styled(TableCell)(({}) => ({
+  const scrollToTop = () => tableRef && tableRef.scrollIntoView();
+
+  const StyledTableCell = styled(TableCell)(() => ({
     "&": {
-      backgroundColor: "#FFFFF",
-      borderBottom: "1px solid #909090",
+      backgroundColor: "#ffa05f",
+      padding: 8,
+      textAlign: "center",
+      color: "white",
     },
   }));
 
@@ -183,7 +84,7 @@ export const ResultArea = ({
     };
 
   const sortedData = docs.sort((a: Geoservice, b: Geoservice) =>
-    order == "asc"
+    order === "asc"
       ? a[orderBy as keyof Geoservice] > b[orderBy as keyof Geoservice]
         ? 1
         : -1
@@ -200,17 +101,31 @@ export const ResultArea = ({
         ) || [];
 
   return (
-    <div
-      style={{
-        marginTop: 1,
-      }}
-    >
+    <>
+      <Box
+        role="presentation"
+        sx={{
+          position: "fixed",
+          bottom: 32,
+          right: 32,
+          zIndex: 10000,
+        }}
+      >
+        <Fab
+          onClick={scrollToTop}
+          color="primary"
+          size="small"
+          aria-label="Scroll back to top"
+        >
+          <KeyboardArrowUp fontSize="medium" style={{ color: "white" }} />
+        </Fab>
+      </Box>
       {docs.length > 0 && (
         <TableContainer
           component={Paper}
-          sx={{ maxHeight: "89vh", cursor: "pointer" }}
+          sx={{ maxHeight: "95vh", cursor: "pointer" }}
         >
-          <Table stickyHeader aria-label="sticky table">
+          <Table stickyHeader aria-label="sticky table" ref={setTableReference}>
             <TableHead>
               <TableRow>
                 <StyledTableCell>Σ={total}</StyledTableCell>
@@ -229,6 +144,7 @@ export const ResultArea = ({
                         sortDirection={orderBy === col_header ? order : false}
                       >
                         <TableSortLabel
+                          style={{ color: "white", textAlign: "center" }}
                           active={true}
                           direction={orderBy === col_header ? order : "desc"}
                           onClick={createSortHandler(col_header)}
@@ -250,12 +166,12 @@ export const ResultArea = ({
             </TableHead>
             <TableBody>
               {sortedData.map((row, index) => (
-                <ResultRow row={row} index={index} />
+                <ServiceRow row={row} index={index} />
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       )}
-    </div>
+    </>
   );
 };
