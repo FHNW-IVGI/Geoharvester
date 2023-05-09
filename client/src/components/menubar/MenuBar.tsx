@@ -150,7 +150,7 @@ export const MenuBar = ({
               value={searchString}
               style={{
                 width: 500,
-                height: 40,
+                height: 30,
                 backgroundColor: "white",
               }}
               onChange={(e) => setSearchString(e.target.value)}
@@ -203,7 +203,7 @@ export const MenuBar = ({
               style={{
                 backgroundColor: "white",
                 textAlign: "center",
-                height: 45,
+                height: 30,
                 margin: "auto 6",
                 color: "#ffa05f",
               }}
@@ -232,7 +232,7 @@ export const MenuBar = ({
               style={{
                 backgroundColor: "white",
                 textAlign: "center",
-                height: 45,
+                height: 30,
                 margin: "auto 6",
                 color: "#ffa05f",
               }}

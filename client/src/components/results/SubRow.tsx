@@ -57,9 +57,9 @@ export const SubRow = ({
         };
   };
 
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  const StyledTableRow = styled(TableRow)(({}) => ({
     "&": {
-      backgroundColor: "#FCFCFC",
+      backgroundColor: "#fdfdfd",
     },
   }));
 
@@ -69,7 +69,7 @@ export const SubRow = ({
         style={{
           paddingBottom: 0,
           paddingTop: 0,
-          boxShadow: "inset 0px 0px 10px 0px rgba(0, 0, 0, 0.15)",
+          boxShadow: "inset 0px 0px 6px 0px rgba(0, 0, 0, 0.15)",
         }}
         colSpan={5}
       >
@@ -112,7 +112,7 @@ export const SubRow = ({
               <div
                 style={{
                   marginLeft: 270,
-                  marginTop: 16,
+                  marginTop: 12,
                   marginBottom: 10,
                   display: "flex",
                   flexDirection: "row",

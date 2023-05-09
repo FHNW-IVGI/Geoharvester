@@ -40,6 +40,7 @@ export const ServiceTable = ({
       backgroundColor: "#ffa05f",
       padding: 8,
       textAlign: "center",
+      color: "white",
     },
   }));
 
