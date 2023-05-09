@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { ResultArea } from "./components/results/ResultArea";
+import { ServiceTable } from "./components/results/ServiceTable";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuBar } from "./components/menubar/MenuBar";
 import { Geoservice } from "./types";
 import "./App.css";
-import { Stack, Divider } from "@mui/material";
 
 const theme = createTheme({
   palette: {
@@ -42,12 +41,12 @@ function App() {
             setPlaceholderText={setPlaceholderText}
           />
         </header>
-        <ResultArea
+        <ServiceTable
           docs={docs || []}
           fields={fields}
           total={total}
           placeholderText={placeholderText}
-        ></ResultArea>
+        ></ServiceTable>
       </div>
     </ThemeProvider>
   );

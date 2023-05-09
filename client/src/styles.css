@@ -10,6 +10,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    height: 50px;
 }
 
 #search-bar {
@@ -24,4 +25,11 @@
     display: flex;
     flex-direction: row;
     justify-content: end;
+    width: 30%;
+}
+
+#menubar {
+    background-color: #ff822c;
+    border-bottom: 1px solid rgb(189, 189, 189);
+    padding: 0;
 }
