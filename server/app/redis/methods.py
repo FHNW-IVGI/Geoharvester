@@ -1,6 +1,7 @@
 
 import uuid
 import pandas as pd
+import re
 from time import time
 from typing import Union
 
@@ -127,7 +128,7 @@ def json_to_pandas(redis_output):
     Output
     """
     query_results = pd.DataFrame()
-    for i, output in enumerate(redis_output):
+    for output in redis_output:
         # Cleaning the string
         doc = str(output).replace("'", '"')
         doc = doc.replace("None", '"None"')
@@ -154,7 +155,25 @@ def pandas_to_dict(ranked_results_df, timing):
     ranked_results["duration"] = timing # it will be calculated from the ranking function
     return ranked_results
 
-def results_ranking(redis_output, redis_et):
+def contains_match_scoring(df, cols, word, score):
+    """
+    tbd
+    """
+    df_red = df[cols]
+    mask = df_red.apply(lambda x: x.str.contains(word, regex=False, case=False)).any(axis=1)
+    df.loc[mask, 'score'] += score
+    return df
+
+def exact_match_scoring(df, cols, word, score):
+    """
+    tbd
+    """
+    df_red = df[cols]
+    mask = df_red.apply(lambda x: x.str.match(word, case=False)).any(axis=1)
+    df.loc[mask, 'score'] += score
+    return df
+
+def results_ranking(redis_output, redis_et, query_words_list):
     """
     Ranks the results according to different methods.
     # TODO: This function will be integrated into a class with different ranking methods
@@ -164,18 +183,20 @@ def results_ranking(redis_output, redis_et):
 
     Output
     """
+    t0 = time() # Start time
+    query_words_list = query_words_list[0] # BUG: expand the function for multiple words search
     query_results_df = json_to_pandas(redis_output)
-    t0 = time()
     print('ranking...')
-    t1 = time()
+    # initialize ranking score
+    query_results_df['score'] = 0
+    # Calculate the scores
+    query_results_df = contains_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_words_list, 80)
+    query_results_df = contains_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_words_list, 25)
+    query_results_df = exact_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_words_list, 100)
+    query_results_df = exact_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_words_list, 50)
+    query_results_df.sort_values(by=['score', 'TITLE'], axis=0, inplace=True, ascending=False)
+    t1 = time() # end time
+    # output the elapsed times for testing purposes
     ranked_results = pandas_to_dict(query_results_df, round(redis_et + (t1-t0), 4))
-    print(f'Redis query takes {round(redis_et, 4)} seconds while pandas ranking takes {round(t1-t0, 4)} seconds')
+    print(f'Redis query executed in {round(redis_et, 4)} seconds while pandas ranking executed in {round(t1-t0, 4)} seconds')
     return ranked_results
-
-def ranks_results_1(df):
-    index = df.index()
-    #df['SCORE'] = df.apply(lambda row: , axis=1)
-    pass
-
-def exact_match_scoring():
-    pass
