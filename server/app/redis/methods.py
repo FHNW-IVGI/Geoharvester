@@ -132,6 +132,7 @@ def json_to_pandas(redis_output):
         doc = str(output).replace("'", '"')
         doc = doc.replace("None", '"None"')
         # Append results to a pandas df
+        print(doc)
         df = pd.read_json(doc.replace("Document ", ""), orient='index').T
         query_results = pd.concat([query_results, df], axis=0)
         # print(len(redis_output)-i)
@@ -197,5 +198,5 @@ def results_ranking(redis_output, redis_et, query_words_list):
     t1 = time() # end time
     # output the elapsed times for testing purposes
     ranked_results = pandas_to_dict(query_results_df, round(redis_et + (t1-t0), 4))
-    print(f'Redis query executed in {round(redis_et, 4)} seconds while pandas ranking executed in {round(t1-t0, 4)} seconds')
+    print(f'Redis query executed in {round(redis_et, 4)} seconds and pandas ranking executed in {round(t1-t0, 4)} seconds')
     return ranked_results
