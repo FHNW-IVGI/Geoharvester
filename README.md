@@ -60,4 +60,4 @@ b) For a "single source of truth" approach, install the "dev containers" extensi
 
 #### SwaggerUI
 
-Fast API comes with Swagger UI preinstalled. If you have the backend running (see steps above), Swagger UI is available on http://localhost:8000/docs. See the wiki pages of this repo for the documentation of this project.
+Fast API comes with Swagger UI preinstalled. If you have the backend running (see steps above), Swagger UI is available on http://localhost:8000/api/docs. See the wiki pages of this repo for the documentation of this project.
