@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   TableContainer,
   Table,
@@ -10,10 +10,14 @@ import {
   Paper,
   Box,
   Typography,
+  Zoom,
+  Fab,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
 import { visuallyHidden } from "@mui/utils";
+import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
 
 import { ServiceRow } from "./ServiceRow";
 
@@ -34,6 +38,9 @@ export const ServiceTable = ({
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
+  const [tableRef, setTableReference] = useState<any>();
+
+  const scrollToTop = () => tableRef && tableRef.scrollIntoView();
 
   const StyledTableCell = styled(TableCell)(() => ({
     "&": {
@@ -95,12 +102,30 @@ export const ServiceTable = ({
 
   return (
     <>
+      <Box
+        role="presentation"
+        sx={{
+          position: "fixed",
+          bottom: 32,
+          right: 32,
+          zIndex: 10000,
+        }}
+      >
+        <Fab
+          onClick={scrollToTop}
+          color="primary"
+          size="small"
+          aria-label="Scroll back to top"
+        >
+          <KeyboardArrowUp fontSize="medium" style={{ color: "white" }} />
+        </Fab>
+      </Box>
       {docs.length > 0 && (
         <TableContainer
           component={Paper}
           sx={{ maxHeight: "95vh", cursor: "pointer" }}
         >
-          <Table stickyHeader aria-label="sticky table">
+          <Table stickyHeader aria-label="sticky table" ref={setTableReference}>
             <TableHead>
               <TableRow>
                 <StyledTableCell>Σ={total}</StyledTableCell>

@@ -36,6 +36,11 @@ export const ServiceRow = ({
     },
   }));
 
+  const abstract =
+    row && row.ABSTRACT && row.ABSTRACT.length > 450
+      ? `${row.ABSTRACT.slice(0, 450)}...`
+      : row.ABSTRACT;
+
   return (
     <>
       <TableRow key={index} onClick={() => setOpen(!open)}>
@@ -50,7 +55,7 @@ export const ServiceRow = ({
           </IconButton>
         </TableCell>
         <TableCell style={{ textAlign: "center" }}>{row.TITLE}</TableCell>
-        <TableCell>{row.ABSTRACT}</TableCell>
+        <TableCell>{abstract}</TableCell>
         <StyledTableCell>
           <Tooltip title={row.OWNER}>
             <Icon>

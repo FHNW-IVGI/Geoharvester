@@ -24,6 +24,7 @@ export const SubRow = ({
   const rowsToInclude = [
     "NAME",
     "CONTACT",
+    "ABSTRACT",
     "TREE",
     "GROUP",
     "KEYWORDS",
