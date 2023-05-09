@@ -38,7 +38,8 @@ export const ServiceTable = ({
   const StyledTableCell = styled(TableCell)(() => ({
     "&": {
       backgroundColor: "#ffa05f",
-      padding: 6,
+      padding: 8,
+      textAlign: "center",
     },
   }));
 
@@ -117,7 +118,7 @@ export const ServiceTable = ({
                         sortDirection={orderBy === col_header ? order : false}
                       >
                         <TableSortLabel
-                          style={{ color: "#ffa05f" }}
+                          style={{ color: "white", textAlign: "center" }}
                           active={true}
                           direction={orderBy === col_header ? order : "desc"}
                           onClick={createSortHandler(col_header)}

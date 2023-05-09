@@ -19,12 +19,16 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 const geoharvesterLogo = require("../../img/geoharvester_logo.png");
 
 const ProviderList = [
+  "Alle",
+  "Bund",
+  "Geodienste",
+  "KT_AG",
   "KT_AI",
   "KT_AR",
-  "KT_AG",
+  "KT_BE",
   "KT_BL",
   "KT_BS",
-  "KT_BE",
+  "KT_FR",
   "KT_GE",
   "KT_GL",
   "KT_GR",
@@ -35,16 +39,13 @@ const ProviderList = [
   "KT_SZ",
   "KT_TG",
   "KT_TI",
+  "KT_VD",
   "KT_UR",
   "KT_ZG",
   "KT_ZH",
-  "KT_VD",
-  "KT_FR",
   "FL_LI",
-  "Geodienste",
-  "Bund",
 ];
-const ServiceList = ["wfs", "wms", "wmts"];
+const ServiceList = ["Alle", "wfs", "wms", "wmts"];
 
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
@@ -56,12 +57,15 @@ export const MenuBar = ({
   setPlaceholderText,
 }: SearchBarProps) => {
   const [searchString, setSearchString] = useState("");
-  const [servicetype, setService] = useState("");
-  const [provider, setProvider] = useState("");
+  const [servicetype, setService] = useState("Alle");
+  const [provider, setProvider] = useState("Alle");
   const [render, setRender] = useState(0);
 
   const triggerSearch = async () => {
-    await getData(searchString, servicetype, provider)
+    const svc = servicetype === "Alle" ? "" : servicetype;
+    const prov = provider === "Alle" ? "" : provider;
+
+    await getData(searchString, svc, prov)
       .then((res) => {
         const { data } = res;
         setSearchResult(data);
@@ -184,14 +188,12 @@ export const MenuBar = ({
         </div>
         <div id="filter">
           <FormControl
-            variant="filled"
+            variant="standard"
             sx={{
               minWidth: 120,
               marginRight: 2,
-              borderBottom: "0px solid white",
             }}
           >
-            <InputLabel id="select-provider-label">Provider</InputLabel>
             <Select
               autoComplete="off"
               labelId="select-provider-label"
@@ -202,13 +204,10 @@ export const MenuBar = ({
                 backgroundColor: "white",
                 textAlign: "center",
                 height: 45,
-                margin: "auto 0",
+                margin: "auto 6",
                 color: "#ffa05f",
               }}
             >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
               {ProviderList.map((provider) => {
                 return (
                   <MenuItem key={provider} value={provider}>
@@ -218,8 +217,10 @@ export const MenuBar = ({
               })}
             </Select>
           </FormControl>
-          <FormControl variant="filled" sx={{ minWidth: 120, marginRight: 2 }}>
-            <InputLabel id="input-service-label">Service</InputLabel>
+          <FormControl
+            variant="standard"
+            sx={{ minWidth: 120, marginRight: 2 }}
+          >
             <Select
               autoComplete="off"
               defaultValue={""}
@@ -232,13 +233,10 @@ export const MenuBar = ({
                 backgroundColor: "white",
                 textAlign: "center",
                 height: 45,
-                margin: "auto 0",
+                margin: "auto 6",
                 color: "#ffa05f",
               }}
             >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
               {ServiceList.map((servicetype) => {
                 return (
                   <MenuItem key={servicetype} value={servicetype}>

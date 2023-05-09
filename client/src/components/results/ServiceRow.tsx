@@ -1,10 +1,17 @@
 import { useState } from "react";
-import { IconButton, TableRow, TableCell, Icon, Tooltip } from "@mui/material";
+import {
+  IconButton,
+  TableRow,
+  TableCell,
+  Icon,
+  Tooltip,
+  styled,
+} from "@mui/material";
 import { Geoservice } from "../../types";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-
 import { SubRow } from "./SubRow";
+import "../../styles.css";
 
 export const ServiceRow = ({
   row,
@@ -21,6 +28,14 @@ export const ServiceRow = ({
     return `/cantonIcons/${target}.svg`;
   };
 
+  const StyledTableCell = styled(TableCell)(({}) => ({
+    "&": {
+      width: 120,
+      padding: 8,
+      textAlign: "center",
+    },
+  }));
+
   return (
     <>
       <TableRow key={index} onClick={() => setOpen(!open)}>
@@ -29,20 +44,21 @@ export const ServiceRow = ({
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
+            style={{ color: "#ffa05f" }}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
         <TableCell>{row.TITLE}</TableCell>
         <TableCell>{row.ABSTRACT}</TableCell>
-        <TableCell>
+        <StyledTableCell>
           <Tooltip title={row.OWNER}>
             <Icon>
               <img src={getIcon()} height={25} width={25} />
             </Icon>
           </Tooltip>
-        </TableCell>
-        <TableCell>{row.SERVICETYPE}</TableCell>
+        </StyledTableCell>
+        <StyledTableCell>{row.SERVICETYPE}</StyledTableCell>
       </TableRow>
       <SubRow row={row} open={open} index={index} />
     </>

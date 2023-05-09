@@ -26,6 +26,7 @@
     flex-direction: row;
     justify-content: end;
     width: 30%;
+    padding-right: 12px;
 }
 
 #menubar {
