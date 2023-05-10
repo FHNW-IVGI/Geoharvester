@@ -1,5 +1,7 @@
 
 import uuid
+import pandas as pd
+from time import time
 from typing import Union
 
 import redis
@@ -80,7 +82,7 @@ def transform_wordlist_to_query(wordlist: list[str]):
     """
     query_string = ""
     for index, word in enumerate(wordlist):
-        query_string += "{} | ".format(word) if index < (len(wordlist)-1) else "{}".format(word)
+        query_string += "{} | ".format(word+'*') if index < (len(wordlist)-1) else "{}".format(word+'*') # the * allows the contain opt
     return query_string
 
 
@@ -91,7 +93,7 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
 
     if (bool(query_string)):
         queryable_parameters.append(
-            '@TITLE|ABSTRACT:({})'.format(query_string)
+            '@TITLE|ABSTRACT|KEYWORDS|KEYWORDS_NLP|SUMMARY:({})'.format(query_string)
         )
 
     if (bool(service)):
@@ -111,3 +113,150 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
         return queryable_parameters[0]
     else:
        return "&".join(queryable_parameters)
+
+######################################################################################################################################
+
+def json_to_pandas(redis_output):
+    """
+    Transforms the json-like output from redis into a pandas df.
+    # TODO: This function will be integrated into a class with different ranking methods
+
+    Parameters
+    ----------
+    redis_output : list[str]
+        Output from the redis search
+    Returns
+    -------
+    _ : pandas.DataFrame
+    """
+    query_results = pd.DataFrame()
+    for output in redis_output:
+        # Cleaning the string
+        doc = str(output).replace("'", '"')
+        doc = doc.replace("None", '"None"')
+        # Append results to a pandas df
+        df = pd.read_json(doc.replace("Document ", ""), orient='index').T
+        query_results = pd.concat([query_results, df], axis=0)
+        # print(len(redis_output)-i)
+    return query_results
+
+def pandas_to_dict(ranked_results_df, timing):
+    """
+    Transform the pandas dataframe into a json-like 
+    output to be passed to the front-end.
+    # TODO: This function will be integrated into a class with different ranking methods
+    Parameters
+    ----------
+    ranked_results_df : pandas.DataFrame
+        ranked results in a data frame
+    timing : float
+        elapsed time fo the ranking function
+
+    Returns
+    -------
+    _ : dict
+        json-like output for the front-end
+    """
+    ranked_results = {
+        "total": 0,
+        "docs": None,
+        "duration": 0, }
+    
+    ranked_results_dict = ranked_results_df.to_dict(orient='records') # after ranking we will have an index -> orient='index' https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
+    #parsed_results = js.loads(ranked_results_js)
+    #js.dumps(parsed_results, indent=4)
+    ranked_results["docs"] = ranked_results_dict
+    ranked_results["total"] = len(ranked_results_df)
+    ranked_results["duration"] = timing # it will be calculated from the ranking function
+    return ranked_results
+
+def contains_match_scoring(df, cols, word, score):
+    """
+    Calculate the ranking score if a word is contained
+    in a pandas data frame
+    # TODO: This function will be integrated into a class with different ranking methods
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Data frame in which we want to search
+    cols : list[str]
+        columns of the df in which we want to search
+    word : str
+        single query word
+    score : int
+        score we add to the row if word contained
+
+    Returns
+    -------
+    _ : pd.DataFrame
+        dataframe with additional score column
+    """
+    df_red = df[cols]
+    mask = df_red.apply(lambda x: x.str.contains(word, regex=False, case=False)).any(axis=1)
+    df.loc[mask, 'score'] += score
+    return df
+
+def exact_match_scoring(df, cols, word, score):
+    """
+    Calculate the ranking score for an exact match of
+    a word in a pandas data frame
+    # TODO: This function will be integrated into a class with different ranking methods
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Data frame in which we want to search
+    cols : list[str]
+        columns of the df in which we want to search
+    word : str
+        single query word
+    score : int
+        score we add to the row if word exact matched
+
+    Returns
+    -------
+    _ : pd.DataFrame
+        dataframe with additional score column
+    """
+    df_red = df[cols]
+    mask = df_red.apply(lambda x: x.str.match(word, case=False)).any(axis=1)
+    df.loc[mask, 'score'] += score
+    return df
+
+def results_ranking(redis_output, redis_et, query_words_list):
+    """
+    Ranks the results according to the assigned scores
+    # TODO: This function will be integrated into a class with different ranking methods
+    Parameters
+    ----------
+    redis_output : pd.DataFrame
+        output from redis search
+    redis_et : float
+        elapsed time for the redis search
+    query_words_list : list[str]
+        query words splitted into a list
+
+    Returns
+    -------
+    _ : pd.DataFrame
+        ranked data frame (descending)
+    """
+    t0 = time() # Start time
+    query_results_df = json_to_pandas(redis_output)
+    print('ranking...')
+    # initialize ranking score and the length counter
+    query_results_df['score'] = 0
+    query_results_df['inv_title_length'] = query_results_df['TITLE'].apply(lambda x: 200 - len(x))
+    # Calculate the scores
+    for query_word in query_words_list:
+        print(query_word)
+        query_results_df = contains_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_word, 8)
+        query_results_df = contains_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_word, 2)
+        query_results_df = exact_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_word, 10)
+        query_results_df = exact_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_word, 5)
+
+    query_results_df.sort_values(by=['score', 'inv_title_length', 'TITLE'], axis=0, inplace=True, ascending=False)
+    t1 = time() # end time
+    # output the elapsed times for testing purposes
+    ranked_results = pandas_to_dict(query_results_df, round(redis_et + (t1-t0), 4))
+    print(f'Redis query executed in {round(redis_et, 4)} seconds and pandas ranking executed in {round(t1-t0, 4)} seconds')
+    return ranked_results

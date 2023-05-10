@@ -32,7 +32,7 @@
 
 1. cd into server folder
 2. Run `docker compose up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
-3. Check `localhost:8000`in your browser to verify that backend is running
+3. Check `localhost:8000/api`in your browser to verify that backend is running
 
 #### Troubleshooting:
 

@@ -3,30 +3,35 @@ Utilities for the elaboration of texts with NLP and TF-IDF
 """
 
 from string import punctuation
-import openai
+import openai #0.27.0
 import os
 import itertools
-import spacy
-import numpy as np
-import pandas as pd
+import spacy #3.3.1 and spacy-legacy 3.0.12 + pretrained models
+import numpy as np #1.23.5
+import pandas as pd #1.5.2
 import matplotlib.pyplot as plt
-import translators as ts
-from langdetect import detect
-from nltk.corpus import stopwords
+import translators as ts #5.5.6
+from langdetect import detect #1.0.9
+from nltk.corpus import stopwords #nltk 3.7
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem import SnowballStemmer, PorterStemmer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from rake_nltk import Rake
-from scipy import sparse
-from gensim import corpora
+from sklearn.feature_extraction.text import TfidfVectorizer # scikit-learn 1.2.0
+from rake_nltk import Rake # 1.0.6
+from scipy import sparse # 1.9.3
+from gensim import corpora # gensim 4.3.0
 from gensim.models import LsiModel
 from gensim.models.ldamodel import LdaModel
 from gensim.models.coherencemodel import CoherenceModel
-from summarizer.sbert import SBertSummarizer
-import pyLDAvis.gensim_models as genvis
+from summarizer.sbert import SBertSummarizer # bert-extractive-summarizer 0.10.1
+from tqdm import tqdm
+import pyLDAvis.gensim_models as genvis # 3.4.0
 
 
-
+def progress(token):
+    """
+    Allows to use the progress bar.
+    """
+    return token
 
 def detect_language(phrase):
     """
@@ -584,12 +589,10 @@ class NLP_spacy():
                 prompt='Riassumi questo testo'
             else:
                 prompt='Summarize this text'
-            print('Summarizing with openai. There is a limit of token for the free version!')
             openai.api_key = os.getenv('OPENAI_KEY') # WARNING: limits of tokens for free version!
             summarized_text = openai.Completion.create(model='text-davinci-003', prompt=f"{prompt}: {text}",
                                                        temperature=.2, max_tokens=1000,)["choices"][0]['text']
         else:
-            print('Summarizing text with Bert')
             if lang == 'english':
                 model = SBertSummarizer('all-MiniLM-L12-v2')
             else:
@@ -614,8 +617,13 @@ class NLP_spacy():
         _ : list
             lists of summarized texts
         """
+        if use_GPT:
+            print('Summarizing with openai. There is a limit of token for the free version!')
+        else:
+            print('Summarizing text with Bert')
         self.index = texts.index.values
-        summaries = [self.summarize(text, use_GPT=use_GPT) for text in texts[column].values.tolist()]
+        #summaries = [self.summarize(progress(i, text, len(texts)), use_GPT=use_GPT) for i, text in enumerate(texts[column].values.tolist())]
+        summaries = [self.summarize(progress(text)) for text in tqdm(texts[column].values.tolist())]
         return summaries
     
     # INSPIRE / eCH classification with pytorch model...

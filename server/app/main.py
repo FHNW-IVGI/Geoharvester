@@ -7,10 +7,11 @@ import pandas as pd
 import redis
 from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
+                                    import_pkl_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters,
-                               transform_wordlist_to_query)
+                               transform_wordlist_to_query, results_ranking)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                geoservices_schema)
 from fastapi import FastAPI
@@ -58,8 +59,10 @@ async def startup_event():
     global dataframe
 
     # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
-    url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
-    dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
+    # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
+    # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
+    url_geoservices_CH_pkl = "app/tmp/rawdata_scraper.pkl" # preprocessed data with NLP!
+    dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
     
     global datajson
     datajson = json.loads(dataframe.to_json(orient='records'))
@@ -143,6 +146,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         .return_field('TREE')
         .return_field('GROUP')
         .return_field('KEYWORDS')
+        .return_field('KEYWORDS_NLP')
         .return_field('LEGEND')
         .return_field('CONTACT')
         .return_field('SERVICELINK')
@@ -151,6 +155,8 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         .return_field('CENTER_LAT')
         .return_field('CENTER_LON')
         .return_field('BBOX')
+        .return_field('SUMMARY')
+        .return_field('LANG_3')
         )
 
     search_result["docs"] = redis_data.docs
@@ -158,4 +164,11 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
     search_result["duration"] = redis_data.duration
     search_result["total"] = len(redis_data.docs)
 
+    ############################################################################################################################
+    # Testing ranking function
+    if (query != None and len(redis_data.docs) > 0):
+        search_result = results_ranking(redis_data.docs, redis_data.duration, word_list)
+    else:
+        pass
+    ############################################################################################################################ 
     return {"data": search_result}
