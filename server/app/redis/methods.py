@@ -134,8 +134,10 @@ def json_to_pandas(redis_output):
         # Cleaning the string
         doc = str(output).replace("'", '"')
         doc = doc.replace("None", '"None"')
+        doc = doc.replace('xa0', "")
+        doc = doc.replace("\\", "")
         # Append results to a pandas df
-        df = pd.read_json(doc.replace("Document ", ""), orient='index').T
+        df = pd.read_json(doc.replace("Document ", ""), orient='index', encoding='utf-16').T
         query_results = pd.concat([query_results, df], axis=0)
         # print(len(redis_output)-i)
     return query_results
@@ -255,6 +257,8 @@ def results_ranking(redis_output, redis_et, query_words_list):
         query_results_df = exact_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_word, 5)
 
     query_results_df.sort_values(by=['score', 'inv_title_length', 'TITLE'], axis=0, inplace=True, ascending=False)
+    # replace nans with empty str
+    query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
     t1 = time() # end time
     # output the elapsed times for testing purposes
     ranked_results = pandas_to_dict(query_results_df, round(redis_et + (t1-t0), 4))

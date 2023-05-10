@@ -165,7 +165,9 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
     search_result["total"] = len(redis_data.docs)
 
     ############################################################################################################################
-    # Testing ranking function
+    # Testing ranking function from the ranking functions in methods.py
+    # If you want the results from redis you can just set this section as comment
+
     if (query != None and len(redis_data.docs) > 0):
         search_result = results_ranking(redis_data.docs, redis_data.duration, word_list)
     else:
