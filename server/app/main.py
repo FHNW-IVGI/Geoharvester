@@ -6,8 +6,8 @@ from typing import Union
 import pandas as pd
 import redis
 from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
-from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
+                                    import_pkl_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters,
