@@ -72,7 +72,7 @@ export const SubRow = ({
           paddingTop: 0,
           boxShadow: "inset 0px 0px 6px 0px rgba(0, 0, 0, 0.15)",
         }}
-        colSpan={5}
+        colSpan={6}
       >
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box sx={{ margin: 1 }}>

@@ -6,7 +6,6 @@ import {
   FormControl,
   InputAdornment,
   Button,
-  Stack,
   Toolbar,
   styled,
 } from "@mui/material";

@@ -41,6 +41,9 @@ export const ServiceRow = ({
       ? `${row.ABSTRACT.slice(0, 450)}...`
       : row.ABSTRACT;
 
+  const metaquality = 60;
+  const qualitynum = `chart x-${metaquality}`;
+
   return (
     <>
       <TableRow key={index} onClick={() => setOpen(!open)}>
@@ -64,6 +67,13 @@ export const ServiceRow = ({
           </Tooltip>
         </StyledTableCell>
         <StyledTableCell>{row.SERVICETYPE}</StyledTableCell>
+        <StyledTableCell>
+          <Tooltip title={metaquality}>
+            <div id="metaqual" className={qualitynum}>
+                <p className="percentage">{metaquality}</p>
+            </div>
+          </Tooltip>
+        </StyledTableCell>
       </TableRow>
       <SubRow row={row} open={open} index={index} />
     </>

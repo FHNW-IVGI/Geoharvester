@@ -4,7 +4,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuBar } from "./components/menubar/MenuBar";
 import { Geoservice } from "./types";
 import "./App.css";
-import { Stack, Divider } from "@mui/material";
 
 const theme = createTheme({
   palette: {

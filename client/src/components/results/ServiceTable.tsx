@@ -162,6 +162,7 @@ export const ServiceTable = ({
                     </>
                   );
                 })}
+                <StyledTableCell>Metadata Quality</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
