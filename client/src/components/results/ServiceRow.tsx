@@ -41,8 +41,19 @@ export const ServiceRow = ({
       ? `${row.ABSTRACT.slice(0, 450)}...`
       : row.ABSTRACT;
 
-  const metaquality = 60;
+  function randomNumber(start: number, end: number) {
+        return Math.floor(Math.random() * end) + start;
+      };
+
+  function round5(x: number)
+      {
+          return Math.ceil(x/5)*5;
+      }
+
+  const randomint = randomNumber(0, 100);
+  const metaquality = round5(randomint);
   const qualitynum = `chart x-${metaquality}`;
+  // const qualitynum = `chart x-${row.METAQUALITY}`;
 
   return (
     <>
@@ -52,7 +63,7 @@ export const ServiceRow = ({
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
-            style={{ color: "#ffa05f" }}
+            style={{ color: "#007CC3" }}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -70,6 +81,7 @@ export const ServiceRow = ({
         <StyledTableCell>
           <Tooltip title={metaquality}>
             <div id="metaqual" className={qualitynum}>
+                {/* <p className="percentage">{row.METAQUALITY}</p> */}
                 <p className="percentage">{metaquality}</p>
             </div>
           </Tooltip>

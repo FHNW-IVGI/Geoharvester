@@ -44,7 +44,7 @@
   height: var(--size);
   margin: 1em auto;
   border-radius: 50%;
-  background-image: conic-gradient(#ffa05f var(--value), #ffe0cb var(--value));
+  background-image: conic-gradient(#007CC3 var(--value), #a8d7f2 var(--value));
   position: relative;
   display: flex;
   justify-content: center;
@@ -63,16 +63,92 @@
   border-radius: inherit;
 }
 
-.x-60 {
-    --value: 60%;
-  }
-  
-.x-20 {
-    --value: 20%;
-  }
 
 .percentage {
     position: relative;
     z-index: 1;
     font-size: 0.8em;
+  }
+
+.x-0 {
+    --value: 0%;
+  }
+
+.x-5 {
+    --value: 5%;
+  }
+
+.x-10 {
+    --value: 10%;
+  }
+
+.x-15 {
+    --value: 15%;
+  }
+
+.x-20 {
+    --value: 20%;
+  }
+
+.x-25 {
+    --value: 25%;
+  }
+
+.x-30 {
+    --value: 30%;
+  }
+
+.x-35 {
+    --value: 35%;
+  }
+.x-40 {
+    --value: 40%;
+  }
+
+.x-45 {
+    --value: 45%;
+  }
+
+.x-50 {
+    --value: 50%;
+  }
+
+.x-55 {
+    --value: 55%;
+  }
+
+.x-60 {
+    --value: 60%;
+  }
+  
+.x-65 {
+    --value: 65%;
+  }
+
+.x-70 {
+    --value: 70%;
+  }
+
+.x-75 {
+    --value: 75%;
+  }
+
+.x-80 {
+    --value: 80%;
+  }
+
+.x-85 {
+    --value: 85%;
+  }
+
+.x-90 {
+    --value: 90%;
+  }
+
+.x-95 {
+    --value: 95%;
+  }
+
+.x-100 {
+    --value: 100%;
   }

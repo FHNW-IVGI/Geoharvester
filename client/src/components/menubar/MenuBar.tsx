@@ -21,7 +21,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import "../../styles.css";
 
-const geoharvesterLogo = require("../../img/geoharvester_logo.png");
+const geoharvesterLogo = require("../../img/geoharvester_logo_blue.png");
 
 const ProviderList = [
   "Alle",
@@ -132,7 +132,7 @@ export const MenuBar = ({
           alignItems: "center",
           justifyContent: "spaceBetween",
           width: "100%",
-          backgroundColor: "#ffcdac",
+          backgroundColor: "#007CC3",
         }}
       >
         <div style={{ width: "30%", display: "flex", alignItems: "center" }}>
@@ -140,7 +140,7 @@ export const MenuBar = ({
             size="large"
             edge="end"
             aria-label="menu"
-            sx={{ mr: 1, color: "#606060" }}
+            sx={{ mr: 1, color: "#004B76" }}
             onClick={handleClick}
           >
             <MenuIcon />
@@ -229,7 +229,7 @@ export const MenuBar = ({
               sx={{
                 fontSize: 14,
                 backgroundColor: "white",
-                color: "#ffa05f",
+                color: "#007CC3",
               }}
               type="submit"
               variant="outlined"
@@ -258,7 +258,7 @@ export const MenuBar = ({
                 textAlign: "center",
                 height: 30,
                 margin: "auto 6",
-                color: "#ffa05f",
+                color: "#007CC3",
               }}
             >
               {ProviderList.map((provider) => {
@@ -287,7 +287,7 @@ export const MenuBar = ({
                 textAlign: "center",
                 height: 30,
                 margin: "auto 6",
-                color: "#ffa05f",
+                color: "#007CC3",
               }}
             >
               {ServiceList.map((servicetype) => {

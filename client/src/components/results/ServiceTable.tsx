@@ -44,7 +44,7 @@ export const ServiceTable = ({
 
   const StyledTableCell = styled(TableCell)(() => ({
     "&": {
-      backgroundColor: "#ffa05f",
+      backgroundColor: "#00A2FF",
       padding: 8,
       textAlign: "center",
       color: "white",
