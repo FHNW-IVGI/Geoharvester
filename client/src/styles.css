@@ -44,7 +44,7 @@
   height: var(--size);
   margin: 1em auto;
   border-radius: 50%;
-  background-image: conic-gradient(#007CC3 var(--value), #a8d7f2 var(--value));
+  background-image: conic-gradient(#007CC3 var(--value), #abe0ff var(--value));
   position: relative;
   display: flex;
   justify-content: center;

@@ -10,6 +10,8 @@ import {
   styled,
   Paper,
   Divider,
+  InputLabel,
+  FormHelperText,
 } from "@mui/material";
 import { getData } from "../../requests";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -241,12 +243,17 @@ export const MenuBar = ({
         </div>
         <div id="filter">
           <FormControl
-            variant="standard"
+            variant="outlined"
             sx={{
               minWidth: 120,
               marginRight: 2,
+              marginBottom: 1.5,
             }}
-          >
+          ><FormHelperText
+          style={{
+            color: "#abe0ff",
+            fontSize: 11,
+          }}>Filter for Owner</FormHelperText>
             <Select
               autoComplete="off"
               labelId="select-provider-label"
@@ -256,8 +263,7 @@ export const MenuBar = ({
               style={{
                 backgroundColor: "white",
                 textAlign: "center",
-                height: 30,
-                margin: "auto 6",
+                height: 25,
                 color: "#007CC3",
               }}
             >
@@ -271,9 +277,17 @@ export const MenuBar = ({
             </Select>
           </FormControl>
           <FormControl
-            variant="standard"
-            sx={{ minWidth: 120, marginRight: 2 }}
-          >
+            variant="outlined"
+            sx={{
+              minWidth: 100,
+              marginRight: 17,
+              marginBottom: 1.5,
+            }}
+          ><FormHelperText
+          style={{
+            color: "#abe0ff",
+            fontSize: 11,
+          }}>Filter for Service Type</FormHelperText>
             <Select
               autoComplete="off"
               defaultValue={""}
@@ -281,12 +295,10 @@ export const MenuBar = ({
               id="select-service"
               value={servicetype}
               onChange={handleChangeService}
-              label="Service Type"
               style={{
                 backgroundColor: "white",
                 textAlign: "center",
-                height: 30,
-                margin: "auto 6",
+                height: 25,
                 color: "#007CC3",
               }}
             >
