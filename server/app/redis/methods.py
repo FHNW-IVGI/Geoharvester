@@ -248,13 +248,14 @@ def results_ranking(redis_output, redis_et, query_words_list):
     # initialize ranking score and the length counter
     query_results_df['score'] = 0
     query_results_df['inv_title_length'] = query_results_df['TITLE'].apply(lambda x: 200 - len(x))
+    query_results_df['METAQUALITY'] = query_results_df['METAQUALITY'].astype('int')
     # Calculate the scores
     for query_word in query_words_list:
         print(query_word)
-        query_results_df = contains_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_word, 8)
-        query_results_df = contains_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_word, 2)
+        query_results_df = contains_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_word, 7)
+        query_results_df = contains_match_scoring(query_results_df, ['KEYWORDS_NLP', 'SUMMARY'], query_word, 2)
         query_results_df = exact_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_word, 10)
-        query_results_df = exact_match_scoring(query_results_df, ['ABSTRACT', 'KEYWORDS_NLP', 'SUMMARY'], query_word, 5)
+        query_results_df = exact_match_scoring(query_results_df, ['KEYWORDS_NLP', 'SUMMARY'], query_word, 5)
 
     query_results_df.sort_values(by=['score', 'inv_title_length', 'TITLE'], axis=0, inplace=True, ascending=False)
     # replace nans with empty str

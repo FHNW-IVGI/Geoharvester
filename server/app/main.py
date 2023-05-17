@@ -157,6 +157,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         .return_field('BBOX')
         .return_field('SUMMARY')
         .return_field('LANG_3')
+        .return_field('METAQUALITY')
         )
 
     search_result["docs"] = redis_data.docs
