@@ -10,17 +10,18 @@ import {
   styled,
   Paper,
   Divider,
-  InputLabel,
   FormHelperText,
 } from "@mui/material";
 import { getData } from "../../requests";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
+import InfoIcon from '@mui/icons-material/Info';
 import MenuIcon from "@mui/icons-material/Menu";
 import DescriptionIcon from "@mui/icons-material/Description";
 import MenuItem from "@mui/material/MenuItem";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { ImpressumDialog } from "../ImpressumDialog";
 import "../../styles.css";
 
 const geoharvesterLogo = require("../../img/geoharvester_logo_blue.png");
@@ -68,6 +69,7 @@ export const MenuBar = ({
   const [provider, setProvider] = useState("Alle");
   const [render, setRender] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openImpressum, setOpenImpressum] = useState(false);
 
   const triggerSearch = async () => {
     const svc = servicetype === "Alle" ? "" : servicetype;
@@ -125,6 +127,8 @@ export const MenuBar = ({
     },
   }));
 
+  const handleClickOpenImpressum = () => setOpenImpressum(true);
+
   return (
     <Toolbar variant="dense" id="menubar">
       <Paper
@@ -143,7 +147,7 @@ export const MenuBar = ({
             size="large"
             edge="end"
             aria-label="menu"
-            sx={{ mr: 1, color: "#004B76" }}
+            sx={{ mr: 1, color: "#7FCAF5" }}
             onClick={handleClick}
           >
             <MenuIcon />
@@ -176,6 +180,13 @@ export const MenuBar = ({
             >
               <TerminalIcon style={{ marginRight: 14 }} />
               API
+            </MenuItem>
+            <Divider />
+            <MenuItem 
+              onClick={handleClickOpenImpressum}
+            >
+              <InfoIcon style={{ marginRight: 14 }} />
+              Impressum
             </MenuItem>
           </Menu>
           <img
@@ -312,6 +323,7 @@ export const MenuBar = ({
               })}
             </Select>
           </FormControl>
+          <ImpressumDialog open={openImpressum} setOpen={setOpenImpressum}></ImpressumDialog>
         </div>
       </Paper>
     </Toolbar>
