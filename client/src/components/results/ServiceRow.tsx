@@ -41,19 +41,7 @@ export const ServiceRow = ({
       ? `${row.ABSTRACT.slice(0, 450)}...`
       : row.ABSTRACT;
 
-  function randomNumber(start: number, end: number) {
-        return Math.floor(Math.random() * end) + start;
-      };
-
-  function round5(x: number)
-      {
-          return Math.ceil(x/5)*5;
-      }
-
-  const randomint = randomNumber(0, 100);
-  const metaquality = round5(randomint);
-  const qualitynum = `chart x-${metaquality}`;
-  // const qualitynum = `chart x-${row.METAQUALITY}`;
+  const qualitynum = `chart x-${row.METAQUALITY}`;
 
   return (
     <>
@@ -79,12 +67,9 @@ export const ServiceRow = ({
         </StyledTableCell>
         <StyledTableCell>{row.SERVICETYPE}</StyledTableCell>
         <StyledTableCell>
-          <Tooltip title={metaquality}>
             <div id="metaqual" className={qualitynum}>
-                {/* <p className="percentage">{row.METAQUALITY}</p> */}
-                <p className="percentage">{metaquality}</p>
+                <p className="percentage">{row.METAQUALITY}</p>
             </div>
-          </Tooltip>
         </StyledTableCell>
       </TableRow>
       <SubRow row={row} open={open} index={index} />

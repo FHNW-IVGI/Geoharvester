@@ -121,7 +121,7 @@ export const MenuBar = ({
     color: "#101010",
     backgroundColor: "white",
     "&:hover": {
-      backgroundColor: "#F0F0F0",
+      backgroundColor: "#E8E8E8",
     },
   }));
 
@@ -135,6 +135,7 @@ export const MenuBar = ({
           justifyContent: "spaceBetween",
           width: "100%",
           backgroundColor: "#007CC3",
+          borderRadius: "0%",
         }}
       >
         <div style={{ width: "30%", display: "flex", alignItems: "center" }}>
@@ -180,9 +181,9 @@ export const MenuBar = ({
           <img
             alt="geoharvester-logo"
             src={String(geoharvesterLogo)}
-            width="220"
-            height="30"
-            style={{ marginLeft: 6 }}
+            width="242"
+            height="29"
+            style={{ marginLeft: -10 }}
           />
         </div>
         <div style={{ display: "flex", flex: "1 1 auto" }}>
