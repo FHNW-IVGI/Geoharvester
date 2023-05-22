@@ -23,6 +23,7 @@ export interface Geoservice {
     CENTER_LAT: string;
     CENTER_LON: string;
     BBOX: string;
+    METAQUALITY: number;
 }
 
 export interface Geodata {

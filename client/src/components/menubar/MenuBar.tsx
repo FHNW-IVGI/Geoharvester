@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 import {
   IconButton,
   OutlinedInput,
@@ -11,6 +10,8 @@ import {
   styled,
   Paper,
   Divider,
+  InputLabel,
+  FormHelperText,
 } from "@mui/material";
 import { getData } from "../../requests";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -22,7 +23,7 @@ import TerminalIcon from "@mui/icons-material/Terminal";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import "../../styles.css";
 
-const geoharvesterLogo = require("../../img/geoharvester_logo.png");
+const geoharvesterLogo = require("../../img/geoharvester_logo_blue.png");
 
 const ProviderList = [
   "Alle",
@@ -120,7 +121,7 @@ export const MenuBar = ({
     color: "#101010",
     backgroundColor: "white",
     "&:hover": {
-      backgroundColor: "#F0F0F0",
+      backgroundColor: "#E8E8E8",
     },
   }));
 
@@ -133,7 +134,8 @@ export const MenuBar = ({
           alignItems: "center",
           justifyContent: "spaceBetween",
           width: "100%",
-          backgroundColor: "#ffcdac",
+          backgroundColor: "#007CC3",
+          borderRadius: "0%",
         }}
       >
         <div style={{ width: "30%", display: "flex", alignItems: "center" }}>
@@ -141,7 +143,7 @@ export const MenuBar = ({
             size="large"
             edge="end"
             aria-label="menu"
-            sx={{ mr: 1, color: "#606060" }}
+            sx={{ mr: 1, color: "#004B76" }}
             onClick={handleClick}
           >
             <MenuIcon />
@@ -179,9 +181,9 @@ export const MenuBar = ({
           <img
             alt="geoharvester-logo"
             src={String(geoharvesterLogo)}
-            width="220"
-            height="30"
-            style={{ marginLeft: 6 }}
+            width="242"
+            height="29"
+            style={{ marginLeft: -10 }}
           />
         </div>
         <div style={{ display: "flex", flex: "1 1 auto" }}>
@@ -230,7 +232,7 @@ export const MenuBar = ({
               sx={{
                 fontSize: 14,
                 backgroundColor: "white",
-                color: "#ffa05f",
+                color: "#007CC3",
               }}
               type="submit"
               variant="outlined"
@@ -242,12 +244,17 @@ export const MenuBar = ({
         </div>
         <div id="filter">
           <FormControl
-            variant="standard"
+            variant="outlined"
             sx={{
               minWidth: 120,
               marginRight: 2,
+              marginBottom: 1.5,
             }}
-          >
+          ><FormHelperText
+          style={{
+            color: "#abe0ff",
+            fontSize: 11,
+          }}>Filter for Owner</FormHelperText>
             <Select
               autoComplete="off"
               labelId="select-provider-label"
@@ -257,9 +264,8 @@ export const MenuBar = ({
               style={{
                 backgroundColor: "white",
                 textAlign: "center",
-                height: 30,
-                margin: "auto 6",
-                color: "#ffa05f",
+                height: 25,
+                color: "#007CC3",
               }}
             >
               {ProviderList.map((provider) => {
@@ -272,9 +278,17 @@ export const MenuBar = ({
             </Select>
           </FormControl>
           <FormControl
-            variant="standard"
-            sx={{ minWidth: 120, marginRight: 2 }}
-          >
+            variant="outlined"
+            sx={{
+              minWidth: 100,
+              marginRight: 17,
+              marginBottom: 1.5,
+            }}
+          ><FormHelperText
+          style={{
+            color: "#abe0ff",
+            fontSize: 11,
+          }}>Filter for Service Type</FormHelperText>
             <Select
               autoComplete="off"
               defaultValue={""}
@@ -282,13 +296,11 @@ export const MenuBar = ({
               id="select-service"
               value={servicetype}
               onChange={handleChangeService}
-              label="Service Type"
               style={{
                 backgroundColor: "white",
                 textAlign: "center",
-                height: 30,
-                margin: "auto 6",
-                color: "#ffa05f",
+                height: 25,
+                color: "#007CC3",
               }}
             >
               {ServiceList.map((servicetype) => {

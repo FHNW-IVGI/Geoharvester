@@ -44,7 +44,7 @@ export const ServiceTable = ({
 
   const StyledTableCell = styled(TableCell)(() => ({
     "&": {
-      backgroundColor: "#ffa05f",
+      backgroundColor: "#7fcaf5",
       padding: 8,
       textAlign: "center",
       color: "white",
@@ -162,6 +162,7 @@ export const ServiceTable = ({
                     </>
                   );
                 })}
+                <StyledTableCell>Metadata Quality</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>

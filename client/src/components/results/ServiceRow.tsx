@@ -41,6 +41,8 @@ export const ServiceRow = ({
       ? `${row.ABSTRACT.slice(0, 450)}...`
       : row.ABSTRACT;
 
+  const qualitynum = `chart x-${row.METAQUALITY}`;
+
   return (
     <>
       <TableRow key={index} onClick={() => setOpen(!open)}>
@@ -49,7 +51,7 @@ export const ServiceRow = ({
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
-            style={{ color: "#ffa05f" }}
+            style={{ color: "#007CC3" }}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -64,6 +66,11 @@ export const ServiceRow = ({
           </Tooltip>
         </StyledTableCell>
         <StyledTableCell>{row.SERVICETYPE}</StyledTableCell>
+        <StyledTableCell>
+            <div id="metaqual" className={qualitynum}>
+                <p className="percentage">{row.METAQUALITY}</p>
+            </div>
+        </StyledTableCell>
       </TableRow>
       <SubRow row={row} open={open} index={index} />
     </>

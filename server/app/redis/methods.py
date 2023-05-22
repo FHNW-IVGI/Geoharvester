@@ -248,6 +248,7 @@ def results_ranking(redis_output, redis_et, query_words_list):
     # initialize ranking score and the length counter
     query_results_df['score'] = 0
     query_results_df['inv_title_length'] = query_results_df['TITLE'].apply(lambda x: 200 - len(x))
+    query_results_df['METAQUALITY'] = query_results_df['METAQUALITY'].astype('int')
     # Calculate the scores
     for query_word in query_words_list:
         print(query_word)

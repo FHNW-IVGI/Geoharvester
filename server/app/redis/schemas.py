@@ -31,7 +31,8 @@ geoservices_schema = (
     TextField('$.BBOX', as_name='BBOX', no_stem=True),
     TextField('$.SUMMARY', as_name='SUMMARY', no_stem=True),
     TagField('$.LANG_3', as_name='LANG_3'),
-    TagField('$.LANG_2', as_name='LANG_2')
+    TagField('$.LANG_2', as_name='LANG_2'),
+    NumericField('$.METAQUALITY', as_name='METAQUALITY')
 )
 
 ### Geodata
