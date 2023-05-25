@@ -30,9 +30,8 @@ export const SubRow = ({
     "KEYWORDS",
     "METADATA",
     "SERVICELINK",
-    "MAPGEO",
-    "LEGEND",
   ];
+
 
   const routeObjectBuilder = () => {
     if (!row || !row.SERVICETYPE) {
@@ -110,6 +109,48 @@ export const SubRow = ({
                   </div>
                 </div>
               ))}
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{}}>
+                    <p 
+                    style={{
+                        width: 140,
+                        color: "#909090",
+                        margin: "0 50px 0 78px",
+                      }}
+                    >Mapgeo:
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      color: "#909090",
+                      display: "flex",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    <a href={row.MAPGEO} target="_blank" style={{ margin: 2 }}>Service in MapGeo öffnen</a>
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{}}>
+                    <p 
+                    style={{
+                        width: 140,
+                        color: "#909090",
+                        margin: "0 50px 0 78px",
+                      }}
+                    >Legend:
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      color: "#909090",
+                      display: "flex",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    <a href={row.LEGEND} target="_blank" style={{ margin: 2 }}>Legende öffnen</a>
+                  </div>
+                </div>
               <div
                 style={{
                   marginLeft: 270,
