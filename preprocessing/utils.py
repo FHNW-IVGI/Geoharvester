@@ -637,8 +637,8 @@ def check_metadata_quality(database, search_word='nan',
                            search_columns=['ABSTRACT', 'KEYWORDS', 'CONTACT', 'METADATA'],
                            case_sensitive=False):
     """
-    Calculate a simple metadata quality score
+    Calculate a metadata quality score
     """
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
-    database['METAQUALITY'] = 100 - (mask.sum(axis=1)*25) # Scoring with 4 fields to be reviewed
+    database['METAQUALITY'] = mask.sum(axis=1)*25 # Scoring with 4 fields
     return database
