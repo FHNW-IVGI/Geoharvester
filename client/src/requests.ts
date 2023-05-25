@@ -23,7 +23,7 @@ enum LANG {
 }
 
 // Redit returns 10 results by default, use this fallback instead when no value is given
-const LIMIT = 100
+const LIMIT = 10000
 
 enum SERVICETYPE {
     WFS = "wfs",
@@ -32,13 +32,10 @@ enum SERVICETYPE {
     NONE = ""
 }
 
-export const getData = async (query: string, service: string = SERVICETYPE.NONE, owner: string = "", lang: string = LANG.GER, resultLimit: number = LIMIT) => {
-    const result = await axios(routes.getData, { params: { query, service, owner, lang, resultLimit } });
-    const { data } = result;
-    return data
+export const getData = async (query: string, service: string = SERVICETYPE.NONE, owner: string = "", lang: string = LANG.GER, limit: number = LIMIT) => {
+    const result = await axios(routes.getData, { params: { query, service, owner, lang, limit } });
+    return result
 }
-
-
 
 const linkBuilder = (blob: any, fileName: string, fileExtension: string) => {
     const url = window.URL.createObjectURL(

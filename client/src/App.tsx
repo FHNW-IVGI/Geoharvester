@@ -20,31 +20,33 @@ const theme = createTheme({
 });
 
 export type SearchResult = {
-  duration: number;
+  page: number;
+  pages: number;
   total: number;
-  docs: Geoservice[];
-  fields: string[];
+  size: number;
+  items: Geoservice[];
 };
 
 function App() {
   const [searchResult, setSearchResult] = useState({} as SearchResult);
-  const { docs, total, fields } = searchResult;
+  const { items, total } = searchResult;
   const [placeholderText, setPlaceholderText] = useState(
     "Webservice suchen..."
   );
 
-const Footer = () => {
+  const Footer = () => {
     return (
       <Box
         sx={{
-          minHeight: '25px',
-          backgroundColor: '#7FBDE1',
-          color: 'white',
+          minHeight: "25px",
+          backgroundColor: "#7FBDE1",
+          color: "white",
           // border: '1px solid #007CC3',
           textAlign: "center",
         }}
       >
-        © 2023 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut Geomatik, FHNW und swisstopo
+        © 2023 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut
+        Geomatik, FHNW und swisstopo
       </Box>
     );
   };
@@ -59,8 +61,8 @@ const Footer = () => {
           />
         </header>
         <ServiceTable
-          docs={docs || []}
-          fields={fields}
+          docs={items || []}
+          fields={[]}
           total={total}
           placeholderText={placeholderText}
         ></ServiceTable>

@@ -107,7 +107,7 @@ async def get_data_by_id(id: str):
 
 
 @app.get("/api/getData", response_model=Page[GeoserviceModel])
-async def get_data(query: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", limit: int = 100):
+async def get_data(query: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
         service: Service filter - wms, wmts, wfs
@@ -157,7 +157,8 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
     # If you want the results from redis you can just set this section as comment
 
     if (query != None and len(redis_data.docs) > 0):
-        return paginate(results_ranking(redis_data.docs))
+        ranked_results = results_ranking(redis_data.docs)
+        return paginate(ranked_results)
     else:
         pass
     ############################################################################################################################ 
