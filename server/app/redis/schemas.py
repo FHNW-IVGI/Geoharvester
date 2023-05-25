@@ -1,4 +1,7 @@
 
+from typing import List, Optional
+
+from pydantic import BaseModel
 from redis.commands.search.field import (GeoField, NumericField, TagField,
                                          TextField)
 
@@ -34,6 +37,42 @@ geoservices_schema = (
     TagField('$.LANG_2', as_name='LANG_2'),
     NumericField('$.METAQUALITY', as_name='METAQUALITY')
 )
+
+class GeoserviceModel(BaseModel):
+    # Any fields not in the csv (and added by preprocessing) need to be optional!
+    _primary_key_field: str = "id"
+    OWNER: str
+    TITLE: str
+    NAME: str
+    MAPGEO: str
+    TREE: str
+    GROUP: str
+    ABSTRACT: str
+    KEYWORDS: str
+    KEYWORDS_NLP:  str
+    LEGEND: str
+    CONTACT: str
+    SERVICELINK: str
+    METADATA: str
+    UPDATE: Optional[str]
+    SERVICETYPE: str
+    MAX_ZOOM: int
+    CENTER_LAT: float
+    CENTER_LON: float
+    BBOX: str
+    SUMMARY: str
+    LANG_3:  Optional[str]
+    LANG_2:  Optional[str]
+    METADATAQUALITY: Optional[int]
+
+    class Config:
+        orm_mode = True
+
+
+
+
+
+
 
 ### Geodata
 # Source data:  https://github.com/davidoesch/geoservice_harvester_poc/tree/main/data/geodata_CH.csv

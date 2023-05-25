@@ -1,7 +1,7 @@
 
 import json
 import logging
-from typing import Union
+from typing import List, Union
 
 import pandas as pd
 import redis
@@ -10,13 +10,14 @@ from app.processing.methods import (import_csv_into_dataframe,
                                     import_pkl_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
-                               redis_query_from_parameters,
-                               transform_wordlist_to_query, results_ranking)
+                               redis_query_from_parameters, results_ranking,
+                               transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
-                               geoservices_schema)
+                               GeoserviceModel, geoservices_schema)
 from fastapi import FastAPI
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import Page, add_pagination, paginate
 from redis import StrictRedis
 from redis.commands.search.query import Query
 
@@ -45,6 +46,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 gunicorn_logger = logging.getLogger('gunicorn.error')
 fastapi_logger.handlers = gunicorn_logger.handlers
@@ -104,7 +106,7 @@ async def get_data_by_id(id: str):
     return redis_data
 
 
-@app.get("/api/getData")
+@app.get("/api/getData", response_model=Page[GeoserviceModel])
 async def get_data(query: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", limit: int = 100):
     """Route for the get_data request
         query: The query string used for searching
@@ -114,16 +116,6 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         limit: Redis returns 10 results by default, allow more results to be returned
         service: Service enum, either WMS, WMTS, WFS
     """
-    search_result = {
-        "total": 0,
-        "docs": None,
-        "fields": [],
-        "duration": 0,
-    }
-
-    # Until pagination is implemented we need to safeguard against extensive limits to avoid server crashes:
-    if (limit > 1000):
-        limit = 1000
 
     query_string = ""
 
@@ -160,18 +152,15 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         .return_field('METAQUALITY')
         )
 
-    search_result["docs"] = redis_data.docs
-    search_result["fields"] = []
-    search_result["duration"] = redis_data.duration
-    search_result["total"] = len(redis_data.docs)
-
     ############################################################################################################################
     # Testing ranking function from the ranking functions in methods.py
     # If you want the results from redis you can just set this section as comment
 
     if (query != None and len(redis_data.docs) > 0):
-        search_result = results_ranking(redis_data.docs, redis_data.duration, word_list)
+        return paginate(results_ranking(redis_data.docs))
     else:
         pass
     ############################################################################################################################ 
-    return {"data": search_result}
+    return paginate(redis_data.docs)
+
+add_pagination(app)
