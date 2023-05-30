@@ -133,7 +133,11 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
 
     redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   
+<<<<<<< Updated upstream
         .paging(0, 30000) # offset, limit
+=======
+        .paging(0, 10000) # offset, limit
+>>>>>>> Stashed changes
         .return_field('TITLE')
         .return_field('ABSTRACT')
         .return_field('OWNER')
