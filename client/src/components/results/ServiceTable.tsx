@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   TableContainer,
   Table,
@@ -10,15 +10,13 @@ import {
   Paper,
   Box,
   Typography,
-  Zoom,
   Fab,
+  useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
 import { visuallyHidden } from "@mui/utils";
 import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
-
 import { ServiceRow } from "./ServiceRow";
 
 type TableProps = {
@@ -39,12 +37,13 @@ export const ServiceTable = ({
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
   const [tableRef, setTableReference] = useState<any>();
+  const theme = useTheme();
 
   const scrollToTop = () => tableRef && tableRef.scrollIntoView();
 
   const StyledTableCell = styled(TableCell)(() => ({
     "&": {
-      backgroundColor: "#7fcaf5",
+      backgroundColor: theme.palette.secondary.main,
       padding: 8,
       textAlign: "center",
       color: "white",
@@ -59,7 +58,7 @@ export const ServiceTable = ({
           justifyContent: "center",
           alignItems: "center",
           textAlign: "center",
-          minHeight: "86vh",
+          flex: 1,
         }}
       >
         <Typography variant="h3" component="h3" color="#C0C0C0">

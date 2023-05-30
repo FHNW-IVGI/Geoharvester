@@ -4,7 +4,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuBar } from "./components/menubar/MenuBar";
 import { Box } from "@mui/material";
 import { Geoservice } from "./types";
-import "./App.css";
 
 const theme = createTheme({
   palette: {
@@ -40,8 +39,8 @@ function App() {
         sx={{
           minHeight: "25px",
           backgroundColor: "#7FBDE1",
+
           color: "white",
-          // border: '1px solid #007CC3',
           textAlign: "center",
         }}
       >
@@ -53,8 +52,8 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div id="wrapper">
-        <header className="App-header">
+      <section>
+        <header className="appheader">
           <MenuBar
             setSearchResult={setSearchResult}
             setPlaceholderText={setPlaceholderText}
@@ -67,7 +66,7 @@ function App() {
           placeholderText={placeholderText}
         ></ServiceTable>
         <Footer />
-      </div>
+      </section>
     </ThemeProvider>
   );
 }

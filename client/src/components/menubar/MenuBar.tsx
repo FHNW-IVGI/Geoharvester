@@ -11,11 +11,12 @@ import {
   Paper,
   Divider,
   FormHelperText,
+  useTheme,
 } from "@mui/material";
 import { getData } from "../../requests";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from "@mui/icons-material/Info";
 import MenuIcon from "@mui/icons-material/Menu";
 import DescriptionIcon from "@mui/icons-material/Description";
 import MenuItem from "@mui/material/MenuItem";
@@ -70,6 +71,7 @@ export const MenuBar = ({
   const [render, setRender] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openImpressum, setOpenImpressum] = useState(false);
+  const theme = useTheme();
 
   const triggerSearch = async () => {
     const svc = servicetype === "Alle" ? "" : servicetype;
@@ -147,7 +149,7 @@ export const MenuBar = ({
             size="large"
             edge="end"
             aria-label="menu"
-            sx={{ mr: 1, color: "#7FCAF5" }}
+            sx={{ mr: 1, color: theme.palette.secondary.main }}
             onClick={handleClick}
           >
             <MenuIcon />
@@ -182,9 +184,7 @@ export const MenuBar = ({
               API
             </MenuItem>
             <Divider />
-            <MenuItem 
-              onClick={handleClickOpenImpressum}
-            >
+            <MenuItem onClick={handleClickOpenImpressum}>
               <InfoIcon style={{ marginRight: 14 }} />
               Impressum
             </MenuItem>
@@ -243,7 +243,7 @@ export const MenuBar = ({
               sx={{
                 fontSize: 14,
                 backgroundColor: "white",
-                color: "#007CC3",
+                color: theme.palette.primary.main,
               }}
               type="submit"
               variant="outlined"
@@ -261,11 +261,15 @@ export const MenuBar = ({
               marginRight: 2,
               marginBottom: 1.5,
             }}
-          ><FormHelperText
-          style={{
-            color: "#abe0ff",
-            fontSize: 11,
-          }}>Filter for Owner</FormHelperText>
+          >
+            <FormHelperText
+              style={{
+                color: "#abe0ff",
+                fontSize: 11,
+              }}
+            >
+              Data Provider
+            </FormHelperText>
             <Select
               autoComplete="off"
               labelId="select-provider-label"
@@ -295,11 +299,15 @@ export const MenuBar = ({
               marginRight: 17,
               marginBottom: 1.5,
             }}
-          ><FormHelperText
-          style={{
-            color: "#abe0ff",
-            fontSize: 11,
-          }}>Filter for Service Type</FormHelperText>
+          >
+            <FormHelperText
+              style={{
+                color: "#abe0ff",
+                fontSize: 11,
+              }}
+            >
+              Service Typ
+            </FormHelperText>
             <Select
               autoComplete="off"
               defaultValue={""}
@@ -323,7 +331,10 @@ export const MenuBar = ({
               })}
             </Select>
           </FormControl>
-          <ImpressumDialog open={openImpressum} setOpen={setOpenImpressum}></ImpressumDialog>
+          <ImpressumDialog
+            open={openImpressum}
+            setOpen={setOpenImpressum}
+          ></ImpressumDialog>
         </div>
       </Paper>
     </Toolbar>
