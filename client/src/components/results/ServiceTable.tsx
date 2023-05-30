@@ -92,15 +92,7 @@ export const ServiceTable = ({
       : -1
   );
 
-  const columns =
-    fields && fields.length > 1
-      ? fields
-      : Object.keys(docs[0]).filter((key) =>
-          ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"].includes(
-            key
-          )
-        ) || [];
-
+  const columns = ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"];
   return (
     <>
       <Box
