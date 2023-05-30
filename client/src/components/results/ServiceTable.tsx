@@ -96,7 +96,9 @@ export const ServiceTable = ({
     fields && fields.length > 1
       ? fields
       : Object.keys(docs[0]).filter((key) =>
-          ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE"].includes(key)
+          ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"].includes(
+            key
+          )
         ) || [];
 
   return (
@@ -161,7 +163,6 @@ export const ServiceTable = ({
                     </>
                   );
                 })}
-                <StyledTableCell>Metadata Quality</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
