@@ -63,7 +63,7 @@ class GeoserviceModel(BaseModel):
     SUMMARY: str
     LANG_3:  Optional[str]
     LANG_2:  Optional[str]
-    METADATAQUALITY: Optional[int]
+    METAQUALITY: Optional[int]
 
     class Config:
         orm_mode = True
