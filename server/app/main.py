@@ -126,9 +126,14 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
     redis_query = redis_query_from_parameters(query_string, service, owner)
     fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
+    ### See: https://redis.io/commands/ft.search/ : limit to count the number of results, maybe split into offsets? Maybe sort by Metaquality?
+    ### 10000: 3 sec with pagination
+
+
+
     redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   
-        .paging(0, limit) # offset, limit
+        .paging(0, 30000) # offset, limit
         .return_field('TITLE')
         .return_field('ABSTRACT')
         .return_field('OWNER')
