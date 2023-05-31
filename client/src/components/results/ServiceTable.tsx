@@ -20,6 +20,7 @@ import { Geoservice } from "../../types";
 import { visuallyHidden } from "@mui/utils";
 import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
+import { DEFAULTPAGE } from "src/constants";
 
 type TableProps = {
   docs: Geoservice[];
@@ -28,6 +29,10 @@ type TableProps = {
   placeholderText: string;
   page: number;
   setPage: (page: number) => void;
+  setOffset: (offset: number) => void;
+  setLimit: (limit: number) => void;
+  setRowsPerPage: (size: number) => void;
+  rowsPerPage: number;
 };
 
 type Order = "asc" | "desc";
@@ -39,11 +44,15 @@ export const ServiceTable = ({
   placeholderText,
   page,
   setPage,
+  setOffset,
+  setLimit,
+  setRowsPerPage,
+  rowsPerPage,
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
   // const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  // const [rowsPerPage, setRowsPerPage] = useState(20);
   const theme = useTheme();
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -61,7 +70,7 @@ export const ServiceTable = ({
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(DEFAULTPAGE);
   };
 
   const StyledTableCell = styled(TableCell)(() => ({

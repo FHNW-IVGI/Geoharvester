@@ -1,5 +1,23 @@
 export const DEFAULTSERVICE = "Alle Services";
 export const DEFAULTPROVIDER = "Alle Quellen";
+export const DEFAULTOFFSET = 0;
+export const DEFAULTLIMIT = 10000;
+export const DEFAULTPAGE = 0;
+
+export enum LANG {
+    GER = "german",
+    ENG = "english",
+    FR = "french",
+    IT = "italian"
+}
+export const DEFAULTLANGUAGE = LANG.GER;
+
+export enum SERVICETYPE {
+    WFS = "wfs",
+    WMS = "wms",
+    WMTS = "wmts",
+    NONE = ""
+}
 
 
 export const PROVIDERLIST = [

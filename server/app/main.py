@@ -107,7 +107,7 @@ async def get_data_by_id(id: str):
 
 
 @app.get("/api/getData", response_model=Page[GeoserviceModel])
-async def get_data(query: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", limit: int = 1000):
+async def get_data(query: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", offset: int = 0, limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
         service: Service filter - wms, wmts, wfs
@@ -133,7 +133,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
 
     redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   
-        .paging(0, 10000) # offset, limit
+        .paging(offset, limit)
         .return_field('TITLE')
         .return_field('ABSTRACT')
         .return_field('OWNER')
@@ -156,6 +156,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         .return_field('LANG_3')
         .return_field('METAQUALITY')
         )
+    
 
     ############################################################################################################################
     # Testing ranking function from the ranking functions in methods.py

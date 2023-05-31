@@ -4,6 +4,12 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuBar } from "./components/menubar/MenuBar";
 import { Box } from "@mui/material";
 import { Geoservice } from "./types";
+import {
+  DEFAULTLANGUAGE,
+  DEFAULTLIMIT,
+  DEFAULTOFFSET,
+  DEFAULTPAGE,
+} from "./constants";
 
 const theme = createTheme({
   palette: {
@@ -32,7 +38,11 @@ function App() {
   const [placeholderText, setPlaceholderText] = useState(
     "Webservice suchen..."
   );
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(DEFAULTPAGE);
+  const [size, setSize] = useState(50);
+  const [offset, setOffset] = useState(DEFAULTOFFSET);
+  const [limit, setLimit] = useState(DEFAULTLIMIT);
+  const [language, setLanguage] = useState(DEFAULTLANGUAGE);
 
   const Footer = () => {
     return (
@@ -59,6 +69,11 @@ function App() {
             setSearchResult={setSearchResult}
             setPlaceholderText={setPlaceholderText}
             setPage={setPage}
+            offset={offset}
+            limit={limit}
+            language={language}
+            size={size}
+            page={page}
           />
         </header>
         <ServiceTable
@@ -68,6 +83,10 @@ function App() {
           placeholderText={placeholderText}
           page={page}
           setPage={setPage}
+          setOffset={setOffset}
+          setLimit={setLimit}
+          setRowsPerPage={setSize}
+          rowsPerPage={size}
         ></ServiceTable>
         <Footer />
       </section>

@@ -13,7 +13,7 @@ import { getData } from "../../requests";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { DEFAULTPROVIDER, DEFAULTSERVICE } from "src/constants";
+import { DEFAULTPAGE, DEFAULTPROVIDER, DEFAULTSERVICE } from "src/constants";
 import { MenuDropdown } from "./MenuDropdown";
 import { Filter } from "./Filter";
 import "../../styles.css";
@@ -22,12 +22,22 @@ export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
   setPlaceholderText: (text: string) => void;
   setPage: (page: number) => void;
+  offset: number;
+  limit: number;
+  language: string;
+  page: number;
+  size: number;
 };
 
 export const MenuBar = ({
   setSearchResult,
   setPlaceholderText,
   setPage,
+  offset,
+  limit,
+  language,
+  page,
+  size,
 }: SearchBarProps) => {
   const [searchStringState, setSearchString] = useState("");
   const [servicetypeState, setServiceState] = useState(DEFAULTSERVICE);
@@ -49,11 +59,20 @@ export const MenuBar = ({
     const prov = provider === undefined ? providerState : provider;
     const provParameter = prov === DEFAULTPROVIDER ? "" : prov;
 
-    await getData(queryParameter, svcParameter, provParameter)
+    await getData(
+      queryParameter,
+      svcParameter,
+      provParameter,
+      language,
+      offset,
+      limit,
+      page,
+      size
+    )
       .then((res) => {
         const { data } = res;
         setSearchResult(data);
-        setPage(0);
+        setPage(DEFAULTPAGE);
       })
       .catch((e) => {
         console.error(e);
