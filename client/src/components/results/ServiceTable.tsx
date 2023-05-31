@@ -4,6 +4,8 @@ import {
   Table,
   TableBody,
   TableHead,
+  TableFooter,
+  TablePagination,
   TableRow,
   TableCell,
   TableSortLabel,
@@ -16,14 +18,16 @@ import {
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
 import { visuallyHidden } from "@mui/utils";
-import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
 import { ServiceRow } from "./ServiceRow";
+import { TablePaginationActions } from "./TablePaginationActions";
 
 type TableProps = {
   docs: Geoservice[];
   fields: string[];
   total: number;
   placeholderText: string;
+  page: number;
+  setPage: (page: number) => void;
 };
 
 type Order = "asc" | "desc";
@@ -33,13 +37,32 @@ export const ServiceTable = ({
   fields,
   total,
   placeholderText,
+  page,
+  setPage,
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
-  const [tableRef, setTableReference] = useState<any>();
+  // const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const theme = useTheme();
 
-  const scrollToTop = () => tableRef && tableRef.scrollIntoView();
+  // Avoid a layout jump when reaching the last page with empty rows.
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - docs.length) : 0;
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const StyledTableCell = styled(TableCell)(() => ({
     "&": {
@@ -47,6 +70,16 @@ export const ServiceTable = ({
       padding: 8,
       textAlign: "center",
       color: "white",
+    },
+  }));
+
+  const StyledTableFooter = styled(TableFooter)(() => ({
+    "&": {
+      left: 0,
+      bottom: 0,
+      zIndex: 2,
+      position: "sticky",
+      backgroundColor: "white",
     },
   }));
 
@@ -93,78 +126,84 @@ export const ServiceTable = ({
   );
 
   const columns = ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"];
-  return (
-    <>
-      <Box
-        role="presentation"
-        sx={{
-          position: "fixed",
-          bottom: 32,
-          right: 32,
-          zIndex: 10000,
-        }}
-      >
-        <Fab
-          onClick={scrollToTop}
-          color="primary"
-          size="small"
-          aria-label="Scroll back to top"
-        >
-          <KeyboardArrowUp fontSize="medium" style={{ color: "white" }} />
-        </Fab>
-      </Box>
-      {docs.length > 0 && (
-        <TableContainer
-          component={Paper}
-          sx={{ maxHeight: "95vh", cursor: "pointer" }}
-        >
-          <Table stickyHeader aria-label="sticky table" ref={setTableReference}>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Σ={total}</StyledTableCell>
-                {columns.map((col_header, index) => {
-                  const commonCasedHeader =
-                    col_header.charAt(0).toUpperCase() +
-                    col_header.slice(1).toLocaleLowerCase();
-                  return index < 2 ? (
-                    <StyledTableCell key={index}>
+  return docs.length > 0 ? (
+    <TableContainer
+      component={Paper}
+      sx={{ cursor: "pointer", overflowX: "auto" }}
+    >
+      <Table stickyHeader aria-label="sticky table">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Σ={total}</StyledTableCell>
+            {columns.map((col_header, index) => {
+              const commonCasedHeader =
+                col_header.charAt(0).toUpperCase() +
+                col_header.slice(1).toLocaleLowerCase();
+              return index < 2 ? (
+                <StyledTableCell key={index}>
+                  {commonCasedHeader}
+                </StyledTableCell>
+              ) : (
+                <>
+                  <StyledTableCell
+                    key={index}
+                    sortDirection={orderBy === col_header ? order : false}
+                  >
+                    <TableSortLabel
+                      style={{ color: "white", textAlign: "center" }}
+                      active={true}
+                      direction={orderBy === col_header ? order : "desc"}
+                      onClick={createSortHandler(col_header)}
+                    >
                       {commonCasedHeader}
-                    </StyledTableCell>
-                  ) : (
-                    <>
-                      <StyledTableCell
-                        key={index}
-                        sortDirection={orderBy === col_header ? order : false}
-                      >
-                        <TableSortLabel
-                          style={{ color: "white", textAlign: "center" }}
-                          active={true}
-                          direction={orderBy === col_header ? order : "desc"}
-                          onClick={createSortHandler(col_header)}
-                        >
-                          {commonCasedHeader}
-                          {orderBy === col_header ? (
-                            <Box component="span" sx={visuallyHidden}>
-                              {order === "desc"
-                                ? "sorted descending"
-                                : "sorted ascending"}
-                            </Box>
-                          ) : null}
-                        </TableSortLabel>
-                      </StyledTableCell>
-                    </>
-                  );
-                })}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedData.map((row, index) => (
-                <ServiceRow row={row} index={index} />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </>
+                      {orderBy === col_header ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === "desc"
+                            ? "sorted descending"
+                            : "sorted ascending"}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </StyledTableCell>
+                </>
+              );
+            })}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {(rowsPerPage > 0
+            ? sortedData.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
+            : sortedData
+          ).map((row, index) => (
+            <ServiceRow row={row} index={index} />
+          ))}
+        </TableBody>
+        <StyledTableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[20, 50, 100, { label: "All", value: -1 }]}
+              colSpan={6}
+              count={total}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              SelectProps={{
+                inputProps: {
+                  "aria-label": "rows per page",
+                },
+                native: true,
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+          </TableRow>
+        </StyledTableFooter>
+      </Table>
+    </TableContainer>
+  ) : (
+    <div />
   );
 };

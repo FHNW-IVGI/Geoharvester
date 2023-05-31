@@ -32,6 +32,7 @@ function App() {
   const [placeholderText, setPlaceholderText] = useState(
     "Webservice suchen..."
   );
+  const [page, setPage] = useState(0);
 
   const Footer = () => {
     return (
@@ -57,6 +58,7 @@ function App() {
           <MenuBar
             setSearchResult={setSearchResult}
             setPlaceholderText={setPlaceholderText}
+            setPage={setPage}
           />
         </header>
         <ServiceTable
@@ -64,6 +66,8 @@ function App() {
           fields={[]}
           total={total}
           placeholderText={placeholderText}
+          page={page}
+          setPage={setPage}
         ></ServiceTable>
         <Footer />
       </section>

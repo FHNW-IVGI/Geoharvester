@@ -32,8 +32,9 @@ enum SERVICETYPE {
     NONE = ""
 }
 
-export const getData = async (query: string, service: string = SERVICETYPE.NONE, owner: string = "", lang: string = LANG.GER, limit: number = LIMIT) => {
-    const result = await axios(routes.getData, { params: { query, service, owner, lang, limit } });
+export const getData = async (query: string, service: string = SERVICETYPE.NONE, owner: string = "", lang: string = LANG.GER,) => {
+    const result = await axios(routes.getData, { params: { query, service, owner, lang } });
+    console.log(result)
     return result
 }
 

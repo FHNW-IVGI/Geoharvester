@@ -21,11 +21,13 @@ import "../../styles.css";
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
   setPlaceholderText: (text: string) => void;
+  setPage: (page: number) => void;
 };
 
 export const MenuBar = ({
   setSearchResult,
   setPlaceholderText,
+  setPage,
 }: SearchBarProps) => {
   const [searchStringState, setSearchString] = useState("");
   const [servicetypeState, setServiceState] = useState(DEFAULTSERVICE);
@@ -51,6 +53,7 @@ export const MenuBar = ({
       .then((res) => {
         const { data } = res;
         setSearchResult(data);
+        setPage(0);
       })
       .catch((e) => {
         console.error(e);
