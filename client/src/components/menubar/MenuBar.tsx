@@ -55,21 +55,21 @@ export const MenuBar = ({
     setPlaceholderText("Keine Treffer :(");
   };
 
-  useEffect(() => {
-    if (render < 1) {
-      setRender(render + 1);
-      return;
-    }
-    triggerSearch();
-  }, [servicetype]);
+  // useEffect(() => {
+  //   if (render < 1) {
+  //     setRender(render + 1);
+  //     return;
+  //   }
+  //   triggerSearch();
+  // }, [servicetype]);
 
-  useEffect(() => {
-    if (render < 1) {
-      setRender(render + 1);
-      return;
-    }
-    triggerSearch();
-  }, [provider]);
+  // useEffect(() => {
+  //   if (render < 1) {
+  //     setRender(render + 1);
+  //     return;
+  //   }
+  //   triggerSearch();
+  // }, [provider]);
 
   const handleChangeService = (event: SelectChangeEvent) => {
     setService(event.target.value);
@@ -89,142 +89,131 @@ export const MenuBar = ({
 
   return (
     <Toolbar variant="dense" id="menubar">
-      <Paper
+      <MenuDropdown />
+      <div style={{ display: "flex", flex: "1 1 auto" }}>
+        <FormControl
+          sx={{
+            m: 1,
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+          variant="standard"
+        >
+          <OutlinedInput
+            autoFocus
+            autoComplete="off"
+            id="webservicesearch"
+            type="outlined"
+            placeholder="Webservice suchen..."
+            value={searchString}
+            style={{
+              width: 600,
+              height: 32,
+              backgroundColor: "white",
+            }}
+            onChange={(e) => setSearchString(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && triggerSearch()}
+            startAdornment={
+              <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
+            }
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="clear search"
+                  onClick={() => setSearchString("")}
+                >
+                  <CancelIcon style={{ marginRight: -14, marginLeft: -8 }} />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          <SearchButton
+            id="search-button"
+            size="small"
+            onClick={triggerSearch}
+            sx={{
+              fontSize: 14,
+              backgroundColor: "white",
+              color: theme.palette.primary.main,
+            }}
+            type="submit"
+            variant="outlined"
+            aria-label="search"
+          >
+            {"Suchen"}
+          </SearchButton>
+        </FormControl>
+      </div>
+      <div
         style={{
           display: "flex",
           flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "spaceBetween",
-          width: "100%",
-          backgroundColor: "#007CC3",
-          borderRadius: "0%",
+          justifyContent: "end",
+          width: 500,
         }}
       >
-        <MenuDropdown />
-        <div style={{ display: "flex", flex: "1 1 auto" }}>
-          <FormControl
-            sx={{
-              m: 1,
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
-            variant="standard"
-          >
-            <OutlinedInput
-              autoFocus
-              autoComplete="off"
-              id="webservicesearch"
-              type="outlined"
-              placeholder="Webservice suchen..."
-              value={searchString}
-              style={{
-                width: 600,
-                height: 32,
-                backgroundColor: "white",
-              }}
-              onChange={(e) => setSearchString(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && triggerSearch()}
-              startAdornment={
-                <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
-              }
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="clear search"
-                    onClick={() => setSearchString("")}
-                  >
-                    <CancelIcon style={{ marginRight: -14, marginLeft: -8 }} />
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-            <SearchButton
-              id="search-button"
-              size="small"
-              onClick={triggerSearch}
-              sx={{
-                fontSize: 14,
-                backgroundColor: "white",
-                color: theme.palette.primary.main,
-              }}
-              type="submit"
-              variant="outlined"
-              aria-label="search"
-            >
-              {"Suchen"}
-            </SearchButton>
-          </FormControl>
-        </div>
-        <div id="filter">
-          <FormControl
-            variant="outlined"
-            sx={{
-              minWidth: 120,
-              marginRight: 2,
-              marginBottom: 1.5,
+        <FormControl
+          variant="outlined"
+          sx={{
+            minWidth: 140,
+            marginRight: 2,
+          }}
+        >
+          <Select
+            autoComplete="off"
+            labelId="select-provider-label"
+            id="select-provider"
+            value={provider}
+            onChange={handleChangeProvider}
+            style={{
+              backgroundColor: "white",
+              textAlign: "center",
+              height: 32,
+              color: "#007CC3",
             }}
           >
-            <Select
-              autoComplete="off"
-              labelId="select-provider-label"
-              id="select-provider"
-              value={provider}
-              onChange={handleChangeProvider}
-              style={{
-                backgroundColor: "white",
-                textAlign: "center",
-                height: 25,
-                color: "#007CC3",
-              }}
-            >
-              {PROVIDERLIST.map((provider) => {
-                return (
-                  <MenuItem key={provider} value={provider}>
-                    {provider}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <FormControl
-            variant="outlined"
-            sx={{
-              minWidth: 100,
-              marginRight: 17,
-              marginBottom: 1.5,
+            {PROVIDERLIST.map((provider) => {
+              return (
+                <MenuItem key={provider} value={provider}>
+                  {provider}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <FormControl
+          variant="outlined"
+          sx={{
+            minWidth: 140,
+          }}
+        >
+          <Select
+            autoComplete="off"
+            defaultValue={""}
+            labelId="select-service-label"
+            id="select-service"
+            value={servicetype}
+            onChange={handleChangeService}
+            style={{
+              backgroundColor: "white",
+              textAlign: "center",
+              height: 32,
+              color: "#007CC3",
             }}
           >
-            <Select
-              autoComplete="off"
-              defaultValue={""}
-              labelId="select-service-label"
-              id="select-service"
-              value={servicetype}
-              onChange={handleChangeService}
-              style={{
-                backgroundColor: "white",
-                textAlign: "center",
-                height: 25,
-                color: "#007CC3",
-              }}
-            >
-              {SERVICELIST.map((servicetype) => {
-                return (
-                  <MenuItem key={servicetype} value={servicetype}>
-                    {servicetype}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          {/* <ImpressumDialog
-            open={openImpressum}
-            setOpen={setOpenImpressum}
-          ></ImpressumDialog> */}
-        </div>
-      </Paper>
+            {SERVICELIST.map((servicetype) => {
+              return (
+                <MenuItem key={servicetype} value={servicetype}>
+                  {servicetype}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <div style={{ width: 12 }} />
+      </div>
     </Toolbar>
   );
 };

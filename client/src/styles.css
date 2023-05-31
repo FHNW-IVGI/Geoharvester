@@ -30,17 +30,11 @@
   margin-left: 10px;
 }
 
-#filter {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  width: 30%;
-  padding-right: 12px;
-}
 
 #menubar {
   border-bottom: 1px solid #f9f9f9;
   padding: 0;
+  background-color: #007CC3;
 }
 
 :root {

@@ -28,7 +28,7 @@ export const MenuDropdown = ({}) => {
   const geoharvesterLogo = require("../../img/geoharvester_logo_blue.png");
 
   return (
-    <div style={{ width: "30%", display: "flex", alignItems: "center" }}>
+    <div style={{ minWidth: 300, display: "flex", alignItems: "center" }}>
       <IconButton
         size="large"
         edge="end"
