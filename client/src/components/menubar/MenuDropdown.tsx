@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ImpressumDialog } from "../ImpressumDialog";
-
 import { IconButton, Menu, Divider, useTheme } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -9,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import "../../styles.css";
 
-export const MenuDropdown = ({}) => {
+export const MenuDropdown = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openImpressum, setOpenImpressum] = useState(false);
 

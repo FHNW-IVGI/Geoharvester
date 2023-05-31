@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   IconButton,
   OutlinedInput,
@@ -7,22 +7,16 @@ import {
   Button,
   Toolbar,
   styled,
-  Paper,
   useTheme,
 } from "@mui/material";
 import { getData } from "../../requests";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import {
-  PROVIDERLIST,
-  DEFAULTPROVIDER,
-  SERVICELIST,
-  DEFAULTSERVICE,
-} from "src/constants";
-import "../../styles.css";
+import { SelectChangeEvent } from "@mui/material/Select";
+import { DEFAULTPROVIDER, DEFAULTSERVICE } from "src/constants";
 import { MenuDropdown } from "./MenuDropdown";
+import { Filter } from "./Filter";
+import "../../styles.css";
 
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
@@ -33,17 +27,27 @@ export const MenuBar = ({
   setSearchResult,
   setPlaceholderText,
 }: SearchBarProps) => {
-  const [searchString, setSearchString] = useState("");
-  const [servicetype, setService] = useState(DEFAULTSERVICE);
-  const [provider, setProvider] = useState(DEFAULTPROVIDER);
-  const [render, setRender] = useState(0);
+  const [searchStringState, setSearchString] = useState("");
+  const [servicetypeState, setServiceState] = useState(DEFAULTSERVICE);
+  const [providerState, setProviderState] = useState(DEFAULTPROVIDER);
   const theme = useTheme();
 
-  const triggerSearch = async () => {
-    const svc = servicetype === DEFAULTSERVICE ? "" : servicetype;
-    const prov = provider === DEFAULTPROVIDER ? "" : provider;
+  const triggerSearch = async (
+    searchString: string | undefined,
+    servicetype: string | undefined,
+    provider: string | undefined
+  ) => {
+    // Fall back to state if an argument is not provided, then parse the default as empty string for the API where necessary
+    const queryParameter =
+      searchString === undefined ? searchStringState : searchString;
 
-    await getData(searchString, svc, prov)
+    const svc = servicetype === undefined ? servicetypeState : servicetype;
+    const svcParameter = svc === DEFAULTSERVICE ? "" : svc;
+
+    const prov = provider === undefined ? providerState : provider;
+    const provParameter = prov === DEFAULTPROVIDER ? "" : prov;
+
+    await getData(queryParameter, svcParameter, provParameter)
       .then((res) => {
         const { data } = res;
         setSearchResult(data);
@@ -55,31 +59,17 @@ export const MenuBar = ({
     setPlaceholderText("Keine Treffer :(");
   };
 
-  // useEffect(() => {
-  //   if (render < 1) {
-  //     setRender(render + 1);
-  //     return;
-  //   }
-  //   triggerSearch();
-  // }, [servicetype]);
-
-  // useEffect(() => {
-  //   if (render < 1) {
-  //     setRender(render + 1);
-  //     return;
-  //   }
-  //   triggerSearch();
-  // }, [provider]);
-
   const handleChangeService = (event: SelectChangeEvent) => {
-    setService(event.target.value);
+    setServiceState(event.target.value);
+    triggerSearch(undefined, event.target.value, undefined);
   };
 
   const handleChangeProvider = (event: SelectChangeEvent) => {
-    setProvider(event.target.value);
+    setProviderState(event.target.value);
+    triggerSearch(undefined, undefined, event.target.value);
   };
 
-  const SearchButton = styled(Button)(({}) => ({
+  const SearchButton = styled(Button)(() => ({
     color: "#101010",
     backgroundColor: "white",
     "&:hover": {
@@ -107,14 +97,17 @@ export const MenuBar = ({
             id="webservicesearch"
             type="outlined"
             placeholder="Webservice suchen..."
-            value={searchString}
+            value={searchStringState}
             style={{
               width: 600,
               height: 32,
               backgroundColor: "white",
             }}
             onChange={(e) => setSearchString(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && triggerSearch()}
+            onKeyDown={(e) =>
+              e.key === "Enter" &&
+              triggerSearch(searchStringState, undefined, undefined)
+            }
             startAdornment={
               <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
             }
@@ -132,7 +125,9 @@ export const MenuBar = ({
           <SearchButton
             id="search-button"
             size="small"
-            onClick={triggerSearch}
+            onClick={() =>
+              triggerSearch(searchStringState, undefined, undefined)
+            }
             sx={{
               fontSize: 14,
               backgroundColor: "white",
@@ -146,74 +141,12 @@ export const MenuBar = ({
           </SearchButton>
         </FormControl>
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "end",
-          width: 500,
-        }}
-      >
-        <FormControl
-          variant="outlined"
-          sx={{
-            minWidth: 140,
-            marginRight: 2,
-          }}
-        >
-          <Select
-            autoComplete="off"
-            labelId="select-provider-label"
-            id="select-provider"
-            value={provider}
-            onChange={handleChangeProvider}
-            style={{
-              backgroundColor: "white",
-              textAlign: "center",
-              height: 32,
-              color: "#007CC3",
-            }}
-          >
-            {PROVIDERLIST.map((provider) => {
-              return (
-                <MenuItem key={provider} value={provider}>
-                  {provider}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-        <FormControl
-          variant="outlined"
-          sx={{
-            minWidth: 140,
-          }}
-        >
-          <Select
-            autoComplete="off"
-            defaultValue={""}
-            labelId="select-service-label"
-            id="select-service"
-            value={servicetype}
-            onChange={handleChangeService}
-            style={{
-              backgroundColor: "white",
-              textAlign: "center",
-              height: 32,
-              color: "#007CC3",
-            }}
-          >
-            {SERVICELIST.map((servicetype) => {
-              return (
-                <MenuItem key={servicetype} value={servicetype}>
-                  {servicetype}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-        <div style={{ width: 12 }} />
-      </div>
+      <Filter
+        handleChangeService={handleChangeService}
+        handleChangeProvider={handleChangeProvider}
+        provider={providerState}
+        servicetype={servicetypeState}
+      />
     </Toolbar>
   );
 };

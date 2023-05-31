@@ -29,4 +29,4 @@ export const PROVIDERLIST = [
     "KT_ZH",
     "FL_LI",
 ];
-export const SERVICELIST = [DEFAULTSERVICE, "WFS", "WMS", "WMTS"];
+export const SERVICELIST = [DEFAULTSERVICE, "wfs", "wms", "wmts"];
