@@ -20,10 +20,12 @@ import { Geoservice } from "../../types";
 import { visuallyHidden } from "@mui/utils";
 import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
-import { DEFAULTPAGE } from "src/constants";
+import { DEFAULTPAGE, RESPONSESTATE } from "src/constants";
+import LinearProgress from "@mui/material/LinearProgress";
 
 type TableProps = {
   docs: Geoservice[];
+  responseState: RESPONSESTATE;
   fields: string[];
   total: number;
   placeholderText: string;
@@ -39,6 +41,7 @@ type Order = "asc" | "desc";
 
 export const ServiceTable = ({
   docs,
+  responseState,
   fields,
   total,
   placeholderText,
@@ -73,43 +76,6 @@ export const ServiceTable = ({
     setPage(DEFAULTPAGE);
   };
 
-  const StyledTableCell = styled(TableCell)(() => ({
-    "&": {
-      backgroundColor: theme.palette.secondary.main,
-      padding: 8,
-      textAlign: "center",
-      color: "white",
-    },
-  }));
-
-  const StyledTableFooter = styled(TableFooter)(() => ({
-    "&": {
-      left: 0,
-      bottom: 0,
-      zIndex: 2,
-      position: "sticky",
-      backgroundColor: "white",
-    },
-  }));
-
-  if (docs.length < 1) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-          flex: 1,
-        }}
-      >
-        <Typography variant="h3" component="h3" color="#C0C0C0">
-          {placeholderText}
-        </Typography>
-      </div>
-    );
-  }
-
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: string
@@ -134,85 +100,151 @@ export const ServiceTable = ({
       : -1
   );
 
-  const columns = ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"];
-  return docs.length > 0 ? (
-    <TableContainer
-      component={Paper}
-      sx={{ cursor: "pointer", overflowX: "auto" }}
+  const StyledTableCell = styled(TableCell)(() => ({
+    "&": {
+      backgroundColor: theme.palette.secondary.main,
+      padding: 8,
+      textAlign: "center",
+      color: "white",
+    },
+  }));
+
+  const StyledTableFooter = styled(TableFooter)(() => ({
+    "&": {
+      left: 0,
+      bottom: 0,
+      zIndex: 2,
+      position: "sticky",
+      backgroundColor: "white",
+    },
+  }));
+
+  const PlaceholderWidget = ({
+    placeholderText,
+  }: {
+    placeholderText?: string;
+  }) => (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        flex: 1,
+      }}
     >
-      <Table stickyHeader aria-label="sticky table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Σ={total}</StyledTableCell>
-            {columns.map((col_header, index) => {
-              const commonCasedHeader =
-                col_header.charAt(0).toUpperCase() +
-                col_header.slice(1).toLocaleLowerCase();
-              return index < 2 ? (
-                <StyledTableCell key={index}>
-                  {commonCasedHeader}
-                </StyledTableCell>
-              ) : (
-                <>
-                  <StyledTableCell
-                    key={index}
-                    sortDirection={orderBy === col_header ? order : false}
-                  >
-                    <TableSortLabel
-                      style={{ color: "white", textAlign: "center" }}
-                      active={true}
-                      direction={orderBy === col_header ? order : "desc"}
-                      onClick={createSortHandler(col_header)}
-                    >
-                      {commonCasedHeader}
-                      {orderBy === col_header ? (
-                        <Box component="span" sx={visuallyHidden}>
-                          {order === "desc"
-                            ? "sorted descending"
-                            : "sorted ascending"}
-                        </Box>
-                      ) : null}
-                    </TableSortLabel>
-                  </StyledTableCell>
-                </>
-              );
-            })}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(rowsPerPage > 0
-            ? sortedData.slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage
-              )
-            : sortedData
-          ).map((row, index) => (
-            <ServiceRow row={row} index={index} />
-          ))}
-        </TableBody>
-        <StyledTableFooter>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[20, 50, 100, { label: "All", value: -1 }]}
-              colSpan={6}
-              count={total}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                inputProps: {
-                  "aria-label": "rows per page",
-                },
-                native: true,
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
-          </TableRow>
-        </StyledTableFooter>
-      </Table>
-    </TableContainer>
-  ) : (
-    <div />
+      {placeholderText ? (
+        <Typography variant="h3" component="h3" color="#C0C0C0">
+          {placeholderText}
+        </Typography>
+      ) : (
+        <div>
+          <Typography variant="h5" component="h3" color="#C0C0C0">
+            Suche...
+          </Typography>
+          <LinearProgress style={{ width: 300 }} />
+        </div>
+      )}
+    </div>
   );
+
+  const columns = ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"];
+
+  switch (responseState) {
+    case RESPONSESTATE.UNINITIALIZED:
+      return <PlaceholderWidget placeholderText="Webservice suchen..." />;
+    case RESPONSESTATE.EMPTY:
+      return <PlaceholderWidget placeholderText="Keine Treffer..." />;
+    case RESPONSESTATE.ERROR:
+      return <PlaceholderWidget placeholderText="Error..." />;
+    case RESPONSESTATE.WAITING:
+      return <PlaceholderWidget />;
+    case RESPONSESTATE.SUCCESS:
+      return (
+        <TableContainer
+          component={Paper}
+          sx={{ cursor: "pointer", overflowX: "auto" }}
+        >
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Σ={total}</StyledTableCell>
+                {columns.map((col_header, index) => {
+                  const commonCasedHeader =
+                    col_header.charAt(0).toUpperCase() +
+                    col_header.slice(1).toLocaleLowerCase();
+                  return index < 2 ? (
+                    <StyledTableCell key={index}>
+                      {commonCasedHeader}
+                    </StyledTableCell>
+                  ) : (
+                    <>
+                      <StyledTableCell
+                        key={index}
+                        sortDirection={orderBy === col_header ? order : false}
+                      >
+                        <TableSortLabel
+                          style={{ color: "white", textAlign: "center" }}
+                          active={true}
+                          direction={orderBy === col_header ? order : "desc"}
+                          onClick={createSortHandler(col_header)}
+                        >
+                          {commonCasedHeader}
+                          {orderBy === col_header ? (
+                            <Box component="span" sx={visuallyHidden}>
+                              {order === "desc"
+                                ? "sorted descending"
+                                : "sorted ascending"}
+                            </Box>
+                          ) : null}
+                        </TableSortLabel>
+                      </StyledTableCell>
+                    </>
+                  );
+                })}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(rowsPerPage > 0
+                ? sortedData.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : sortedData
+              ).map((row, index) => (
+                <ServiceRow row={row} index={index} />
+              ))}
+            </TableBody>
+            <StyledTableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[
+                    20,
+                    50,
+                    100,
+                    { label: "All", value: -1 },
+                  ]}
+                  colSpan={6}
+                  count={total}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      "aria-label": "rows per page",
+                    },
+                    native: true,
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </StyledTableFooter>
+          </Table>
+        </TableContainer>
+      );
+
+    default:
+      return <PlaceholderWidget placeholderText="Webservice suchen..." />;
+  }
 };

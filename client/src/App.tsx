@@ -9,6 +9,7 @@ import {
   DEFAULTLIMIT,
   DEFAULTOFFSET,
   DEFAULTPAGE,
+  RESPONSESTATE,
 } from "./constants";
 
 const theme = createTheme({
@@ -34,6 +35,9 @@ export type SearchResult = {
 
 function App() {
   const [searchResult, setSearchResult] = useState({} as SearchResult);
+  const [responseState, setResponseState] = useState(
+    RESPONSESTATE.UNINITIALIZED
+  );
   const { items, total } = searchResult;
   const [placeholderText, setPlaceholderText] = useState(
     "Webservice suchen..."
@@ -67,6 +71,7 @@ function App() {
         <header className="appheader">
           <MenuBar
             setSearchResult={setSearchResult}
+            setResponseState={setResponseState}
             setPlaceholderText={setPlaceholderText}
             setPage={setPage}
             offset={offset}
@@ -87,7 +92,8 @@ function App() {
           setLimit={setLimit}
           setRowsPerPage={setSize}
           rowsPerPage={size}
-        ></ServiceTable>
+          responseState={responseState}
+        />
         <Footer />
       </section>
     </ThemeProvider>

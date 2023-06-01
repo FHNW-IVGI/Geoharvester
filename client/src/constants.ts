@@ -12,12 +12,7 @@ export enum LANG {
 }
 export const DEFAULTLANGUAGE = LANG.GER;
 
-export enum SERVICETYPE {
-    WFS = "wfs",
-    WMS = "wms",
-    WMTS = "wmts",
-    NONE = ""
-}
+
 
 
 export const PROVIDERLIST = [
@@ -48,3 +43,19 @@ export const PROVIDERLIST = [
     "FL_LI",
 ];
 export const SERVICELIST = [DEFAULTSERVICE, "wfs", "wms", "wmts"];
+
+export enum SERVICETYPE {
+    WFS = "wfs",
+    WMS = "wms",
+    WMTS = "wmts",
+    NONE = ""
+}
+
+export enum RESPONSESTATE {
+    UNINITIALIZED = "UNINITIALIZED",
+    WAITING = "WAITING",
+    SUCCESS = "SUCCESS",
+    EMPTY = "EMPTY",
+    ERROR = "ERROR",
+}
+

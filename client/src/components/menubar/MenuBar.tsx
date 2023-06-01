@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
   IconButton,
   OutlinedInput,
@@ -13,13 +14,19 @@ import { getData } from "../../requests";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { DEFAULTPAGE, DEFAULTPROVIDER, DEFAULTSERVICE } from "src/constants";
+import {
+  DEFAULTPAGE,
+  DEFAULTPROVIDER,
+  DEFAULTSERVICE,
+  RESPONSESTATE,
+} from "src/constants";
 import { MenuDropdown } from "./MenuDropdown";
 import { Filter } from "./Filter";
 import "../../styles.css";
 
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
+  setResponseState: (setResponseState: RESPONSESTATE) => void;
   setPlaceholderText: (text: string) => void;
   setPage: (page: number) => void;
   offset: number;
@@ -31,6 +38,7 @@ export type SearchBarProps = {
 
 export const MenuBar = ({
   setSearchResult,
+  setResponseState,
   setPlaceholderText,
   setPage,
   offset,
@@ -59,6 +67,7 @@ export const MenuBar = ({
     const prov = provider === undefined ? providerState : provider;
     const provParameter = prov === DEFAULTPROVIDER ? "" : prov;
 
+    setResponseState(RESPONSESTATE.WAITING);
     await getData(
       queryParameter,
       svcParameter,
@@ -71,14 +80,22 @@ export const MenuBar = ({
     )
       .then((res) => {
         const { data } = res;
-        setSearchResult(data);
-        setPage(DEFAULTPAGE);
+
+        if (data.length > 0) {
+          setResponseState(RESPONSESTATE.SUCCESS);
+          setSearchResult(data);
+          setPage(DEFAULTPAGE);
+        } else {
+          setResponseState(RESPONSESTATE.EMPTY);
+          setSearchResult([]); // Fallback on error
+        }
       })
       .catch((e) => {
         console.error(e);
+        setResponseState(RESPONSESTATE.ERROR);
         setSearchResult([]); // Fallback on error
       });
-    setPlaceholderText("Keine Treffer :(");
+    setResponseState(RESPONSESTATE.EMPTY);
   };
 
   const handleChangeService = (event: SelectChangeEvent) => {
