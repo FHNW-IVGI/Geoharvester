@@ -23,7 +23,7 @@ export function ImpressumDialog(props: any) {
           <Typography variant="h5" sx={{ mt: 4 }}>
             Finanzierung
           </Typography>
-          <Typography variant="body1"> Strategie Nationale Geodaten Infrastruktur Schweiz </Typography>
+          <Typography variant="body1">Strategie Geoinformation Schweiz</Typography>
           <Typography variant="h5" sx={{ mt: 4 }}>
             Projektteam
           </Typography>
