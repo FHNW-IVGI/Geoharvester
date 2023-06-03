@@ -175,7 +175,11 @@ export const MenuBar = ({
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);
-                window.location.replace("/api/docs/");
+                if  (window.location.hostname == "localhost") {
+                  window.open("http://localhost:8000/api/docs");
+                } else {
+                  window.open("3.76.227.122:8000/api/docs");
+                }
               }}
             >
               <TerminalIcon style={{ marginRight: 14 }} />
@@ -194,8 +198,10 @@ export const MenuBar = ({
             src={String(geoharvesterLogo)}
             width="242"
             height="29"
-            style={{ marginLeft: -10 }}
-          />
+            style={{ marginLeft: -10, cursor: "pointer"}}
+            onClick={() => {
+              window.location.reload();
+            }}/>
         </div>
         <div style={{ display: "flex", flex: "1 1 auto" }}>
           <FormControl

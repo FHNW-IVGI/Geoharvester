@@ -1,4 +1,4 @@
-import { TableRow, TableCell, Collapse, Box, Button } from "@mui/material";
+import { TableRow, TableCell, Collapse, Box, Button, Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
 
@@ -56,6 +56,18 @@ export const SubRow = ({
           qgis_handler: () => getQgisWMTS(row),
         };
   };
+
+  const openUrlMapgeo = () => {
+    if (row.MAPGEO === "n.a." || row.MAPGEO === null || row.MAPGEO === "") {
+  } else {
+    window.open(row.MAPGEO);
+  }};
+
+  const openUrlLegend = () => {
+    if (row.LEGEND === "n.a." || row.LEGEND === null || row.LEGEND === "") {
+    }else {
+    window.open(row.LEGEND);
+  }};
 
   const StyledTableRow = styled(TableRow)(({}) => ({
     "&": {
@@ -127,7 +139,9 @@ export const SubRow = ({
                       wordBreak: "break-word",
                     }}
                   >
-                    <a href={row.MAPGEO} target="_blank" style={{ margin: 2 }}>Service in MapGeo öffnen</a>
+                    <Tooltip title={row.MAPGEO} arrow>
+                      <a onClick={openUrlMapgeo} style={{ margin: 2}}>Service in MapGeo öffnen</a>
+                    </Tooltip>
                   </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "row" }}>
@@ -148,7 +162,9 @@ export const SubRow = ({
                       wordBreak: "break-word",
                     }}
                   >
-                    <a href={row.LEGEND} target="_blank" style={{ margin: 2 }}>Legende öffnen</a>
+                    <Tooltip title={row.LEGEND} arrow>
+                      <a onClick={openUrlLegend} style={{ margin: 2}}>Legende öffnen</a>
+                    </Tooltip>
                   </div>
                 </div>
               <div
