@@ -58,13 +58,13 @@ export const SubRow = ({
   };
 
   const openUrlMapgeo = () => {
-    if (row.MAPGEO == "n.a." || row.MAPGEO == null || row.MAPGEO == "") {
+    if (row.MAPGEO === "n.a." || row.MAPGEO === null || row.MAPGEO === "") {
   } else {
     window.open(row.MAPGEO);
   }};
 
   const openUrlLegend = () => {
-    if (row.LEGEND == "n.a." || row.LEGEND == null || row.LEGEND == "") {
+    if (row.LEGEND === "n.a." || row.LEGEND === null || row.LEGEND === "") {
     }else {
     window.open(row.LEGEND);
   }};
