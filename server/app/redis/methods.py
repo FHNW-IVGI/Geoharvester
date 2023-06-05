@@ -4,13 +4,13 @@ from time import time
 from typing import Union
 
 import pandas as pd
-import redis
-from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
+from app.constants import EnumServiceType
 from app.processing.stopwords import get_stopwords
+# from app.redis.redis import r
 from fastapi.logger import logger as fastapi_logger
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
-r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+from server.app.redis.redis_manager import r
 
 
 def check_if_index_exists(INDEX_ID):

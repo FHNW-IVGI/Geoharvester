@@ -3,23 +3,23 @@ import json
 import logging
 from typing import List, Union
 
-import pandas as pd
-import redis
-from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
+from app.constants import EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
                                     import_pkl_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters, results_ranking,
                                transform_wordlist_to_query)
+# from app.redis.redis import r
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                GeoserviceModel, geoservices_schema)
 from fastapi import FastAPI
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
-from redis import StrictRedis
 from redis.commands.search.query import Query
+
+from server.app.redis.redis_manager import r
 
 app = FastAPI(
     debug=True,
@@ -31,8 +31,6 @@ app = FastAPI(
 
 dataframe=None
 datajson=None
-csv_row_limit= 5000
-r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
 origins = [
     # Adjust to your frontend localhost port if not default
