@@ -10,12 +10,11 @@ env_location = sys.path[0]+"/app/redis/redis.env"
 load_dotenv(dotenv_path=env_location) 
 
 REDIS_HOST_PASSWORD = os.getenv("REDIS_HOST_PASSWORD") 
-from dotenv import load_dotenv
 
 
 class RedisManager(object):
     def __init__(self, *args):
-        self.redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_HOST_PASSWORD, username="default")
+        self.redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_HOST_PASSWORD)
 
 
 r = RedisManager().redis

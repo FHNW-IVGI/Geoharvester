@@ -25,11 +25,13 @@
 
 - Your favorite terminal
 - Have docker and docker compose installed (https://docs.docker.com/compose/install/). Windows users need to install Docker Desktop (https://docs.docker.com/desktop/install/windows-install/)
+- A redis.conf in /server/app/redis with the setting requirepass= set to a password. Create the file manually, it must not be checked into git.
+- A redis.env in /server/app/redis with REDIS_HOST_PASSWORD= set to a password. Create the file and its content manually, it must not be checked into git.
 
 ###### Run:
 
 1. cd into server folder
-2. Run `docker compose up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
+2. Run `docker compose --env-file ./app/redis/redis.env  up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
 3. Check `localhost:8000/api`in your browser to verify that backend is running
 
 #### Troubleshooting:
@@ -41,6 +43,8 @@
 ##### Cannot start application
 
 - Check that you are starting the backend from the `server` folder (not server/apps). Is Docker running? You might need to start the daemon (Ubuntu: `sudo service docker start`) or Docker Desktop (Windows)
+- Make sure that you have created the two files that contain the redis password, as described above.
+- Use `docker compose --env-file ./app/redis/redis.env  up --build` (or another path to where the redis password is located).
 
 ##### Error about reaching max_clients and no results in the frontend.
 

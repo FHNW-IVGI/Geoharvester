@@ -2,6 +2,7 @@ FROM python:3.9
 WORKDIR /server
 RUN mkdir app
 COPY ./app/requirements.txt /server/app/requirements.txt
+COPY ./app/redis/redis.env /server/app/redis/redis.env
 RUN pip install --no-cache-dir --upgrade -r /server/app/requirements.txt
 COPY ./app server/app
 EXPOSE 8000

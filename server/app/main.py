@@ -131,7 +131,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
 
     redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   
-        .paging(offset, 12000)
+        .paging(offset, 99)
         .return_field('TITLE')
         .return_field('ABSTRACT')
         .return_field('OWNER')
