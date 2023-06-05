@@ -50,6 +50,10 @@
 
 Redis allows a limit of 10000 by default and will throw an error if the limit is set to a higher number in code. In order to allow a higher limit, this needs to be set in the redis .conf file and the modified config needs to be copied to the docker instance (which is handled by docker-compose.yml, "volumes" ). Redis v.7.0+ required.
 
+##### Error about reaching max_clients and no results in the frontend.
+
+Redis allows a limit of 10000 by default and will throw an error if the limit is set to a higher number in code. In order to allow a higher limit, this needs to be set in the redis .conf file and the modified config needs to be copied to the docker instance (which is handled by docker-compose.yml, "volumes" ). Redis v.7.0+ required.
+
 #### Development / VSCode Support:
 
 Docker is set up to automatically copy code changes into the container. However, when it comes to the Python interpreter and the management of dependencies on your local machine both (Docker and your local environment) are not in sync by default. VSCode might flag missing dependencies on your local environment, depending on which interpreter is selected. There are two approaches to solve this issue for development:
