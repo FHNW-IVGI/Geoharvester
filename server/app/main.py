@@ -56,12 +56,11 @@ else:
 @app.on_event("startup")
 async def startup_event():
     """Startup Event: Load csv into data frame"""
-    global dataframe
+    # Overwrite config limit for a maximum of 10000 search results:
+    r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
-    # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
-    # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
-    # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
     url_geoservices_CH_pkl = "app/tmp/rawdata_scraper.pkl" # preprocessed data with NLP!
+    global dataframe
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
     
     global datajson
@@ -131,7 +130,7 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
 
     redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
         .language(lang)                                   
-        .paging(offset, 99)
+        .paging(offset, 100000)
         .return_field('TITLE')
         .return_field('ABSTRACT')
         .return_field('OWNER')
