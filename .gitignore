@@ -14,6 +14,9 @@ client/coverage
 
 # production
 client/build
+# These contain passwords, do not check them into git!
+server/app/redis/redis.conf 
+server/app/redis/redis.env 
 
 # misc
 env

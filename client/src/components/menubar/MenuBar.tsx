@@ -95,7 +95,6 @@ export const MenuBar = ({
         setResponseState(RESPONSESTATE.ERROR);
         setSearchResult([]); // Fallback on error
       });
-    setResponseState(RESPONSESTATE.EMPTY);
   };
 
   const handleChangeService = (event: SelectChangeEvent) => {
