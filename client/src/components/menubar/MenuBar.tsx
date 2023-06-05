@@ -80,8 +80,8 @@ export const MenuBar = ({
     )
       .then((res) => {
         const { data } = res;
-
-        if (data.length > 0) {
+        console.log(data);
+        if (data.items.length > 0) {
           setResponseState(RESPONSESTATE.SUCCESS);
           setSearchResult(data);
           setPage(DEFAULTPAGE);
