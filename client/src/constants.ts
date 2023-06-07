@@ -1,8 +1,9 @@
 export const DEFAULTSERVICE = "Alle Services";
 export const DEFAULTPROVIDER = "Alle Quellen";
 export const DEFAULTOFFSET = 0;
-export const DEFAULTLIMIT = 10000;
+export const DEFAULTLIMIT = 50000; // Search limit in redis - how many records are scanned in the search.
 export const DEFAULTPAGE = 0;
+export const DEFAULTSIZE = 50; // Numnber of records returned per page.
 
 export enum LANG {
     GER = "german",
@@ -10,11 +11,8 @@ export enum LANG {
     FR = "french",
     IT = "italian"
 }
+
 export const DEFAULTLANGUAGE = LANG.GER;
-
-
-
-
 export const PROVIDERLIST = [
     DEFAULTPROVIDER,
     "Bund",

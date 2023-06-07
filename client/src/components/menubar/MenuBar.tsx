@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
   IconButton,
   OutlinedInput,
@@ -10,92 +8,37 @@ import {
   styled,
   useTheme,
 } from "@mui/material";
-import { getData } from "../../requests";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
 import { SelectChangeEvent } from "@mui/material/Select";
-import {
-  DEFAULTPAGE,
-  DEFAULTPROVIDER,
-  DEFAULTSERVICE,
-  RESPONSESTATE,
-} from "src/constants";
 import { MenuDropdown } from "./MenuDropdown";
 import { Filter } from "./Filter";
 import "../../styles.css";
 
 export type SearchBarProps = {
-  setSearchResult: (searchResult: any) => void;
-  setResponseState: (setResponseState: RESPONSESTATE) => void;
-  setPlaceholderText: (text: string) => void;
-  setPage: (page: number) => void;
-  offset: number;
-  limit: number;
-  language: string;
-  page: number;
-  size: number;
-};
-
-export const MenuBar = ({
-  setSearchResult,
-  setResponseState,
-  setPlaceholderText,
-  setPage,
-  offset,
-  limit,
-  language,
-  page,
-  size,
-}: SearchBarProps) => {
-  const [searchStringState, setSearchString] = useState("");
-  const [servicetypeState, setServiceState] = useState(DEFAULTSERVICE);
-  const [providerState, setProviderState] = useState(DEFAULTPROVIDER);
-  const theme = useTheme();
-
-  const triggerSearch = async (
+  triggerSearch: (
     searchString: string | undefined,
     servicetype: string | undefined,
     provider: string | undefined
-  ) => {
-    // Fall back to state if an argument is not provided, then parse the default as empty string for the API where necessary
-    const queryParameter =
-      searchString === undefined ? searchStringState : searchString;
+  ) => void;
+  servicetypeState: string;
+  setServiceState: (serviceState: string) => void;
+  providerState: string;
+  setProviderState: (serviceState: string) => void;
+  searchStringState: string;
+  setSearchString: (searchString: string) => void;
+};
 
-    const svc = servicetype === undefined ? servicetypeState : servicetype;
-    const svcParameter = svc === DEFAULTSERVICE ? "" : svc;
-
-    const prov = provider === undefined ? providerState : provider;
-    const provParameter = prov === DEFAULTPROVIDER ? "" : prov;
-
-    setResponseState(RESPONSESTATE.WAITING);
-    await getData(
-      queryParameter,
-      svcParameter,
-      provParameter,
-      language,
-      offset,
-      limit,
-      page,
-      size
-    )
-      .then((res) => {
-        const { data } = res;
-        console.log(data);
-        if (data.items.length > 0) {
-          setResponseState(RESPONSESTATE.SUCCESS);
-          setSearchResult(data);
-          setPage(DEFAULTPAGE);
-        } else {
-          setResponseState(RESPONSESTATE.EMPTY);
-          setSearchResult([]); // Fallback on error
-        }
-      })
-      .catch((e) => {
-        console.error(e);
-        setResponseState(RESPONSESTATE.ERROR);
-        setSearchResult([]); // Fallback on error
-      });
-  };
+export const MenuBar = ({
+  triggerSearch,
+  setServiceState,
+  servicetypeState,
+  setProviderState,
+  providerState,
+  setSearchString,
+  searchStringState,
+}: SearchBarProps) => {
+  const theme = useTheme();
 
   const handleChangeService = (event: SelectChangeEvent) => {
     setServiceState(event.target.value);

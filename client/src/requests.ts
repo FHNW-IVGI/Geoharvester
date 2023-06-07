@@ -16,12 +16,11 @@ const routes = {
     getQgisWMTS: "/templates/qgis_wmts_template.qlr",
 }
 
-export const getData = async (query: string, service: string = SERVICETYPE.NONE, owner: string = "", lang: string = LANG.GER, offset: number = DEFAULTOFFSET, limit: number = DEFAULTLIMIT, pageIndex: number, size: number) => {
+export const getData = async (query_string: string, service: string = SERVICETYPE.NONE, owner: string = "", lang: string = LANG.GER, offset: number = DEFAULTOFFSET, limit: number = DEFAULTLIMIT, pageIndex: number, size: number) => {
     const page = pageIndex + 1 // FastAPI Pagination uses 1 as first index
-    console.log("request", { query, service, owner, lang, offset, limit, page, size })
-    const response = await axios(routes.getData, { params: { query, service, owner, lang, offset, limit, page, size } });
+    console.log("request", { query_string, service, owner, lang, offset, limit, page, size })
+    const response = await axios(routes.getData, { params: { query_string, service, owner, lang, offset, limit, page, size } });
     const result = { ...response, data: { ...response.data, page: page - 1 } } // Translate back to zero indexed MUI value
-    console.log(result.data)
     return result
 }
 

@@ -5,10 +5,10 @@ from typing import Union
 
 import pandas as pd
 from app.constants import EnumServiceType
-from app.processing.stopwords import get_stopwords
-# from app.redis.redis import r
+from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+from redis.commands.search.query import Query
 
 from server.app.redis.redis_manager import r
 
@@ -36,7 +36,7 @@ def create_index(PREFIX, INDEX_ID, schema):
     if(check_if_index_exists(INDEX_ID)):
         # Drop index in case it is cached by Docker
         r.ft(INDEX_ID).dropindex()
-    r.ft(INDEX_ID).create_index(schema, definition = index_def, stopwords=get_stopwords())
+    r.ft(INDEX_ID).create_index(schema, definition = index_def)
     return
 
 
@@ -112,7 +112,35 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
     elif (len(queryable_parameters) == 1):
         return queryable_parameters[0]
     else:
-       return "&".join(queryable_parameters)
+        return "&".join(queryable_parameters)
+    
+
+def search_redis(redis_query, lang, offset, limit):
+    return r.ft(SVC_INDEX_ID).search(Query(redis_query)
+            .language(lang)                                   
+            .paging(offset, 50000)
+            .return_field('TITLE')
+            .return_field('ABSTRACT')
+            .return_field('OWNER')
+            .return_field('SERVICETYPE')
+            .return_field('NAME')
+            .return_field('MAPGEO')
+            .return_field('TREE')
+            .return_field('GROUP')
+            .return_field('KEYWORDS')
+            .return_field('KEYWORDS_NLP')
+            .return_field('LEGEND')
+            .return_field('CONTACT')
+            .return_field('SERVICELINK')
+            .return_field('METADATA')
+            .return_field('MAX_ZOOM')
+            .return_field('CENTER_LAT')
+            .return_field('CENTER_LON')
+            .return_field('BBOX')
+            .return_field('SUMMARY')
+            .return_field('LANG_3')
+            .return_field('METAQUALITY')
+            )
 
 ######################################################################################################################################
 

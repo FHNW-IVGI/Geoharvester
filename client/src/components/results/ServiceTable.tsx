@@ -35,6 +35,15 @@ type TableProps = {
   setLimit: (limit: number) => void;
   setRowsPerPage: (size: number) => void;
   rowsPerPage: number;
+  triggerSearch: (
+    searchString: string | undefined,
+    servicetype: string | undefined,
+    provider: string | undefined,
+    pageIndex: number
+  ) => void;
+  servicetypeState: string;
+  providerState: string;
+  searchStringState: string;
 };
 
 type Order = "asc" | "desc";
@@ -51,11 +60,14 @@ export const ServiceTable = ({
   setLimit,
   setRowsPerPage,
   rowsPerPage,
+  triggerSearch,
+  servicetypeState,
+  providerState,
+  searchStringState,
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
-  // const [page, setPage] = useState(0);
-  // const [rowsPerPage, setRowsPerPage] = useState(20);
+
   const theme = useTheme();
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -67,6 +79,7 @@ export const ServiceTable = ({
     newPage: number
   ) => {
     setPage(newPage);
+    triggerSearch(searchStringState, servicetypeState, providerState, newPage);
   };
 
   const handleChangeRowsPerPage = (

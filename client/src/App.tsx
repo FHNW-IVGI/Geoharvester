@@ -9,8 +9,11 @@ import {
   DEFAULTLIMIT,
   DEFAULTOFFSET,
   DEFAULTPAGE,
+  DEFAULTPROVIDER,
+  DEFAULTSERVICE,
   RESPONSESTATE,
 } from "./constants";
+import { getData } from "./requests";
 
 const theme = createTheme({
   palette: {
@@ -47,6 +50,56 @@ function App() {
   const [offset, setOffset] = useState(DEFAULTOFFSET);
   const [limit, setLimit] = useState(DEFAULTLIMIT);
   const [language, setLanguage] = useState(DEFAULTLANGUAGE);
+  const [searchStringState, setSearchString] = useState("");
+  const [servicetypeState, setServiceState] = useState(DEFAULTSERVICE);
+  const [providerState, setProviderState] = useState(DEFAULTPROVIDER);
+
+  const triggerSearch = async (
+    searchString: string | undefined,
+    servicetype: string | undefined,
+    provider: string | undefined,
+    pageIndex: number = page
+  ) => {
+    // Fall back to state if an argument is not provided, then parse the default as empty string for the API where necessary
+    const queryParameter =
+      searchString === undefined ? searchStringState : searchString;
+
+    const svc = servicetype === undefined ? servicetypeState : servicetype;
+    const svcParameter = svc === DEFAULTSERVICE ? "" : svc;
+
+    const prov = provider === undefined ? providerState : provider;
+    const provParameter = prov === DEFAULTPROVIDER ? "" : prov;
+
+    setResponseState(RESPONSESTATE.WAITING);
+
+    await getData(
+      queryParameter,
+      svcParameter,
+      provParameter,
+      language,
+      offset,
+      limit,
+      pageIndex,
+      size
+    )
+      .then((res) => {
+        const { data } = res;
+        console.log(data);
+        if (data.items.length > 0) {
+          setResponseState(RESPONSESTATE.SUCCESS);
+          setSearchResult(data);
+          setPage(DEFAULTPAGE);
+        } else {
+          setResponseState(RESPONSESTATE.EMPTY);
+          setSearchResult({} as SearchResult); // Fallback on error
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        setResponseState(RESPONSESTATE.ERROR);
+        setSearchResult({} as SearchResult); // Fallback on error
+      });
+  };
 
   const Footer = () => {
     return (
@@ -70,15 +123,15 @@ function App() {
       <section>
         <header className="appheader">
           <MenuBar
-            setSearchResult={setSearchResult}
-            setResponseState={setResponseState}
-            setPlaceholderText={setPlaceholderText}
-            setPage={setPage}
-            offset={offset}
-            limit={limit}
-            language={language}
-            size={size}
-            page={page}
+            {...{
+              triggerSearch,
+              setServiceState,
+              servicetypeState,
+              setProviderState,
+              providerState,
+              setSearchString,
+              searchStringState,
+            }}
           />
         </header>
         <ServiceTable
@@ -93,6 +146,10 @@ function App() {
           setRowsPerPage={setSize}
           rowsPerPage={size}
           responseState={responseState}
+          triggerSearch={triggerSearch}
+          searchStringState={searchStringState}
+          providerState={providerState}
+          servicetypeState={servicetypeState}
         />
         <Footer />
       </section>

@@ -3,7 +3,6 @@ import shlex
 from typing import List
 
 import pandas as pd
-from app.processing.stopwords import get_stopwords
 
 from ..constants import fields_to_output
 
@@ -45,10 +44,8 @@ def split_search_string(query: str) -> List[str]:
     # Also split terms with delimiters
     word_list_without_delimiters = split_delimiters(word_list_with_delimiters)
 
-    # Filter out blanks, stopwords and other leftovers:
     # TODO: Implement the stop words for all the languages with NLP -> see preprocessing utils.py
-    stopwords = get_stopwords()
-    strings_to_remove = ["", *stopwords]
+    strings_to_remove = [""]
     filtered_word_list = list(filter(lambda string: string not in strings_to_remove, word_list_without_delimiters))
 
     # Trim whitespaces of terms which may originate from splitting:
