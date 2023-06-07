@@ -4,8 +4,10 @@
  * 
  */
 
+import { PROVIDERTYPE, SERVICETYPE } from "./constants";
+
 export interface Geoservice {
-    OWNER: string;
+    OWNER: PROVIDERTYPE;
     TITLE: string;
     NAME: string;
     MAPGEO: string;
@@ -18,7 +20,7 @@ export interface Geoservice {
     SERVICELINK: string;
     METADATA: string;
     UPDATE: string;
-    SERVICETYPE: string;
+    SERVICETYPE: SERVICETYPE;
     MAX_ZOOM: number;
     CENTER_LAT: string;
     CENTER_LON: string;
@@ -27,7 +29,7 @@ export interface Geoservice {
 }
 
 export interface Geodata {
-    OWNER: string;
+    OWNER: PROVIDERTYPE;
     TITLE: string;
     NAME: string;
     MAPGEO: string;

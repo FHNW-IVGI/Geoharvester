@@ -20,7 +20,12 @@ import { Geoservice } from "../../types";
 import { visuallyHidden } from "@mui/utils";
 import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
-import { DEFAULTPAGE, RESPONSESTATE } from "src/constants";
+import {
+  DEFAULTPAGE,
+  PROVIDERTYPE,
+  RESPONSESTATE,
+  SERVICETYPE,
+} from "src/constants";
 import LinearProgress from "@mui/material/LinearProgress";
 
 type TableProps = {
@@ -37,12 +42,12 @@ type TableProps = {
   rowsPerPage: number;
   triggerSearch: (
     searchString: string | undefined,
-    servicetype: string | undefined,
-    provider: string | undefined,
+    servicetype: SERVICETYPE | undefined,
+    provider: PROVIDERTYPE | undefined,
     pageIndex: number
   ) => void;
-  servicetypeState: string;
-  providerState: string;
+  servicetypeState: SERVICETYPE;
+  providerState: PROVIDERTYPE;
   searchStringState: string;
 };
 

@@ -9,9 +9,9 @@ import {
   DEFAULTLIMIT,
   DEFAULTOFFSET,
   DEFAULTPAGE,
-  DEFAULTPROVIDER,
-  DEFAULTSERVICE,
+  PROVIDERTYPE,
   RESPONSESTATE,
+  SERVICETYPE,
 } from "./constants";
 import { getData } from "./requests";
 
@@ -51,24 +51,27 @@ function App() {
   const [limit, setLimit] = useState(DEFAULTLIMIT);
   const [language, setLanguage] = useState(DEFAULTLANGUAGE);
   const [searchStringState, setSearchString] = useState("");
-  const [servicetypeState, setServiceState] = useState(DEFAULTSERVICE);
-  const [providerState, setProviderState] = useState(DEFAULTPROVIDER);
+  const [servicetypeState, setServiceState] = useState<SERVICETYPE>(
+    SERVICETYPE.NONE
+  );
+  const [providerState, setProviderState] = useState<PROVIDERTYPE>(
+    PROVIDERTYPE.NONE
+  );
 
   const triggerSearch = async (
     searchString: string | undefined,
-    servicetype: string | undefined,
-    provider: string | undefined,
+    servicetype: SERVICETYPE | undefined,
+    provider: PROVIDERTYPE | undefined,
     pageIndex: number = page
   ) => {
-    // Fall back to state if an argument is not provided, then parse the default as empty string for the API where necessary
+    // Fall back to state if an argument is not provided
     const queryParameter =
       searchString === undefined ? searchStringState : searchString;
 
-    const svc = servicetype === undefined ? servicetypeState : servicetype;
-    const svcParameter = svc === DEFAULTSERVICE ? "" : svc;
+    const svcParameter =
+      servicetype === undefined ? servicetypeState : servicetype;
 
-    const prov = provider === undefined ? providerState : provider;
-    const provParameter = prov === DEFAULTPROVIDER ? "" : prov;
+    const provParameter = provider === undefined ? providerState : provider;
 
     setResponseState(RESPONSESTATE.WAITING);
 

@@ -14,17 +14,18 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { MenuDropdown } from "./MenuDropdown";
 import { Filter } from "./Filter";
 import "../../styles.css";
+import { PROVIDERTYPE, SERVICETYPE } from "src/constants";
 
 export type SearchBarProps = {
   triggerSearch: (
     searchString: string | undefined,
-    servicetype: string | undefined,
-    provider: string | undefined
+    servicetype: SERVICETYPE | undefined,
+    provider: PROVIDERTYPE | undefined
   ) => void;
-  servicetypeState: string;
-  setServiceState: (serviceState: string) => void;
-  providerState: string;
-  setProviderState: (serviceState: string) => void;
+  servicetypeState: SERVICETYPE;
+  setServiceState: (serviceState: SERVICETYPE) => void;
+  providerState: PROVIDERTYPE;
+  setProviderState: (serviceState: PROVIDERTYPE) => void;
   searchStringState: string;
   setSearchString: (searchString: string) => void;
 };
@@ -41,13 +42,13 @@ export const MenuBar = ({
   const theme = useTheme();
 
   const handleChangeService = (event: SelectChangeEvent) => {
-    setServiceState(event.target.value);
-    triggerSearch(undefined, event.target.value, undefined);
+    setServiceState(event.target.value as SERVICETYPE);
+    triggerSearch(undefined, event.target.value as SERVICETYPE, undefined);
   };
 
   const handleChangeProvider = (event: SelectChangeEvent) => {
-    setProviderState(event.target.value);
-    triggerSearch(undefined, undefined, event.target.value);
+    setProviderState(event.target.value as PROVIDERTYPE);
+    triggerSearch(undefined, undefined, event.target.value as PROVIDERTYPE);
   };
 
   const SearchButton = styled(Button)(() => ({
