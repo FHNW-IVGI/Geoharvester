@@ -20,7 +20,8 @@ export type SearchBarProps = {
   triggerSearch: (
     searchString: string | undefined,
     servicetype: SERVICETYPE | undefined,
-    provider: PROVIDERTYPE | undefined
+    provider: PROVIDERTYPE | undefined,
+    page: number
   ) => void;
   servicetypeState: SERVICETYPE;
   setServiceState: (serviceState: SERVICETYPE) => void;
@@ -40,15 +41,26 @@ export const MenuBar = ({
   searchStringState,
 }: SearchBarProps) => {
   const theme = useTheme();
+  const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
 
   const handleChangeService = (event: SelectChangeEvent) => {
     setServiceState(event.target.value as SERVICETYPE);
-    triggerSearch(undefined, event.target.value as SERVICETYPE, undefined);
+    triggerSearch(
+      undefined,
+      event.target.value as SERVICETYPE,
+      undefined,
+      page
+    );
   };
 
   const handleChangeProvider = (event: SelectChangeEvent) => {
     setProviderState(event.target.value as PROVIDERTYPE);
-    triggerSearch(undefined, undefined, event.target.value as PROVIDERTYPE);
+    triggerSearch(
+      undefined,
+      undefined,
+      event.target.value as PROVIDERTYPE,
+      page
+    );
   };
 
   const SearchButton = styled(Button)(() => ({
@@ -88,7 +100,7 @@ export const MenuBar = ({
             onChange={(e) => setSearchString(e.target.value)}
             onKeyDown={(e) =>
               e.key === "Enter" &&
-              triggerSearch(searchStringState, undefined, undefined)
+              triggerSearch(searchStringState, undefined, undefined, page)
             }
             startAdornment={
               <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
@@ -108,7 +120,7 @@ export const MenuBar = ({
             id="search-button"
             size="small"
             onClick={() =>
-              triggerSearch(searchStringState, undefined, undefined)
+              triggerSearch(searchStringState, undefined, undefined, page)
             }
             sx={{
               fontSize: 14,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ServiceTable } from "./components/results/ServiceTable";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuBar } from "./components/menubar/MenuBar";
@@ -12,6 +12,7 @@ import {
   RESPONSESTATE,
   SERVICETYPE,
   DEFAULTROWSPERPAGE,
+  DEFAULTCHUNKSIZE,
 } from "./constants";
 import { getData } from "./requests";
 
@@ -45,10 +46,11 @@ function App() {
   const [placeholderText, setPlaceholderText] = useState(
     "Webservice suchen..."
   );
-  const [page, setPage] = useState(DEFAULTPAGE);
+  const [currentApiPage, setCurrentApiPage] = useState(DEFAULTPAGE);
   const [size, setSize] = useState(DEFAULTROWSPERPAGE);
   const [offset, setOffset] = useState(DEFAULTOFFSET);
   const [language, setLanguage] = useState(DEFAULTLANGUAGE);
+  const [initialTotal, setInitialTotal] = useState(0);
   const [searchStringState, setSearchString] = useState("");
   const [servicetypeState, setServiceState] = useState<SERVICETYPE>(
     SERVICETYPE.NONE
@@ -57,11 +59,14 @@ function App() {
     PROVIDERTYPE.NONE
   );
 
+  const [page, setPage] = useState<number>(0);
+
   const triggerSearch = async (
     searchString: string | undefined,
     servicetype: SERVICETYPE | undefined,
     provider: PROVIDERTYPE | undefined,
-    pageIndex: number = page
+    page: number,
+    offset?: number
   ) => {
     // Fall back to state if an argument is not provided
     const queryParameter =
@@ -79,17 +84,16 @@ function App() {
       svcParameter,
       provParameter,
       language,
-      offset,
-      pageIndex,
-      size
+      page,
+      DEFAULTCHUNKSIZE
     )
       .then((res) => {
         const { data } = res;
-        console.log(data);
+        console.log("data", data);
         if (data.items.length > 0) {
           setResponseState(RESPONSESTATE.SUCCESS);
           setSearchResult(data);
-          setPage(DEFAULTPAGE);
+          setCurrentApiPage(data.page);
         } else {
           setResponseState(RESPONSESTATE.EMPTY);
           setSearchResult({} as SearchResult); // Fallback on error
@@ -139,9 +143,11 @@ function App() {
           docs={items || []}
           fields={[]}
           total={total}
+          offset={offset}
           placeholderText={placeholderText}
-          page={page}
-          setPage={setPage}
+          currentApiPage={currentApiPage}
+          initialTotal={initialTotal}
+          setInitialTotal={setInitialTotal}
           setOffset={setOffset}
           setRowsPerPage={setSize}
           rowsPerPage={size}
@@ -150,6 +156,8 @@ function App() {
           searchStringState={searchStringState}
           providerState={providerState}
           servicetypeState={servicetypeState}
+          page={page}
+          setPage={setPage}
         />
         <Footer />
       </section>

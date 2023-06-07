@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   TableContainer,
   Table,
@@ -21,6 +21,7 @@ import { visuallyHidden } from "@mui/utils";
 import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
 import {
+  DEFAULTCHUNKSIZE,
   DEFAULTPAGE,
   DEFAULTROWSPERPAGE,
   PROVIDERTYPE,
@@ -33,12 +34,16 @@ type TableProps = {
   docs: Geoservice[];
   responseState: RESPONSESTATE;
   fields: string[];
+  offset: number;
   total: number;
-  placeholderText: string;
   page: number;
-  setPage: (page: number) => void;
+  placeholderText: string;
+  currentApiPage: number;
+  initialTotal: number;
   setOffset: (offset: number) => void;
+  setInitialTotal: (total: number) => void;
   setRowsPerPage: (size: number) => void;
+  setPage: (page: number) => void;
   rowsPerPage: number;
   triggerSearch: (
     searchString: string | undefined,
@@ -57,11 +62,14 @@ export const ServiceTable = ({
   docs,
   responseState,
   fields,
+  offset,
   total,
   placeholderText,
+  currentApiPage,
+  setInitialTotal,
   page,
   setPage,
-  setOffset,
+  initialTotal,
   setRowsPerPage,
   rowsPerPage,
   triggerSearch,
@@ -82,18 +90,20 @@ export const ServiceTable = ({
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
-    setPage(newPage);
-    if (
-      rowsPerPage * newPage >= DEFAULTROWSPERPAGE &&
-      rowsPerPage * newPage <= total
-    ) {
+    const processedResults = rowsPerPage * newPage;
+    console.log("currentApiPage", currentApiPage);
+    console.log(processedResults);
+    if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
+      setPage(0);
       // Only trigger search if value is > 1000, then recalc with offset and override UI
       triggerSearch(
         searchStringState,
         servicetypeState,
         providerState,
-        newPage // Needs to be offset
+        currentApiPage + 1 //
       );
+    } else {
+      setPage(newPage);
     }
   };
 

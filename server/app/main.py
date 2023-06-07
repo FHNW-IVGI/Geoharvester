@@ -50,7 +50,7 @@ else:
 
 # Pagination settings. Adjust FE table calculations accordingly when changing these!
 Page = Page.with_custom_options(
-    size=Field(100, ge=1, le=DEFAULTSIZE),
+    size=Field(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
 )
 
 dataframe=None
@@ -107,7 +107,7 @@ async def get_data_by_id(id: str):
 
 
 @app.get("/api/getData", response_model=Page[GeoserviceModel])
-async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:EnumProviderType = EnumProviderType.none, lang: str = "german", offset: int = 0, limit: int = 1000):
+async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:EnumProviderType = EnumProviderType.none, lang: str = "german", page: int = 0, limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
         service: Service filter - wms, wmts, wfs
@@ -121,7 +121,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_query = redis_query_from_parameters("", service, owner)
         fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
-        redis_data = search_redis(redis_query, lang, offset, 30000)
+        redis_data = search_redis(redis_query, lang, 0, 30000)
         return paginate(redis_data.docs)
 
 
@@ -132,7 +132,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_query = redis_query_from_parameters(text_query, service, owner)
         fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
-        redis_data = search_redis(redis_query, lang, offset, 30000)
+        redis_data = search_redis(redis_query, lang, 0, 30000)
 
         ############################################################################################################################
         # Testing ranking function from the ranking functions in methods.py
