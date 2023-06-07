@@ -28,3 +28,36 @@ class EnumServiceType(str, Enum):
     wmts = "wmts"
     wfs = "wfs"
     none = ""
+
+
+class EnumProviderType(str, Enum):
+    BUND = "Bund",
+    GEODIENSTE = "Geodienste",
+    KT_AG = "KT_AG",
+    KT_AI = "KT_AI",
+    KT_AR = "KT_AR",
+    KT_BE = "KT_BE",
+    KT_BL = "KT_BL",
+    KT_BS = "KT_BS",
+    KT_FR = "KT_FR",
+    KT_GE = "KT_GE",
+    KT_GL = "KT_GL",
+    KT_GR = "KT_GR",
+    KT_JU = "KT_JU",
+    KT_SG = "KT_SG",
+    KT_SH = "KT_SH",
+    KT_SO = "KT_SO",
+    KT_SZ = "KT_SZ",
+    KT_TG = "KT_TG",
+    KT_TI = "KT_TI",
+    KT_VD = "KT_VD",
+    KT_UR = "KT_UR",
+    KT_ZG = "KT_ZG",
+    KT_ZH = "KT_ZH",
+    FL_LI = "FL_LI",
+    none = ""
+
+
+#---------------------------------------------------------------------------------------------------------------
+# Constants:
+DEFAULTSIZE = 1000 # Chunk size retrieved with a single call from redis. Needs to match FE variable of same name!

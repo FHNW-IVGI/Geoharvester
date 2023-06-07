@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Union
 
-from app.constants import EnumServiceType
+from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
 from app.processing.methods import (import_pkl_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
@@ -15,9 +15,14 @@ from fastapi import FastAPI
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
+from pydantic import Field
 
 from server.app.redis.redis_manager import r
 
+origins = [
+    # Adjust to your frontend localhost port if not default
+    "http://localhost:3000"
+]
 app = FastAPI(
     debug=True,
     version="0.2.0",
@@ -25,14 +30,6 @@ app = FastAPI(
     redoc_url='/api/redoc',
     openapi_url='/api/openapi.json'
 )
-
-dataframe=None
-datajson=None
-
-origins = [
-    # Adjust to your frontend localhost port if not default
-    "http://localhost:3000"
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -42,13 +39,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+# Logging:
 gunicorn_logger = logging.getLogger('gunicorn.error')
 fastapi_logger.handlers = gunicorn_logger.handlers
 if __name__ != "main":
     fastapi_logger.setLevel("DEBUG")
 else:
     fastapi_logger.setLevel(logging.DEBUG)
+
+
+# Pagination settings. Adjust FE table calculations accordingly when changing these!
+Page = Page.with_custom_options(
+    size=Field(100, ge=1, le=DEFAULTSIZE),
+)
+
+dataframe=None
+datajson=None
 
 @app.on_event("startup")
 async def startup_event():
@@ -101,7 +107,7 @@ async def get_data_by_id(id: str):
 
 
 @app.get("/api/getData", response_model=Page[GeoserviceModel])
-async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", offset: int = 0, limit: int = 1000):
+async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:EnumProviderType = EnumProviderType.none, lang: str = "german", offset: int = 0, limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
         service: Service filter - wms, wmts, wfs
