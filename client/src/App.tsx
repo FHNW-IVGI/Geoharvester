@@ -11,6 +11,7 @@ import {
   PROVIDERTYPE,
   RESPONSESTATE,
   SERVICETYPE,
+  DEFAULTROWSPERPAGE,
 } from "./constants";
 import { getData } from "./requests";
 
@@ -31,7 +32,7 @@ export type SearchResult = {
   page: number;
   pages: number;
   total: number;
-  size: number;
+  size: number; // Items per page
   items: Geoservice[];
 };
 
@@ -45,7 +46,7 @@ function App() {
     "Webservice suchen..."
   );
   const [page, setPage] = useState(DEFAULTPAGE);
-  const [size, setSize] = useState(50);
+  const [size, setSize] = useState(DEFAULTROWSPERPAGE);
   const [offset, setOffset] = useState(DEFAULTOFFSET);
   const [language, setLanguage] = useState(DEFAULTLANGUAGE);
   const [searchStringState, setSearchString] = useState("");

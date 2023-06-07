@@ -22,7 +22,7 @@ import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
 import {
   DEFAULTPAGE,
-  DEFAULTSIZE,
+  DEFAULTROWSPERPAGE,
   PROVIDERTYPE,
   RESPONSESTATE,
   SERVICETYPE,
@@ -84,7 +84,7 @@ export const ServiceTable = ({
   ) => {
     setPage(newPage);
     if (
-      rowsPerPage * newPage >= DEFAULTSIZE &&
+      rowsPerPage * newPage >= DEFAULTROWSPERPAGE &&
       rowsPerPage * newPage <= total
     ) {
       // Only trigger search if value is > 1000, then recalc with offset and override UI
