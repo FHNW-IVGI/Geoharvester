@@ -1,12 +1,7 @@
 import { FormControl } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import {
-  PROVIDERLIST,
-  PROVIDERTYPE,
-  SERVICELIST,
-  SERVICETYPE,
-} from "src/constants";
+import { PROVIDERTYPE, SERVICETYPE } from "src/constants";
 import "../../styles.css";
 
 export type SearchBarProps = {
@@ -56,10 +51,10 @@ export const Filter = ({
             color: "#007CC3",
           }}
         >
-          {PROVIDERLIST.map((provider) => {
+          {(Object.values(PROVIDERTYPE) as PROVIDERTYPE[]).map((provider) => {
             return (
               <MenuItem key={provider} value={provider}>
-                {provider === "" ? "Alle Quellen" : provider}
+                {provider}
               </MenuItem>
             );
           })}
@@ -85,10 +80,12 @@ export const Filter = ({
             color: "#007CC3",
           }}
         >
-          {SERVICELIST.map((servicetype) => {
+          {(Object.values(SERVICETYPE) as SERVICETYPE[]).map((servicetype) => {
             return (
               <MenuItem key={servicetype} value={servicetype}>
-                {servicetype === "" ? "Alle Services" : servicetype}
+                {servicetype === SERVICETYPE.NONE
+                  ? "Alle Services"
+                  : servicetype}
               </MenuItem>
             );
           })}
