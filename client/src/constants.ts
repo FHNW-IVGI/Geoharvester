@@ -1,6 +1,5 @@
 
 export const DEFAULTOFFSET = 0;
-export const DEFAULTLIMIT = 50000; // Search limit in redis - how many records are scanned in the search.
 export const DEFAULTPAGE = 0;
 export const DEFAULTSIZE = 1000; // Chunk size retrieved with a single call from redis. Needs to match BE variable of same name!
 

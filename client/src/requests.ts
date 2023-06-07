@@ -3,7 +3,7 @@ import axios from "axios";
 import { Geoservice } from "./types";
 import { parseQgisTemplate } from "./templateParser/qgisParser";
 import { parseArcgisWFS, parseArcgisWMSorWMTS } from "./templateParser/arcgisParser";
-import { LANG, SERVICETYPE, DEFAULTLIMIT, DEFAULTOFFSET, DEFAULTSIZE, PROVIDERTYPE } from "./constants";
+import { LANG, SERVICETYPE, DEFAULTOFFSET, DEFAULTSIZE, PROVIDERTYPE } from "./constants";
 
 
 const routes = {
@@ -16,12 +16,12 @@ const routes = {
     getQgisWMTS: "/templates/qgis_wmts_template.qlr",
 }
 
-export const getData = async (query_string: string, servicetype: SERVICETYPE = SERVICETYPE.NONE, ownertype: PROVIDERTYPE = PROVIDERTYPE.NONE, lang: string = LANG.GER, offset: number = DEFAULTOFFSET, limit: number = DEFAULTLIMIT, pageIndex: number, size: number = DEFAULTSIZE) => {
+export const getData = async (query_string: string, servicetype: SERVICETYPE = SERVICETYPE.NONE, ownertype: PROVIDERTYPE = PROVIDERTYPE.NONE, lang: string = LANG.GER, offset: number = DEFAULTOFFSET, pageIndex: number, size: number = DEFAULTSIZE) => {
     const page = pageIndex + 1 // FastAPI Pagination uses 1 as first index
     const service = servicetype === SERVICETYPE.NONE ? "" : servicetype
     const owner = ownertype === PROVIDERTYPE.NONE ? "" : ownertype
-    console.log("request", { query_string, service, owner, lang, offset, limit, page, size })
-    const response = await axios(routes.getData, { params: { query_string, service, owner, lang, offset, limit, page, size } });
+    console.log("request", { query_string, service, owner, lang, offset, page, size })
+    const response = await axios(routes.getData, { params: { query_string, service, owner, lang, offset, page, size } });
     const result = { ...response, data: { ...response.data, page: page - 1 } } // Translate back to zero indexed MUI value
     return result
 }

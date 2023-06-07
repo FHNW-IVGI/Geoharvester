@@ -6,7 +6,6 @@ import { Box } from "@mui/material";
 import { Geoservice } from "./types";
 import {
   DEFAULTLANGUAGE,
-  DEFAULTLIMIT,
   DEFAULTOFFSET,
   DEFAULTPAGE,
   PROVIDERTYPE,
@@ -48,7 +47,6 @@ function App() {
   const [page, setPage] = useState(DEFAULTPAGE);
   const [size, setSize] = useState(50);
   const [offset, setOffset] = useState(DEFAULTOFFSET);
-  const [limit, setLimit] = useState(DEFAULTLIMIT);
   const [language, setLanguage] = useState(DEFAULTLANGUAGE);
   const [searchStringState, setSearchString] = useState("");
   const [servicetypeState, setServiceState] = useState<SERVICETYPE>(
@@ -81,7 +79,6 @@ function App() {
       provParameter,
       language,
       offset,
-      limit,
       pageIndex,
       size
     )
@@ -145,7 +142,6 @@ function App() {
           page={page}
           setPage={setPage}
           setOffset={setOffset}
-          setLimit={setLimit}
           setRowsPerPage={setSize}
           rowsPerPage={size}
           responseState={responseState}

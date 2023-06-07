@@ -38,7 +38,6 @@ type TableProps = {
   page: number;
   setPage: (page: number) => void;
   setOffset: (offset: number) => void;
-  setLimit: (limit: number) => void;
   setRowsPerPage: (size: number) => void;
   rowsPerPage: number;
   triggerSearch: (
@@ -63,7 +62,6 @@ export const ServiceTable = ({
   page,
   setPage,
   setOffset,
-  setLimit,
   setRowsPerPage,
   rowsPerPage,
   triggerSearch,
