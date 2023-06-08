@@ -86,26 +86,46 @@ export const ServiceTable = ({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - docs.length) : 0;
 
-  const handleChangePage = (
+  const handleChangePageForward = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
     const processedResults = rowsPerPage * newPage;
     console.log("currentApiPage", currentApiPage);
-    // console.log(processedResults);
-    // if (processedResults == DEFAULTCHUNKSIZE && processedResults <= total) {
-    // Only trigger search if value is > 1000, then recalc with offset and override UI
-    triggerSearch(
-      searchStringState,
-      servicetypeState,
-      providerState,
-      newPage // + 1 //,
-    );
-    setPage(0);
-    // setPage(newPage + 1);
-    // } else {
-    //   setPage(newPage);
-    // }
+    console.log(processedResults);
+    if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
+      setPage(0);
+      triggerSearch(
+        searchStringState,
+        servicetypeState,
+        providerState,
+        currentApiPage + 1 //
+      );
+    } else {
+      setPage(newPage);
+    }
+  };
+  const handleChangePageBackward = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    const processedResults = rowsPerPage * newPage;
+    console.log("currentApiPage", currentApiPage);
+    console.log(processedResults);
+    if (
+      processedResults >= DEFAULTCHUNKSIZE * currentApiPage &&
+      processedResults <= total
+    ) {
+      setPage(0);
+      triggerSearch(
+        searchStringState,
+        servicetypeState,
+        providerState,
+        currentApiPage - 1
+      );
+    } else {
+      setPage(newPage);
+    }
   };
 
   const handleChangeRowsPerPage = (
@@ -274,10 +294,16 @@ export const ServiceTable = ({
                     },
                     native: true,
                   }}
-                  onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={(onTest) => (
-                    <TablePaginationActions {...onTest} />
+                  onPageChange={() => null}
+                  ActionsComponent={(
+                    handleChangePageForward,
+                    handleChangePageBackward
+                  ) => (
+                    <TablePaginationActions
+                      {...handleChangePageForward}
+                      {...handleChangePageForward}
+                    />
                   )}
                 />
               </TableRow>
