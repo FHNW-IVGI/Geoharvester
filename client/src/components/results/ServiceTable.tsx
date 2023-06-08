@@ -110,19 +110,22 @@ export const ServiceTable = ({
     newPage: number
   ) => {
     const processedResults = rowsPerPage * newPage;
-    console.log("currentApiPage", currentApiPage);
-    console.log(processedResults);
+    const pagesBeforeReload = DEFAULTCHUNKSIZE / rowsPerPage - 1;
+
+    // 100 / 100 = 1, 100 / 50  = 2
+
+    console.log("pagesBeforeReload", pagesBeforeReload);
     if (
-      processedResults >= DEFAULTCHUNKSIZE * currentApiPage &&
-      processedResults <= total
+      processedResults <= DEFAULTCHUNKSIZE * currentApiPage &&
+      processedResults > 0
     ) {
-      setPage(0);
       triggerSearch(
         searchStringState,
         servicetypeState,
         providerState,
         currentApiPage - 1
       );
+      setPage(pagesBeforeReload);
     } else {
       setPage(newPage);
     }
