@@ -86,6 +86,8 @@ export const ServiceTable = ({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - docs.length) : 0;
 
+  // const handleChangePageForward = () => console.log("forward");
+  // const handleChangePageBackward = () => console.log("back");
   const handleChangePageForward = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -296,13 +298,11 @@ export const ServiceTable = ({
                   }}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                   onPageChange={() => null}
-                  ActionsComponent={(
-                    handleChangePageForward,
-                    handleChangePageBackward
-                  ) => (
+                  ActionsComponent={(props) => (
                     <TablePaginationActions
-                      {...handleChangePageForward}
-                      {...handleChangePageForward}
+                      handleChangePageForward={handleChangePageForward}
+                      handleChangePageBackward={handleChangePageBackward}
+                      {...props}
                     />
                   )}
                 />
