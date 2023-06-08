@@ -29,6 +29,7 @@ export type SearchBarProps = {
   setProviderState: (serviceState: PROVIDERTYPE) => void;
   searchStringState: string;
   setSearchString: (searchString: string) => void;
+  resetPageToZero: () => void;
 };
 
 export const MenuBar = ({
@@ -39,6 +40,7 @@ export const MenuBar = ({
   providerState,
   setSearchString,
   searchStringState,
+  resetPageToZero,
 }: SearchBarProps) => {
   const theme = useTheme();
   const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
@@ -119,9 +121,10 @@ export const MenuBar = ({
           <SearchButton
             id="search-button"
             size="small"
-            onClick={() =>
-              triggerSearch(searchStringState, undefined, undefined, page)
-            }
+            onClick={() => {
+              resetPageToZero();
+              triggerSearch(searchStringState, undefined, undefined, page);
+            }}
             sx={{
               fontSize: 14,
               backgroundColor: "white",

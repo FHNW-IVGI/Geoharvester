@@ -60,6 +60,7 @@ function App() {
   );
 
   const [page, setPage] = useState<number>(0);
+  const resetPageToZero = () => setPage(0);
 
   const triggerSearch = async (
     searchString: string | undefined,
@@ -136,6 +137,7 @@ function App() {
               providerState,
               setSearchString,
               searchStringState,
+              resetPageToZero,
             }}
           />
         </header>
