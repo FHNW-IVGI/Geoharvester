@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TableContainer,
   Table,
@@ -86,8 +86,6 @@ export const ServiceTable = ({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - docs.length) : 0;
 
-  // const handleChangePageForward = () => console.log("forward");
-  // const handleChangePageBackward = () => console.log("back");
   const handleChangePageForward = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -210,7 +208,6 @@ export const ServiceTable = ({
   );
 
   const columns = ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"];
-  const onTest = 2;
 
   switch (responseState) {
     case RESPONSESTATE.UNINITIALIZED:
@@ -256,7 +253,8 @@ export const ServiceTable = ({
                             <Box component="span" sx={visuallyHidden}>
                               {order === "desc"
                                 ? "sorted descending"
-                                : "sorted ascending"}
+                                : "sorted ascending"}{" "}
+                              + ro
                             </Box>
                           ) : null}
                         </TableSortLabel>
@@ -290,6 +288,31 @@ export const ServiceTable = ({
                   count={total}
                   rowsPerPage={rowsPerPage}
                   page={page}
+                  labelDisplayedRows={({
+                    from,
+                    to,
+                    count,
+                    page,
+                  }): React.ReactNode => {
+                    console.log(
+                      "currentApiPage:",
+                      currentApiPage,
+                      "page",
+                      page,
+                      "rows",
+                      rowsPerPage
+                    );
+                    console.log(
+                      currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage
+                    );
+                    return `${
+                      currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage
+                    }–${
+                      currentApiPage * DEFAULTCHUNKSIZE +
+                      page * rowsPerPage +
+                      rowsPerPage
+                    } of ${count !== -1 ? count : `more than ${to}`}`;
+                  }}
                   SelectProps={{
                     inputProps: {
                       "aria-label": "rows per page",

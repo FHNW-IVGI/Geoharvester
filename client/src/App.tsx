@@ -89,7 +89,7 @@ function App() {
     )
       .then((res) => {
         const { data } = res;
-        console.log("data", data);
+        // console.log("data", data);
         if (data.items.length > 0) {
           setResponseState(RESPONSESTATE.SUCCESS);
           setSearchResult(data);

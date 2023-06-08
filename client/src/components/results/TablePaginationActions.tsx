@@ -53,7 +53,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
       <IconButton
         onClick={handleBackButtonClick}
-        disabled={page === 0}
+        // disabled={page === 0}
         aria-label="previous page"
       >
         {theme.direction === "rtl" ? (
@@ -64,7 +64,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        // disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
       >
         {theme.direction === "rtl" ? (
