@@ -92,19 +92,20 @@ export const ServiceTable = ({
   ) => {
     const processedResults = rowsPerPage * newPage;
     console.log("currentApiPage", currentApiPage);
-    console.log(processedResults);
-    if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
-      setPage(0);
-      // Only trigger search if value is > 1000, then recalc with offset and override UI
-      triggerSearch(
-        searchStringState,
-        servicetypeState,
-        providerState,
-        currentApiPage + 1 //
-      );
-    } else {
-      setPage(newPage);
-    }
+    // console.log(processedResults);
+    // if (processedResults == DEFAULTCHUNKSIZE && processedResults <= total) {
+    // Only trigger search if value is > 1000, then recalc with offset and override UI
+    triggerSearch(
+      searchStringState,
+      servicetypeState,
+      providerState,
+      newPage // + 1 //,
+    );
+    setPage(0);
+    // setPage(newPage + 1);
+    // } else {
+    //   setPage(newPage);
+    // }
   };
 
   const handleChangeRowsPerPage = (
@@ -187,6 +188,7 @@ export const ServiceTable = ({
   );
 
   const columns = ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"];
+  const onTest = 2;
 
   switch (responseState) {
     case RESPONSESTATE.UNINITIALIZED:
@@ -274,7 +276,9 @@ export const ServiceTable = ({
                   }}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
+                  ActionsComponent={(onTest) => (
+                    <TablePaginationActions {...onTest} />
+                  )}
                 />
               </TableRow>
             </StyledTableFooter>

@@ -15,6 +15,7 @@ interface TablePaginationActionsProps {
     event: React.MouseEvent<HTMLButtonElement>,
     newPage: number
   ) => void;
+  onTest?: number;
 }
 
 // MUI Default, source: https://mui.com/material-ui/react-table/#customization
