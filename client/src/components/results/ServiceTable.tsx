@@ -91,8 +91,6 @@ export const ServiceTable = ({
     newPage: number
   ) => {
     const processedResults = rowsPerPage * newPage;
-    console.log("currentApiPage", currentApiPage);
-    console.log(processedResults);
     if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
       setPage(0);
       triggerSearch(
@@ -109,24 +107,30 @@ export const ServiceTable = ({
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
-    const processedResults = rowsPerPage * newPage;
-    const pagesBeforeReload = DEFAULTCHUNKSIZE / rowsPerPage - 1;
+    const processedResults = Math.abs(rowsPerPage * newPage);
+    const pagesBeforeReload = DEFAULTCHUNKSIZE / rowsPerPage;
 
     // 100 / 100 = 1, 100 / 50  = 2
 
-    console.log("pagesBeforeReload", pagesBeforeReload);
+    console.log("processedResults", processedResults); // Rows * page
+    console.log("currentApiPage", currentApiPage);
+    console.log("pagesBeforeReload", Math.abs(pagesBeforeReload));
+    console.log("newPage", newPage); // -1
+    console.log("-----");
     if (
       processedResults <= DEFAULTCHUNKSIZE * currentApiPage &&
       processedResults > 0
     ) {
+      console.log("newcall");
       triggerSearch(
         searchStringState,
         servicetypeState,
         providerState,
         currentApiPage - 1
       );
-      setPage(pagesBeforeReload);
+      setPage(Math.abs(pagesBeforeReload) - 1);
     } else {
+      console.log("skip");
       setPage(newPage);
     }
   };
