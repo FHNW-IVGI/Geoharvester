@@ -332,6 +332,7 @@ export const ServiceTable = ({
                     <TablePaginationActions
                       handleChangePageForward={handleChangePageForward}
                       handleChangePageBackward={handleChangePageBackward}
+                      currentApiPage={currentApiPage}
                       {...props}
                     />
                   )}

@@ -10,6 +10,7 @@ import LastPageIcon from "@mui/icons-material/LastPage";
 interface TablePaginationActionsProps {
   count: number;
   page: number;
+  currentApiPage: number;
   rowsPerPage: number;
   onPageChange: (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -35,6 +36,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
     handleChangePageForward,
     handleChangePageBackward,
     onPageChange,
+    currentApiPage,
   } = props;
 
   const handleBackButtonClick = (
@@ -53,7 +55,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
       <IconButton
         onClick={handleBackButtonClick}
-        // disabled={page === 0}
+        disabled={currentApiPage === 0}
         aria-label="previous page"
       >
         {theme.direction === "rtl" ? (
