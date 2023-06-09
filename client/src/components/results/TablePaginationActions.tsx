@@ -11,6 +11,8 @@ interface TablePaginationActionsProps {
   count: number;
   page: number;
   currentApiPage: number;
+  displayedRecordsStart: number;
+  displayedRecordsEnd: number;
   rowsPerPage: number;
   onPageChange: (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -37,6 +39,8 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
     handleChangePageBackward,
     onPageChange,
     currentApiPage,
+    displayedRecordsStart,
+    displayedRecordsEnd,
   } = props;
 
   const handleBackButtonClick = (
@@ -55,7 +59,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
       <IconButton
         onClick={handleBackButtonClick}
-        disabled={currentApiPage === 0}
+        disabled={currentApiPage === 0 && displayedRecordsStart === 0}
         aria-label="previous page"
       >
         {theme.direction === "rtl" ? (
@@ -66,7 +70,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
-        // disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        disabled={displayedRecordsEnd >= count}
         aria-label="next page"
       >
         {theme.direction === "rtl" ? (

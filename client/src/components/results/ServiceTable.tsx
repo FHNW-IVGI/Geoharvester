@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   TableContainer,
   Table,
@@ -23,7 +23,6 @@ import { TablePaginationActions } from "./TablePaginationActions";
 import {
   DEFAULTCHUNKSIZE,
   DEFAULTPAGE,
-  DEFAULTROWSPERPAGE,
   PROVIDERTYPE,
   RESPONSESTATE,
   SERVICETYPE,
@@ -86,6 +85,10 @@ export const ServiceTable = ({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - docs.length) : 0;
 
+  const displayedRecordsStart =
+    currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage;
+  const displayedRecordsEnd = displayedRecordsStart + rowsPerPage;
+
   const handleChangePageForward = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -110,18 +113,10 @@ export const ServiceTable = ({
     const processedResults = Math.abs(rowsPerPage * newPage);
     const pagesBeforeReload = DEFAULTCHUNKSIZE / rowsPerPage;
 
-    // 100 / 100 = 1, 100 / 50  = 2
-
-    console.log("processedResults", processedResults); // Rows * page
-    console.log("currentApiPage", currentApiPage);
-    console.log("pagesBeforeReload", Math.abs(pagesBeforeReload));
-    console.log("newPage", newPage); // -1
-    console.log("-----");
     if (
       processedResults <= DEFAULTCHUNKSIZE * currentApiPage &&
       processedResults > 0
     ) {
-      console.log("newcall");
       triggerSearch(
         searchStringState,
         servicetypeState,
@@ -130,7 +125,6 @@ export const ServiceTable = ({
       );
       setPage(Math.abs(pagesBeforeReload) - 1);
     } else {
-      console.log("skip");
       setPage(newPage);
     }
   };
@@ -301,24 +295,10 @@ export const ServiceTable = ({
                     count,
                     page,
                   }): React.ReactNode => {
-                    console.log(
-                      "currentApiPage:",
-                      currentApiPage,
-                      "page",
-                      page,
-                      "rows",
-                      rowsPerPage
-                    );
-                    console.log(
-                      currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage
-                    );
-                    return `${
-                      currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage
-                    }–${
-                      currentApiPage * DEFAULTCHUNKSIZE +
-                      page * rowsPerPage +
-                      rowsPerPage
-                    } of ${count !== -1 ? count : `more than ${to}`}`;
+                    return `${displayedRecordsStart}–${Math.min(
+                      total,
+                      displayedRecordsEnd
+                    )} of ${count !== -1 ? count : `more than ${to}`}`;
                   }}
                   SelectProps={{
                     inputProps: {
@@ -333,6 +313,8 @@ export const ServiceTable = ({
                       handleChangePageForward={handleChangePageForward}
                       handleChangePageBackward={handleChangePageBackward}
                       currentApiPage={currentApiPage}
+                      displayedRecordsStart={displayedRecordsStart}
+                      displayedRecordsEnd={displayedRecordsEnd}
                       {...props}
                     />
                   )}
