@@ -95,7 +95,8 @@ export const MenuBar = ({
             placeholder="Webservice suchen..."
             value={searchStringState}
             style={{
-              width: 600,
+              flexGrow: 2,
+              maxWidth: 600,
               height: 32,
               backgroundColor: "white",
             }}
