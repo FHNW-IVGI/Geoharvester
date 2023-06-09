@@ -279,12 +279,7 @@ export const ServiceTable = ({
             <StyledTableFooter>
               <TableRow>
                 <TablePagination
-                  rowsPerPageOptions={[
-                    20,
-                    50,
-                    100,
-                    { label: "All", value: -1 },
-                  ]}
+                  rowsPerPageOptions={[20, 50, 100, 200]}
                   colSpan={6}
                   count={total}
                   rowsPerPage={rowsPerPage}
