@@ -162,11 +162,19 @@ export const ServiceTable = ({
       : -1
   );
 
-  const StyledTableCell = styled(TableCell)(() => ({
+  const CenteredTableCell = styled(TableCell)(() => ({
+    "&": {
+      backgroundColor: theme.palette.secondary.main,
+      padding: "0 1px",
+      textAlign: "center",
+      color: "white",
+    },
+  }));
+  const LeftAlignedTableCell = styled(TableCell)(() => ({
     "&": {
       backgroundColor: theme.palette.secondary.main,
       padding: 8,
-      textAlign: "center",
+      textAlign: "left",
       color: "white",
     },
   }));
@@ -230,23 +238,23 @@ export const ServiceTable = ({
           <Table stickyHeader aria-label="sticky table" ref={setTableReference}>
             <TableHead>
               <TableRow>
-                <StyledTableCell>Σ={total}</StyledTableCell>
+                <CenteredTableCell></CenteredTableCell>
                 {columns.map((col_header, index) => {
                   const commonCasedHeader =
                     col_header.charAt(0).toUpperCase() +
                     col_header.slice(1).toLocaleLowerCase();
                   return index < 2 ? (
-                    <StyledTableCell key={index}>
+                    <LeftAlignedTableCell key={index}>
                       {commonCasedHeader}
-                    </StyledTableCell>
+                    </LeftAlignedTableCell>
                   ) : (
                     <>
-                      <StyledTableCell
+                      <CenteredTableCell
                         key={index}
                         sortDirection={orderBy === col_header ? order : false}
                       >
                         <TableSortLabel
-                          style={{ color: "white", textAlign: "center" }}
+                          style={{ color: "white" }}
                           active={true}
                           direction={orderBy === col_header ? order : "desc"}
                           onClick={createSortHandler(col_header)}
@@ -256,12 +264,12 @@ export const ServiceTable = ({
                             <Box component="span" sx={visuallyHidden}>
                               {order === "desc"
                                 ? "sorted descending"
-                                : "sorted ascending"}{" "}
+                                : "sorted ascending"}
                               + ro
                             </Box>
                           ) : null}
                         </TableSortLabel>
-                      </StyledTableCell>
+                      </CenteredTableCell>
                     </>
                   );
                 })}

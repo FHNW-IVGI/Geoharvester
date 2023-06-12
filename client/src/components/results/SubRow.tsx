@@ -1,4 +1,11 @@
-import { TableRow, TableCell, Collapse, Box, Button, Tooltip } from "@mui/material";
+import {
+  TableRow,
+  TableCell,
+  Collapse,
+  Box,
+  Button,
+  Tooltip,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
 
@@ -32,7 +39,6 @@ export const SubRow = ({
     "SERVICELINK",
   ];
 
-
   const routeObjectBuilder = () => {
     if (!row || !row.SERVICETYPE) {
       return {
@@ -57,19 +63,7 @@ export const SubRow = ({
         };
   };
 
-  const openUrlMapgeo = () => {
-    if (row.MAPGEO === "n.a." || row.MAPGEO === null || row.MAPGEO === "") {
-  } else {
-    window.open(row.MAPGEO);
-  }};
-
-  const openUrlLegend = () => {
-    if (row.LEGEND === "n.a." || row.LEGEND === null || row.LEGEND === "") {
-    }else {
-    window.open(row.LEGEND);
-  }};
-
-  const StyledTableRow = styled(TableRow)(({}) => ({
+  const StyledTableRow = styled(TableRow)(() => ({
     "&": {
       backgroundColor: "#fdfdfd",
     },
@@ -79,8 +73,8 @@ export const SubRow = ({
     <StyledTableRow key={index}>
       <TableCell
         style={{
-          paddingBottom: 0,
-          paddingTop: 0,
+          textAlign: "left",
+          padding: 0,
           boxShadow: "inset 0px 0px 6px 0px rgba(0, 0, 0, 0.15)",
         }}
         colSpan={6}
@@ -91,16 +85,17 @@ export const SubRow = ({
               style={{
                 display: "flex",
                 flexDirection: "column",
+                marginLeft: -10,
               }}
             >
               {rowsToInclude.map((prop) => (
                 <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div style={{}}>
+                  <div>
                     <p
                       style={{
                         width: 140,
                         color: "#909090",
-                        margin: "0 50px 0 78px",
+                        margin: "0 24px 0 78px",
                       }}
                     >
                       {`${
@@ -121,52 +116,83 @@ export const SubRow = ({
                   </div>
                 </div>
               ))}
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div style={{}}>
-                    <p 
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <div>
+                  <p
                     style={{
-                        width: 140,
-                        color: "#909090",
-                        margin: "0 50px 0 78px",
-                      }}
-                    >Mapgeo:
-                    </p>
-                  </div>
-                  <div
-                    style={{
+                      width: 140,
                       color: "#909090",
-                      display: "flex",
-                      wordBreak: "break-word",
+                      margin: "0 50px 0 78px",
                     }}
                   >
-                    <Tooltip title={row.MAPGEO} arrow>
-                      <a onClick={openUrlMapgeo} style={{ margin: 2}}>Service in MapGeo öffnen</a>
-                    </Tooltip>
-                  </div>
+                    Mapgeo:
+                  </p>
                 </div>
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div style={{}}>
-                    <p 
+                <div
+                  style={{
+                    color: "#909090",
+                    display: "flex",
+                    wordBreak: "break-word",
+                    marginLeft: -24,
+                  }}
+                >
+                  <Tooltip title={row.MAPGEO} arrow>
+                    <Button
+                      style={{ padding: 0 }}
+                      variant="text"
+                      onClick={() => window.open(row.MAPGEO)}
+                      disabled={
+                        row.MAPGEO === "n.a." ||
+                        row.MAPGEO === null ||
+                        row.MAPGEO === ""
+                      }
+                    >
+                      Service in MapGeo öffnen
+                    </Button>
+                  </Tooltip>
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
+                <div>
+                  <p
                     style={{
-                        width: 140,
-                        color: "#909090",
-                        margin: "0 50px 0 78px",
-                      }}
-                    >Legend:
-                    </p>
-                  </div>
-                  <div
-                    style={{
+                      width: 140,
+                      marginLeft: -24,
                       color: "#909090",
-                      display: "flex",
-                      wordBreak: "break-word",
+                      margin: "0 50px 0 78px",
                     }}
                   >
-                    <Tooltip title={row.LEGEND} arrow>
-                      <a onClick={openUrlLegend} style={{ margin: 2}}>Legende öffnen</a>
-                    </Tooltip>
-                  </div>
+                    Legend:
+                  </p>
                 </div>
+                <div
+                  style={{
+                    color: "#909090",
+                    display: "flex",
+                    wordBreak: "break-word",
+                    marginLeft: -24,
+                  }}
+                >
+                  <Tooltip title={row.LEGEND} arrow>
+                    <Button
+                      onClick={() => window.open(row.LEGEND)}
+                      style={{ padding: 0 }}
+                      disabled={
+                        row.LEGEND === "n.a." ||
+                        row.LEGEND === null ||
+                        row.LEGEND === ""
+                      }
+                    >
+                      Legende öffnen
+                    </Button>
+                  </Tooltip>
+                </div>
+              </div>
               <div
                 style={{
                   marginLeft: 270,
@@ -178,7 +204,7 @@ export const SubRow = ({
               >
                 <Button
                   variant="outlined"
-                  style={{ marginRight: 30 }}
+                  style={{ marginRight: 30, marginLeft: -24 }}
                   onClick={routeObjectBuilder().arcgis_handler}
                   startIcon={<DownloadIcon />}
                 >
