@@ -1,73 +1,142 @@
-import { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   TableContainer,
   Table,
   TableBody,
   TableHead,
+  TableFooter,
+  TablePagination,
   TableRow,
   TableCell,
   TableSortLabel,
   Paper,
   Box,
   Typography,
-  Zoom,
-  Fab,
+  useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
 import { visuallyHidden } from "@mui/utils";
-import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
-
 import { ServiceRow } from "./ServiceRow";
+import { TablePaginationActions } from "./TablePaginationActions";
+import {
+  DEFAULTCHUNKSIZE,
+  DEFAULTPAGE,
+  PROVIDERTYPE,
+  RESPONSESTATE,
+  SERVICETYPE,
+} from "src/constants";
+import LinearProgress from "@mui/material/LinearProgress";
 
 type TableProps = {
   docs: Geoservice[];
+  responseState: RESPONSESTATE;
   fields: string[];
+  offset: number;
   total: number;
-  placeholderText: string;
+  page: number;
+  currentApiPage: number;
+  setOffset: (offset: number) => void;
+  setRowsPerPage: (size: number) => void;
+  setPage: (page: number) => void;
+  rowsPerPage: number;
+  triggerSearch: (
+    searchString: string | undefined,
+    servicetype: SERVICETYPE | undefined,
+    provider: PROVIDERTYPE | undefined,
+    pageIndex: number
+  ) => void;
+  servicetypeState: SERVICETYPE;
+  providerState: PROVIDERTYPE;
+  searchStringState: string;
 };
 
 type Order = "asc" | "desc";
 
 export const ServiceTable = ({
   docs,
+  responseState,
   fields,
+  offset,
   total,
-  placeholderText,
+  currentApiPage,
+  page,
+  setPage,
+  setRowsPerPage,
+  rowsPerPage,
+  triggerSearch,
+  servicetypeState,
+  providerState,
+  searchStringState,
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
   const [tableRef, setTableReference] = useState<any>();
 
+  const theme = useTheme();
+
   const scrollToTop = () => tableRef && tableRef.scrollIntoView();
 
-  const StyledTableCell = styled(TableCell)(() => ({
-    "&": {
-      backgroundColor: "#7fcaf5",
-      padding: 8,
-      textAlign: "center",
-      color: "white",
-    },
-  }));
+  const displayedRecordsStart =
+    currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage;
+  const displayedRecordsEnd = displayedRecordsStart + rowsPerPage;
 
-  if (docs.length < 1) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-          minHeight: "86vh",
-        }}
-      >
-        <Typography variant="h3" component="h3" color="#C0C0C0">
-          {placeholderText}
-        </Typography>
-      </div>
-    );
-  }
+  const handleChangePageForward = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    const processedResults = rowsPerPage * newPage;
+    if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
+      setPage(0);
+      triggerSearch(
+        searchStringState,
+        servicetypeState,
+        providerState,
+        currentApiPage + 1 //
+      );
+    } else {
+      setPage(newPage);
+    }
+    scrollToTop();
+  };
+  const handleChangePageBackward = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    const processedResults = Math.abs(rowsPerPage * newPage);
+    const pagesBeforeReload = DEFAULTCHUNKSIZE / rowsPerPage;
+
+    if (
+      processedResults <= DEFAULTCHUNKSIZE * currentApiPage &&
+      processedResults > 0
+    ) {
+      triggerSearch(
+        searchStringState,
+        servicetypeState,
+        providerState,
+        currentApiPage - 1
+      );
+      setPage(Math.abs(pagesBeforeReload) - 1);
+    } else {
+      setPage(newPage);
+    }
+    scrollToTop();
+  };
+
+  const handleSetPageZero = () => {
+    if (currentApiPage > 0) {
+      triggerSearch(searchStringState, servicetypeState, providerState, 0);
+    }
+    setPage(0);
+    scrollToTop();
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(DEFAULTPAGE);
+  };
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -93,37 +162,70 @@ export const ServiceTable = ({
       : -1
   );
 
-  const columns =
-    fields && fields.length > 1
-      ? fields
-      : Object.keys(docs[0]).filter((key) =>
-          ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE"].includes(key)
-        ) || [];
+  const StyledTableCell = styled(TableCell)(() => ({
+    "&": {
+      backgroundColor: theme.palette.secondary.main,
+      padding: 8,
+      textAlign: "center",
+      color: "white",
+    },
+  }));
 
-  return (
-    <>
-      <Box
-        role="presentation"
-        sx={{
-          position: "fixed",
-          bottom: 32,
-          right: 32,
-          zIndex: 10000,
-        }}
-      >
-        <Fab
-          onClick={scrollToTop}
-          color="primary"
-          size="small"
-          aria-label="Scroll back to top"
-        >
-          <KeyboardArrowUp fontSize="medium" style={{ color: "white" }} />
-        </Fab>
-      </Box>
-      {docs.length > 0 && (
+  const StyledTableFooter = styled(TableFooter)(() => ({
+    "&": {
+      left: 0,
+      bottom: 0,
+      zIndex: 2,
+      position: "sticky",
+      backgroundColor: "white",
+    },
+  }));
+
+  const PlaceholderWidget = ({
+    placeholderText,
+  }: {
+    placeholderText?: string;
+  }) => (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        flex: 1,
+      }}
+    >
+      {placeholderText ? (
+        <Typography variant="h3" component="h3" color="#C0C0C0">
+          {placeholderText}
+        </Typography>
+      ) : (
+        <div>
+          <Typography variant="h5" component="h3" color="#C0C0C0">
+            Suche...
+          </Typography>
+          <LinearProgress style={{ width: 300 }} />
+        </div>
+      )}
+    </div>
+  );
+
+  const columns = ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"];
+
+  switch (responseState) {
+    case RESPONSESTATE.UNINITIALIZED:
+      return <PlaceholderWidget placeholderText="Webservice suchen..." />;
+    case RESPONSESTATE.EMPTY:
+      return <PlaceholderWidget placeholderText="Keine Treffer..." />;
+    case RESPONSESTATE.ERROR:
+      return <PlaceholderWidget placeholderText="Error..." />;
+    case RESPONSESTATE.WAITING:
+      return <PlaceholderWidget />;
+    case RESPONSESTATE.SUCCESS:
+      return (
         <TableContainer
           component={Paper}
-          sx={{ maxHeight: "95vh", cursor: "pointer" }}
+          sx={{ cursor: "pointer", overflowX: "auto" }}
         >
           <Table stickyHeader aria-label="sticky table" ref={setTableReference}>
             <TableHead>
@@ -154,7 +256,8 @@ export const ServiceTable = ({
                             <Box component="span" sx={visuallyHidden}>
                               {order === "desc"
                                 ? "sorted descending"
-                                : "sorted ascending"}
+                                : "sorted ascending"}{" "}
+                              + ro
                             </Box>
                           ) : null}
                         </TableSortLabel>
@@ -162,17 +265,65 @@ export const ServiceTable = ({
                     </>
                   );
                 })}
-                <StyledTableCell>Metadata Quality</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedData.map((row, index) => (
+              {(rowsPerPage > 0
+                ? sortedData.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : sortedData
+              ).map((row, index) => (
                 <ServiceRow row={row} index={index} />
               ))}
             </TableBody>
+            <StyledTableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[20, 50, 100, 200]}
+                  colSpan={6}
+                  count={total}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  labelDisplayedRows={({
+                    from,
+                    to,
+                    count,
+                    page,
+                  }): React.ReactNode => {
+                    return `${displayedRecordsStart}–${Math.min(
+                      total,
+                      displayedRecordsEnd
+                    )} of ${count !== -1 ? count : `more than ${to}`}`;
+                  }}
+                  SelectProps={{
+                    inputProps: {
+                      "aria-label": "rows per page",
+                    },
+                    native: true,
+                  }}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  onPageChange={() => null}
+                  ActionsComponent={(props) => (
+                    <TablePaginationActions
+                      handleChangePageForward={handleChangePageForward}
+                      handleChangePageBackward={handleChangePageBackward}
+                      currentApiPage={currentApiPage}
+                      displayedRecordsStart={displayedRecordsStart}
+                      displayedRecordsEnd={displayedRecordsEnd}
+                      handleSetPageZero={handleSetPageZero}
+                      {...props}
+                    />
+                  )}
+                />
+              </TableRow>
+            </StyledTableFooter>
           </Table>
         </TableContainer>
-      )}
-    </>
-  );
+      );
+
+    default:
+      return <PlaceholderWidget placeholderText="Webservice suchen..." />;
+  }
 };

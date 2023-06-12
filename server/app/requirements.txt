@@ -1,4 +1,5 @@
 fastapi
+fastapi-pagination
 geopandas
 pandas
 uvicorn
@@ -8,3 +9,4 @@ PyYAML
 numpy
 nltk
 langdetect
+python-dotenv

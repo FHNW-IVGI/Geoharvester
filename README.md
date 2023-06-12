@@ -2,9 +2,6 @@
 
 ![Stack Diagram](https://user-images.githubusercontent.com/36440175/220350037-c8300e83-8d18-4962-b99a-54b75f5c886a.PNG)
 
-
-
-
 ## Deployment
 
 ### Frontend:
@@ -19,6 +16,7 @@
 1. cd into frontend folder ("geoharvester_client")
 2. run `npm i` to install dependencies (from package.json)
 3. run `npm start` to start the fronted on localhost (`npm start` is defined in package.json)
+
 ---
 
 ### Backend / Database:
@@ -27,11 +25,13 @@
 
 - Your favorite terminal
 - Have docker and docker compose installed (https://docs.docker.com/compose/install/). Windows users need to install Docker Desktop (https://docs.docker.com/desktop/install/windows-install/)
+- A redis.conf in /server/app/redis with the setting requirepass= set to a password. Create the file manually, it must not be checked into git.
+- A redis.env in /server/app/redis with REDIS_HOST_PASSWORD= set to a password. Create the file and its content manually, it must not be checked into git.
 
 ###### Run:
 
 1. cd into server folder
-2. Run `docker compose up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
+2. Run `docker compose --env-file ./app/redis/redis.env  up --build` (this takes a while for the first build). Make sure to use `docker compose` not the (soon to be) depricated `docker-compose`
 3. Check `localhost:8000/api`in your browser to verify that backend is running
 
 #### Troubleshooting:
@@ -43,6 +43,16 @@
 ##### Cannot start application
 
 - Check that you are starting the backend from the `server` folder (not server/apps). Is Docker running? You might need to start the daemon (Ubuntu: `sudo service docker start`) or Docker Desktop (Windows)
+- Make sure that you have created the two files that contain the redis password, as described above.
+- Use `docker compose --env-file ./app/redis/redis.env  up --build` (or another path to where the redis password is located).
+
+##### Error about reaching max_clients and no results in the frontend.
+
+Redis allows a limit of 10000 by default and will throw an error if the limit is set to a higher number in code. In order to allow a higher limit, this needs to be set in the redis .conf file and the modified config needs to be copied to the docker instance (which is handled by docker-compose.yml, "volumes" ). Redis v.7.0+ required.
+
+##### Error about reaching max_clients and no results in the frontend.
+
+Redis allows a limit of 10000 by default and will throw an error if the limit is set to a higher number in code. In order to allow a higher limit, this needs to be set in the redis .conf file and the modified config needs to be copied to the docker instance (which is handled by docker-compose.yml, "volumes" ). Redis v.7.0+ required.
 
 #### Development / VSCode Support:
 
@@ -51,8 +61,6 @@ Docker is set up to automatically copy code changes into the container. However,
 a) You can either set up a venv and install the dependencies from requirements.txt (cd into server/app, then run `python -m venv env &&  source ./env/bin/activate && pip install -r requirements.txt`), then point the Python interpreter of VSCode to it. Make sure to rerun `pip install` if you make changes to the requirements file.
 
 b) For a "single source of truth" approach, install the "dev containers" extension for VSCode (https://code.visualstudio.com/docs/devcontainers/containers), then attach to the container (https://code.visualstudio.com/docs/devcontainers/attach-container). Windows user: This requires Docker Desktop with WSL 2 set up.
-
-
 
 ---
 

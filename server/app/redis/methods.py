@@ -1,16 +1,16 @@
 
 import uuid
-import pandas as pd
 from time import time
 from typing import Union
 
-import redis
-from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
-from app.processing.stopwords import get_stopwords
+import pandas as pd
+from app.constants import EnumServiceType
+from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+from redis.commands.search.query import Query
 
-r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+from server.app.redis.redis_manager import r
 
 
 def check_if_index_exists(INDEX_ID):
@@ -36,7 +36,7 @@ def create_index(PREFIX, INDEX_ID, schema):
     if(check_if_index_exists(INDEX_ID)):
         # Drop index in case it is cached by Docker
         r.ft(INDEX_ID).dropindex()
-    r.ft(INDEX_ID).create_index(schema, definition = index_def, stopwords=get_stopwords())
+    r.ft(INDEX_ID).create_index(schema, definition = index_def)
     return
 
 
@@ -112,7 +112,35 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
     elif (len(queryable_parameters) == 1):
         return queryable_parameters[0]
     else:
-       return "&".join(queryable_parameters)
+        return "&".join(queryable_parameters)
+    
+
+def search_redis(redis_query, lang, offset, limit):
+    return r.ft(SVC_INDEX_ID).search(Query(redis_query)
+            .language(lang)                                   
+            .paging(offset, 50000)
+            .return_field('TITLE')
+            .return_field('ABSTRACT')
+            .return_field('OWNER')
+            .return_field('SERVICETYPE')
+            .return_field('NAME')
+            .return_field('MAPGEO')
+            .return_field('TREE')
+            .return_field('GROUP')
+            .return_field('KEYWORDS')
+            .return_field('KEYWORDS_NLP')
+            .return_field('LEGEND')
+            .return_field('CONTACT')
+            .return_field('SERVICELINK')
+            .return_field('METADATA')
+            .return_field('MAX_ZOOM')
+            .return_field('CENTER_LAT')
+            .return_field('CENTER_LON')
+            .return_field('BBOX')
+            .return_field('SUMMARY')
+            .return_field('LANG_3')
+            .return_field('METAQUALITY')
+            )
 
 ######################################################################################################################################
 
@@ -142,7 +170,7 @@ def json_to_pandas(redis_output):
         # print(len(redis_output)-i)
     return query_results
 
-def pandas_to_dict(ranked_results_df, timing):
+def pandas_to_dict(ranked_results_df):
     """
     Transform the pandas dataframe into a json-like 
     output to be passed to the front-end.
@@ -151,26 +179,16 @@ def pandas_to_dict(ranked_results_df, timing):
     ----------
     ranked_results_df : pandas.DataFrame
         ranked results in a data frame
-    timing : float
-        elapsed time fo the ranking function
 
     Returns
     -------
     _ : dict
         json-like output for the front-end
     """
-    ranked_results = {
-        "total": 0,
-        "docs": None,
-        "duration": 0, }
-    
+ 
     ranked_results_dict = ranked_results_df.to_dict(orient='records') # after ranking we will have an index -> orient='index' https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
-    #parsed_results = js.loads(ranked_results_js)
-    #js.dumps(parsed_results, indent=4)
-    ranked_results["docs"] = ranked_results_dict
-    ranked_results["total"] = len(ranked_results_df)
-    ranked_results["duration"] = timing # it will be calculated from the ranking function
-    return ranked_results
+
+    return ranked_results_dict
 
 def contains_match_scoring(df, cols, word, score):
     """
@@ -224,7 +242,7 @@ def exact_match_scoring(df, cols, word, score):
     df.loc[mask, 'score'] += score
     return df
 
-def results_ranking(redis_output, redis_et, query_words_list):
+def results_ranking(redis_output, query_words_list=[]):
     """
     Ranks the results according to the assigned scores
     # TODO: This function will be integrated into a class with different ranking methods
@@ -262,6 +280,5 @@ def results_ranking(redis_output, redis_et, query_words_list):
     query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
     t1 = time() # end time
     # output the elapsed times for testing purposes
-    ranked_results = pandas_to_dict(query_results_df, round(redis_et + (t1-t0), 4))
-    print(f'Redis query executed in {round(redis_et, 4)} seconds and pandas ranking executed in {round(t1-t0, 4)} seconds')
+    ranked_results = pandas_to_dict(query_results_df)
     return ranked_results

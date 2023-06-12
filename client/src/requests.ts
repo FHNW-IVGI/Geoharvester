@@ -3,6 +3,7 @@ import axios from "axios";
 import { Geoservice } from "./types";
 import { parseQgisTemplate } from "./templateParser/qgisParser";
 import { parseArcgisWFS, parseArcgisWMSorWMTS } from "./templateParser/arcgisParser";
+import { LANG, SERVICETYPE, DEFAULTOFFSET, DEFAULTCHUNKSIZE, PROVIDERTYPE } from "./constants";
 
 
 const routes = {
@@ -15,30 +16,17 @@ const routes = {
     getQgisWMTS: "/templates/qgis_wmts_template.qlr",
 }
 
-enum LANG {
-    GER = "german",
-    ENG = "english",
-    FR = "french",
-    IT = "italian"
+export const getData = async (query_string: string, servicetype: SERVICETYPE = SERVICETYPE.NONE, ownertype: PROVIDERTYPE = PROVIDERTYPE.NONE, lang: string = LANG.GER, pageParam: number = 0, size: number = DEFAULTCHUNKSIZE) => {
+    const page = pageParam + 1 // FastAPI Pagination uses 1 as first index
+    const offset = 0
+    const service = servicetype === SERVICETYPE.NONE ? "" : servicetype
+    const owner = ownertype === PROVIDERTYPE.NONE ? "" : ownertype
+    console.log("request", { query_string, service, owner, lang, offset, page, size })
+    const response = await axios(routes.getData, { params: { query_string, service, owner, lang, offset, page, size } });
+    console.log("response", response.data)
+    const result = { ...response, data: { ...response.data, page: response.data.page - 1 } } // Translate back to zero indexed MUI value
+    return result
 }
-
-// Redit returns 10 results by default, use this fallback instead when no value is given
-const LIMIT = 100
-
-enum SERVICETYPE {
-    WFS = "wfs",
-    WMS = "wms",
-    WMTS = "wmts",
-    NONE = ""
-}
-
-export const getData = async (query: string, service: string = SERVICETYPE.NONE, owner: string = "", lang: string = LANG.GER, resultLimit: number = LIMIT) => {
-    const result = await axios(routes.getData, { params: { query, service, owner, lang, resultLimit } });
-    const { data } = result;
-    return data
-}
-
-
 
 const linkBuilder = (blob: any, fileName: string, fileExtension: string) => {
     const url = window.URL.createObjectURL(

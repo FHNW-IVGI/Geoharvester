@@ -3,23 +3,26 @@ import json
 import logging
 from typing import Union
 
-import pandas as pd
-import redis
-from app.constants import REDIS_HOST, REDIS_PORT, EnumServiceType
-from app.processing.methods import (import_csv_into_dataframe,
-                                    import_pkl_into_dataframe,
+from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
+from app.processing.methods import (import_pkl_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
-                               redis_query_from_parameters,
-                               transform_wordlist_to_query, results_ranking)
+                               redis_query_from_parameters, results_ranking,
+                               search_redis, transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
-                               geoservices_schema)
+                               GeoserviceModel, geoservices_schema)
 from fastapi import FastAPI
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
-from redis import StrictRedis
-from redis.commands.search.query import Query
+from fastapi_pagination import Page, add_pagination, paginate
+from pydantic import Field
 
+from server.app.redis.redis_manager import r
+
+origins = [
+    # Adjust to your frontend localhost port if not default
+    "http://localhost:3000"
+]
 app = FastAPI(
     debug=True,
     version="0.2.0",
@@ -27,16 +30,6 @@ app = FastAPI(
     redoc_url='/api/redoc',
     openapi_url='/api/openapi.json'
 )
-
-dataframe=None
-datajson=None
-csv_row_limit= 5000
-r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
-
-origins = [
-    # Adjust to your frontend localhost port if not default
-    "http://localhost:3000"
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Logging:
 gunicorn_logger = logging.getLogger('gunicorn.error')
 fastapi_logger.handlers = gunicorn_logger.handlers
 if __name__ != "main":
@@ -53,15 +47,23 @@ if __name__ != "main":
 else:
     fastapi_logger.setLevel(logging.DEBUG)
 
+
+# Pagination settings. Adjust FE table calculations accordingly when changing these!
+Page = Page.with_custom_options(
+    size=Field(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
+)
+
+dataframe=None
+datajson=None
+
 @app.on_event("startup")
 async def startup_event():
     """Startup Event: Load csv into data frame"""
-    global dataframe
+    # Overwrite config limit for a maximum of 10000 search results:
+    r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
-    # To reduce traffic we load the file from ./tmp instead from Github. Remove this and the next line for prod / demo use:
-    # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
-    # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
     url_geoservices_CH_pkl = "app/tmp/rawdata_scraper.pkl" # preprocessed data with NLP!
+    global dataframe
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
     
     global datajson
@@ -104,8 +106,8 @@ async def get_data_by_id(id: str):
     return redis_data
 
 
-@app.get("/api/getData")
-async def get_data(query: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = "", lang: str = "german", limit: int = 100):
+@app.get("/api/getData", response_model=Page[GeoserviceModel])
+async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:EnumProviderType = EnumProviderType.none, lang: str = "german", page: int = 0, limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
         service: Service filter - wms, wmts, wfs
@@ -114,64 +116,34 @@ async def get_data(query: Union[str, None] = None,  service: EnumServiceType = E
         limit: Redis returns 10 results by default, allow more results to be returned
         service: Service enum, either WMS, WMTS, WFS
     """
-    search_result = {
-        "total": 0,
-        "docs": None,
-        "fields": [],
-        "duration": 0,
-    }
 
-    # Until pagination is implemented we need to safeguard against extensive limits to avoid server crashes:
-    if (limit > 1000):
-        limit = 1000
+    if (query_string == None or query_string == ""):
+        redis_query = redis_query_from_parameters("", service, owner)
+        fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
-    query_string = ""
+        redis_data = search_redis(redis_query, lang, 0, 30000)
+        return paginate(redis_data.docs)
 
-    if (query != None):
-        word_list = split_search_string(query)
-        query_string = transform_wordlist_to_query(word_list)
 
-    redis_query = redis_query_from_parameters(query_string, service, owner)
-    fastapi_logger.info("Redis queried with: {}".format(redis_query))
+    if (query_string != None and len(query_string) > 1):
+        word_list = split_search_string(query_string)
+        text_query = transform_wordlist_to_query(word_list)
 
-    redis_data = r.ft(SVC_INDEX_ID).search(Query(redis_query)
-        .language(lang)                                   
-        .paging(0, limit) # offset, limit
-        .return_field('TITLE')
-        .return_field('ABSTRACT')
-        .return_field('OWNER')
-        .return_field('SERVICETYPE')
-        .return_field('NAME')
-        .return_field('MAPGEO')
-        .return_field('TREE')
-        .return_field('GROUP')
-        .return_field('KEYWORDS')
-        .return_field('KEYWORDS_NLP')
-        .return_field('LEGEND')
-        .return_field('CONTACT')
-        .return_field('SERVICELINK')
-        .return_field('METADATA')
-        .return_field('MAX_ZOOM')
-        .return_field('CENTER_LAT')
-        .return_field('CENTER_LON')
-        .return_field('BBOX')
-        .return_field('SUMMARY')
-        .return_field('LANG_3')
-        .return_field('METAQUALITY')
-        )
+        redis_query = redis_query_from_parameters(text_query, service, owner)
+        fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
-    search_result["docs"] = redis_data.docs
-    search_result["fields"] = []
-    search_result["duration"] = redis_data.duration
-    search_result["total"] = len(redis_data.docs)
+        redis_data = search_redis(redis_query, lang, 0, 30000)
 
-    ############################################################################################################################
-    # Testing ranking function from the ranking functions in methods.py
-    # If you want the results from redis you can just set this section as comment
+        ############################################################################################################################
+        # Testing ranking function from the ranking functions in methods.py
+        # If you want the results from redis you can just set this section as comment
 
-    if (query != None and len(redis_data.docs) > 0):
-        search_result = results_ranking(redis_data.docs, redis_data.duration, word_list)
-    else:
-        pass
-    ############################################################################################################################ 
-    return {"data": search_result}
+        if (query_string != None and len(redis_data.docs) > 0):
+            ranked_results = results_ranking(redis_data.docs)
+            return paginate(ranked_results)
+        else:
+            pass
+        ############################################################################################################################ 
+    return paginate([])
+
+add_pagination(app)
