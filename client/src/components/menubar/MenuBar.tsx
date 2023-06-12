@@ -99,7 +99,46 @@ export const MenuBar = ({
               maxWidth: 600,
               height: 32,
               backgroundColor: "white",
-      <Paper
+            }}
+            onChange={(e) => setSearchString(e.target.value)}
+            onKeyDown={(e) =>
+              e.key === "Enter" &&
+              triggerSearch(searchStringState, undefined, undefined)
+            }
+            startAdornment={
+              <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
+            }
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="clear search"
+                  onClick={() => setSearchString("")}
+                >
+                  <CancelIcon style={{ marginRight: -14, marginLeft: -8 }} />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          <SearchButton
+            id="search-button"
+            size="small"
+            onClick={() =>
+              triggerSearch(searchStringState, undefined, undefined)
+            }
+            sx={{
+              fontSize: 14,
+              backgroundColor: "white",
+              color: theme.palette.primary.main,
+            }}
+            type="submit"
+            variant="outlined"
+            aria-label="search"
+          >
+            {"Suchen"}
+          </SearchButton>
+        </FormControl>
+      </div>
+      <div
         style={{
           display: "flex",
           flexDirection: "row",
@@ -222,6 +261,12 @@ export const MenuBar = ({
         </FormControl>
         <div style={{ width: 12 }} />
       </div>
+      <Filter
+        handleChangeService={handleChangeService}
+        handleChangeProvider={handleChangeProvider}
+        provider={providerState}
+        servicetype={servicetypeState}
+      />
     </Toolbar>
   );
 };
