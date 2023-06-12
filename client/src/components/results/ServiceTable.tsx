@@ -78,6 +78,9 @@ export const ServiceTable = ({
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
+  const [tableRef, setTableReference] = useState<any>();
+
+  const scrollToTop = () => tableRef && tableRef.scrollIntoView();
 
   const theme = useTheme();
 
@@ -105,6 +108,7 @@ export const ServiceTable = ({
     } else {
       setPage(newPage);
     }
+    scrollToTop();
   };
   const handleChangePageBackward = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -127,6 +131,7 @@ export const ServiceTable = ({
     } else {
       setPage(newPage);
     }
+    scrollToTop();
   };
 
   const handleChangeRowsPerPage = (
@@ -225,7 +230,7 @@ export const ServiceTable = ({
           component={Paper}
           sx={{ cursor: "pointer", overflowX: "auto" }}
         >
-          <Table stickyHeader aria-label="sticky table">
+          <Table stickyHeader aria-label="sticky table" ref={setTableReference}>
             <TableHead>
               <TableRow>
                 <StyledTableCell>Σ={total}</StyledTableCell>
