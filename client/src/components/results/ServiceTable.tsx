@@ -283,7 +283,7 @@ export const ServiceTable = ({
                   )
                 : sortedData
               ).map((row, index) => (
-                <ServiceRow row={row} index={index} />
+                <ServiceRow row={row} index={index} page={page} total={total} />
               ))}
             </TableBody>
             <StyledTableFooter>

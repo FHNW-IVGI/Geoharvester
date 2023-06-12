@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IconButton,
   TableRow,
@@ -16,11 +16,17 @@ import "../../styles.css";
 export const ServiceRow = ({
   row,
   index,
+  page,
+  total,
 }: {
   row: Geoservice;
   index: number;
+  page: number;
+  total: number;
 }) => {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => setOpen(false), [page, total]);
 
   const getIcon = () => {
     const target =
