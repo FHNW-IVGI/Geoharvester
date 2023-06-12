@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   TableContainer,
   Table,
@@ -12,7 +12,6 @@ import {
   Paper,
   Box,
   Typography,
-  Fab,
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -36,11 +35,8 @@ type TableProps = {
   offset: number;
   total: number;
   page: number;
-  placeholderText: string;
   currentApiPage: number;
-  initialTotal: number;
   setOffset: (offset: number) => void;
-  setInitialTotal: (total: number) => void;
   setRowsPerPage: (size: number) => void;
   setPage: (page: number) => void;
   rowsPerPage: number;
@@ -63,12 +59,9 @@ export const ServiceTable = ({
   fields,
   offset,
   total,
-  placeholderText,
   currentApiPage,
-  setInitialTotal,
   page,
   setPage,
-  initialTotal,
   setRowsPerPage,
   rowsPerPage,
   triggerSearch,
@@ -80,13 +73,9 @@ export const ServiceTable = ({
   const [orderBy, setOrderBy] = useState<string>("");
   const [tableRef, setTableReference] = useState<any>();
 
-  const scrollToTop = () => tableRef && tableRef.scrollIntoView();
-
   const theme = useTheme();
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - docs.length) : 0;
+  const scrollToTop = () => tableRef && tableRef.scrollIntoView();
 
   const displayedRecordsStart =
     currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage;
@@ -137,10 +126,9 @@ export const ServiceTable = ({
   const handleSetPageZero = () => {
     if (currentApiPage > 0) {
       triggerSearch(searchStringState, servicetypeState, providerState, 0);
-
-      setPage(0);
-      scrollToTop();
     }
+    setPage(0);
+    scrollToTop();
   };
 
   const handleChangeRowsPerPage = (

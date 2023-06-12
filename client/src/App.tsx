@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ServiceTable } from "./components/results/ServiceTable";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { MenuBar } from "./components/menubar/MenuBar";
@@ -43,14 +43,11 @@ function App() {
     RESPONSESTATE.UNINITIALIZED
   );
   const { items, total } = searchResult;
-  const [placeholderText, setPlaceholderText] = useState(
-    "Webservice suchen..."
-  );
+
   const [currentApiPage, setCurrentApiPage] = useState(DEFAULTPAGE);
   const [size, setSize] = useState(DEFAULTROWSPERPAGE);
   const [offset, setOffset] = useState(DEFAULTOFFSET);
   const [language, setLanguage] = useState(DEFAULTLANGUAGE);
-  const [initialTotal, setInitialTotal] = useState(0);
   const [searchStringState, setSearchString] = useState("");
   const [servicetypeState, setServiceState] = useState<SERVICETYPE>(
     SERVICETYPE.NONE
@@ -90,7 +87,6 @@ function App() {
     )
       .then((res) => {
         const { data } = res;
-        // console.log("data", data);
         if (data.items.length > 0) {
           setResponseState(RESPONSESTATE.SUCCESS);
           setSearchResult(data);
@@ -146,10 +142,7 @@ function App() {
           fields={[]}
           total={total}
           offset={offset}
-          placeholderText={placeholderText}
           currentApiPage={currentApiPage}
-          initialTotal={initialTotal}
-          setInitialTotal={setInitialTotal}
           setOffset={setOffset}
           setRowsPerPage={setSize}
           rowsPerPage={size}

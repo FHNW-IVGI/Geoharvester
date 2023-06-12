@@ -13,7 +13,6 @@ interface TablePaginationActionsProps {
   currentApiPage: number;
   displayedRecordsStart: number;
   displayedRecordsEnd: number;
-  rowsPerPage: number;
   onPageChange: (
     event: React.MouseEvent<HTMLButtonElement>,
     newPage: number
@@ -35,11 +34,9 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
   const {
     count,
     page,
-    rowsPerPage,
     handleChangePageForward,
     handleChangePageBackward,
     handleSetPageZero,
-    onPageChange,
     currentApiPage,
     displayedRecordsStart,
     displayedRecordsEnd,
