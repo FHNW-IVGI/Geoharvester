@@ -99,6 +99,35 @@ export const MenuBar = ({
               maxWidth: 600,
               height: 32,
               backgroundColor: "white",
+      <Paper
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "spaceBetween",
+          width: "100%",
+          backgroundColor: "#007CC3",
+          borderRadius: "0%",
+        }}
+      >
+        <div style={{ width: "30%", display: "flex", alignItems: "center" }}>
+          <IconButton
+            size="large"
+            edge="end"
+            aria-label="menu"
+            sx={{ mr: 1, color: theme.palette.secondary.main }}
+            onClick={handleClick}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            style={{ marginLeft: -16 }}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
             }}
             onChange={(e) => setSearchString(e.target.value)}
             onKeyDown={(e) =>
@@ -125,6 +154,14 @@ export const MenuBar = ({
             onClick={() => {
               resetPageToZero();
               triggerSearch(searchStringState, undefined, undefined, page);
+        <div style={{ display: "flex", flex: "1 1 auto" }}>
+          <FormControl
+            sx={{
+              m: 1,
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
             }}
             sx={{
               fontSize: 14,
