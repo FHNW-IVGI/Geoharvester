@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TableContainer,
   Table,
@@ -132,6 +132,15 @@ export const ServiceTable = ({
       setPage(newPage);
     }
     scrollToTop();
+  };
+
+  const handleSetPageZero = () => {
+    if (currentApiPage > 0) {
+      triggerSearch(searchStringState, servicetypeState, providerState, 0);
+
+      setPage(0);
+      scrollToTop();
+    }
   };
 
   const handleChangeRowsPerPage = (
@@ -315,6 +324,7 @@ export const ServiceTable = ({
                       currentApiPage={currentApiPage}
                       displayedRecordsStart={displayedRecordsStart}
                       displayedRecordsEnd={displayedRecordsEnd}
+                      handleSetPageZero={handleSetPageZero}
                       {...props}
                     />
                   )}

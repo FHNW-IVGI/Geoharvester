@@ -26,6 +26,7 @@ interface TablePaginationActionsProps {
     event: React.MouseEvent<HTMLButtonElement>,
     newPage: number
   ) => void;
+  handleSetPageZero?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 // MUI Default, source: https://mui.com/material-ui/react-table/#customization
@@ -37,6 +38,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
     rowsPerPage,
     handleChangePageForward,
     handleChangePageBackward,
+    handleSetPageZero,
     onPageChange,
     currentApiPage,
     displayedRecordsStart,
@@ -55,8 +57,21 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
     handleChangePageForward && handleChangePageForward(event, page + 1);
   };
 
+  const handleFirstPageButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    handleSetPageZero && handleSetPageZero(event);
+  };
+
   return (
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0 && currentApiPage === 0}
+        aria-label="first page"
+      >
+        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
       <IconButton
         onClick={handleBackButtonClick}
         disabled={currentApiPage === 0 && displayedRecordsStart === 0}
