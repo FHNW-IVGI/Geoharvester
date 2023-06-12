@@ -103,13 +103,11 @@ export const MenuBar = ({
         style={{
           display: "flex",
           flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "spaceBetween",
-          width: "100%",
-          backgroundColor: "#007CC3",
-          borderRadius: "0%",
+          justifyContent: "end",
+          width: 500,
         }}
       >
+
         <div style={{ width: "30%", display: "flex", alignItems: "center" }}>
           <IconButton
             size="large"
@@ -182,6 +180,48 @@ export const MenuBar = ({
         provider={providerState}
         servicetype={servicetypeState}
       />
+            }}
+          >
+            {PROVIDERLIST.map((provider) => {
+              return (
+                <MenuItem key={provider} value={provider}>
+                  {provider}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <FormControl
+          variant="outlined"
+          sx={{
+            minWidth: 140,
+          }}
+        >
+          <Select
+            autoComplete="off"
+            defaultValue={""}
+            labelId="select-service-label"
+            id="select-service"
+            value={servicetype}
+            onChange={handleChangeService}
+            style={{
+              backgroundColor: "white",
+              textAlign: "center",
+              height: 32,
+              color: "#007CC3",
+            }}
+          >
+            {SERVICELIST.map((servicetype) => {
+              return (
+                <MenuItem key={servicetype} value={servicetype}>
+                  {servicetype}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <div style={{ width: 12 }} />
+      </div>
     </Toolbar>
   );
 };
