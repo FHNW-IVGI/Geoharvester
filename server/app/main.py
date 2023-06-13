@@ -139,7 +139,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         # If you want the results from redis you can just set this section as comment
 
         if (query_string != None and len(redis_data.docs) > 0):
-            ranked_results = results_ranking(redis_data.docs)
+            ranked_results = results_ranking(redis_data.docs, word_list)
             return paginate(ranked_results)
         else:
             pass
