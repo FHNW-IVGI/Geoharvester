@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@main
 
       - name: Increase git buffer size
         run: |
@@ -65,5 +65,5 @@ jobs:
           push-branch: "main"
           commit-message: "Scraper done"
           force-add: "true"
-          files: ./data/
+          files: data/
           name: autoupdate
