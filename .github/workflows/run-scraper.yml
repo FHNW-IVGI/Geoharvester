@@ -32,15 +32,15 @@ jobs:
       
       - name: Debugging
         run: |
-          ls -la
           pwd
-          ls ../
-          ls ../../
+          cat requirements.txt
+          echo "---"
+
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r ../../scraper/requirements.txt
+          pip install -r requirements.txt
 
       - name: Run Python script
         run: |
