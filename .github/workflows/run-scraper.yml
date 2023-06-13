@@ -27,6 +27,7 @@ jobs:
           
       - name: Pull latest changes
         run: |
+          git config pull.ff only 
           git pull origin main
 
       - name: Set up Python 3.9
