@@ -15,6 +15,7 @@ import { MenuDropdown } from "./MenuDropdown";
 import { Filter } from "./Filter";
 import "../../styles.css";
 import { PROVIDERTYPE, SERVICETYPE } from "src/constants";
+import { useState } from "react";
 
 export type SearchBarProps = {
   triggerSearch: (
@@ -27,7 +28,6 @@ export type SearchBarProps = {
   setServiceState: (serviceState: SERVICETYPE) => void;
   providerState: PROVIDERTYPE;
   setProviderState: (serviceState: PROVIDERTYPE) => void;
-  searchStringState: string;
   setSearchString: (searchString: string) => void;
   resetPageToZero: () => void;
 };
@@ -39,11 +39,12 @@ export const MenuBar = ({
   setProviderState,
   providerState,
   setSearchString,
-  searchStringState,
   resetPageToZero,
 }: SearchBarProps) => {
   const theme = useTheme();
   const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
+
+  const [localSearchString, setlocalSearchString] = useState("");
 
   const handleChangeService = (event: SelectChangeEvent) => {
     setServiceState(event.target.value as SERVICETYPE);
@@ -93,17 +94,17 @@ export const MenuBar = ({
             id="webservicesearch"
             type="outlined"
             placeholder="Webservice suchen..."
-            value={searchStringState}
+            value={localSearchString}
             style={{
               flexGrow: 2,
               maxWidth: 600,
               height: 32,
               backgroundColor: "white",
             }}
-            onChange={(e) => setSearchString(e.target.value)}
+            onChange={(e) => setlocalSearchString(e.target.value)}
             onKeyDown={(e) =>
               e.key === "Enter" &&
-              triggerSearch(searchStringState, undefined, undefined, page)
+              triggerSearch(localSearchString, undefined, undefined, page)
             }
             startAdornment={
               <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
@@ -112,7 +113,10 @@ export const MenuBar = ({
               <InputAdornment position="end">
                 <IconButton
                   aria-label="clear search"
-                  onClick={() => setSearchString("")}
+                  onClick={() => {
+                    setSearchString("");
+                    setlocalSearchString("");
+                  }}
                 >
                   <CancelIcon style={{ marginRight: -14, marginLeft: -8 }} />
                 </IconButton>
@@ -124,7 +128,8 @@ export const MenuBar = ({
             size="small"
             onClick={() => {
               resetPageToZero();
-              triggerSearch(searchStringState, undefined, undefined, page);
+              setSearchString(localSearchString);
+              triggerSearch(localSearchString, undefined, undefined, page);
             }}
             sx={{
               fontSize: 14,
