@@ -30,12 +30,6 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Debugging
-        run: |
-          pwd
-          cat requirements.txt
-          echo "---"
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -55,6 +49,13 @@ jobs:
       #     force-add: "true"
       #     files: tools/
       #     name: autoupdate
+      
+      - name: Debugging
+        run: |
+          pwd
+          ls data
+          ls tools
+          echo "---"
 
       # Subsequent "on push" Actions are only triggered if this
       # push is done with a Personal Access Token (PAT)
