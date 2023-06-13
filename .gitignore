@@ -1,11 +1,15 @@
+
+##------SERVER ------
 server/.vscode
 server/.pylintrc
 server/app/env
 
-__pycache__
-**/__pycache__
+# These contain passwords, do not check them into git!
+server/app/redis/redis.conf 
+server/app/redis/redis.env 
 
 
+##------CLIENT ------
 client/node_modules
 client/.vscode
 
@@ -14,9 +18,11 @@ client/coverage
 
 # production
 client/build
-# These contain passwords, do not check them into git!
-server/app/redis/redis.conf 
-server/app/redis/redis.env 
+client/public/cantonIcons/Logo_geodienste.ch.zip
+
+##------SCRAPER ------
+scraper/data
+
 
 # misc
 env
@@ -32,4 +38,6 @@ yarn-error.log*
 
 .vscode
 
-client/public/cantonIcons/Logo_geodienste.ch.zip
+
+__pycache__
+**/__pycache__
