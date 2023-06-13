@@ -29,13 +29,12 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
-      
+
       - name: Debugging
         run: |
           pwd
           cat requirements.txt
           echo "---"
-
 
       - name: Install dependencies
         run: |
@@ -48,14 +47,14 @@ jobs:
         env: # Set the secrets as env var
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 
-      - name: Push log files to repo
-        uses: github-actions-x/commit@v2.9
-        with:
-          push-branch: "main"
-          commit-message: "Scraper done"
-          force-add: "true"
-          files: tools/
-          name: autoupdate
+      # - name: Push log files to repo
+      #   uses: github-actions-x/commit@v2.9
+      #   with:
+      #     push-branch: "main"
+      #     commit-message: "Scraper done"
+      #     force-add: "true"
+      #     files: tools/
+      #     name: autoupdate
 
       # Subsequent "on push" Actions are only triggered if this
       # push is done with a Personal Access Token (PAT)
