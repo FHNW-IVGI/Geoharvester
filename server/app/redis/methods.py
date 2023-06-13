@@ -242,7 +242,7 @@ def exact_match_scoring(df, cols, word, score):
     df.loc[mask, 'score'] += score
     return df
 
-def results_ranking(redis_output, query_words_list=[]):
+def results_ranking(redis_output, query_words_list):
     """
     Ranks the results according to the assigned scores
     # TODO: This function will be integrated into a class with different ranking methods
