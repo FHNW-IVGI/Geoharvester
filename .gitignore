@@ -21,7 +21,6 @@ client/build
 client/public/cantonIcons/Logo_geodienste.ch.zip
 
 ##------SCRAPER ------
-scraper/data/*
 
 
 # misc
