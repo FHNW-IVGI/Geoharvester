@@ -41,22 +41,17 @@ jobs:
         env: # Set the secrets as env var
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 
-      # - name: Push log files to repo
-      #   uses: github-actions-x/commit@v2.9
-      #   with:
-      #     push-branch: "main"
-      #     commit-message: "Scraper done"
-      #     force-add: "true"
-      #     files: tools/
-      #     name: autoupdate
-      
-      - name: Debugging
-        run: |
-          pwd
-          ls data
-          ls tools
-          echo "---"
-
+      # If main is protected (in repo settings) pushing will fail
+      - name: Push log files to repo
+        uses: github-actions-x/commit@v2.9
+          with:
+            push-branch: "main"
+            commit-message: "Scraper done"
+            force-add: "true"
+            files: scraper/tools/
+            name: autoupdate
+            
+      # If main is protected (in repo settings) pushing will fail
       # Subsequent "on push" Actions are only triggered if this
       # push is done with a Personal Access Token (PAT)
       - name: Push contents of data folder to repo
