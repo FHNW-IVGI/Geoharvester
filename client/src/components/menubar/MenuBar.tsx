@@ -127,7 +127,6 @@ export const MenuBar = ({
             id="search-button"
             size="small"
             onClick={() => {
-              console.log(localSearchString);
               resetPageToZero();
               setSearchString(localSearchString);
               triggerSearch(localSearchString, undefined, undefined, page);
