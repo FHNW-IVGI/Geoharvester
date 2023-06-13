@@ -65,5 +65,5 @@ jobs:
           push-branch: "main"
           commit-message: "Scraper done"
           force-add: "true"
-          files: data/
+          files: scraper/data/
           name: autoupdate
