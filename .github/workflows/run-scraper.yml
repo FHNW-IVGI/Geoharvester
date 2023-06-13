@@ -44,12 +44,12 @@ jobs:
       # If main is protected (in repo settings) pushing will fail
       - name: Push log files to repo
         uses: github-actions-x/commit@v2.9
-          with:
-            push-branch: "main"
-            commit-message: "Scraper done"
-            force-add: "true"
-            files: scraper/tools/
-            name: autoupdate
+        with:
+          push-branch: "main"
+          commit-message: "Scraper done"
+          force-add: "true"
+          files: scraper/tools/
+          name: autoupdate
             
       # If main is protected (in repo settings) pushing will fail
       # Subsequent "on push" Actions are only triggered if this
