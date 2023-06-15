@@ -1,47 +1,47 @@
 version: "3.8"
 services:
-  server:
-    container_name: fastapi
-    # Environment variables
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    depends_on:
-      redis:
-        condition: service_healthy
-    links:
-      - redis
-    restart: always
+  # server:
+  #   container_name: fastapi
+  #   # Environment variables
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #   links:
+  #     - redis
+  #   restart: always
 
-    ports:
-      - 8000:8000
-    expose:
-      - 8000
-    volumes:
-    # Allow hot reloading on code changes for Docker. Uvicorn also requires --reload flag
-      - ./app:/server/app
-    environment:
-      # Required for Python to print to terminal
-      PYTHONUNBUFFERED: 1
-      LOG_LEVEL: debug
+  #   ports:
+  #     - 8000:8000
+  #   expose:
+  #     - 8000
+  #   volumes:
+  #   # Allow hot reloading on code changes for Docker. Uvicorn also requires --reload flag
+  #     - ./app:/server/app
+  #   environment:
+  #     # Required for Python to print to terminal
+  #     PYTHONUNBUFFERED: 1
+  #     LOG_LEVEL: debug
 
-  redis:
-    image: redis/redis-stack-server:7.2.0-M01
-    container_name: redis
-    hostname: redis
-    ports:
-      - 6379:6379
-    expose:
-      - 6379
-    volumes:
-    - ./app/redis/redis.conf:/usr/local/etc/redis/redis.conf
-    - ./app/redis/redis.env:/server/app/redis/redis.env
-    env_file:
-      - ./app/redis/redis.env # Do not check this file into git!
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
-    command: redis-stack-server --requirepass ${REDIS_HOST_PASSWORD}
+  # redis:
+  #   image: redis/redis-stack-server:7.2.0-M01
+  #   container_name: redis
+  #   hostname: redis
+  #   ports:
+  #     - 6379:6379
+  #   expose:
+  #     - 6379
+  #   volumes:
+  #   - ./app/redis/redis.conf:/usr/local/etc/redis/redis.conf
+  #   - ./app/redis/redis.env:/server/app/redis/redis.env
+  #   env_file:
+  #     - ./app/redis/redis.env # Do not check this file into git!
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+  #   command: redis-stack-server --requirepass ${REDIS_HOST_PASSWORD}
 
 
   cronjob:
