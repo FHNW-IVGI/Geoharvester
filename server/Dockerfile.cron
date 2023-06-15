@@ -1,0 +1,18 @@
+FROM alpine
+COPY ./cronjob /cronjob
+WORKDIR /cronjob
+RUN apk add python3
+
+
+RUN crontab crontab
+CMD [ "/usr/sbin/crond", "-f", "-d8" ]
+
+
+
+# FROM python:3.9
+
+
+
+
+
+# CMD ["crond", "-f"]

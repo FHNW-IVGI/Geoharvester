@@ -42,3 +42,18 @@ services:
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
     command: redis-stack-server --requirepass ${REDIS_HOST_PASSWORD}
+
+
+  cronjob:
+    container_name: cronjob
+    # Environment variables
+    build:
+      context: .
+      dockerfile: Dockerfile.cron
+    # depends_on:
+    #   server:
+    #     condition: service_healthy
+    environment:
+      # Required for Python to print to terminal
+      PYTHONUNBUFFERED: 1
+      LOG_LEVEL: debug
