@@ -1,3 +1,0 @@
-Timestamp,Operator,URL,Issue
-2023-06-14T09:42:39.952882+02:00,KT_BS,https://wfs.geo.bs.ch/?SERVICE=WFS&REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
-2023-06-14T09:44:04.332756+02:00,KT_BS,https://wms.geo.bs.ch/?SERVICE=WMS&REQUEST=GetCapabilities,"'NoneType' object has no attribute 'identification'"
