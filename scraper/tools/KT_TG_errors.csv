@@ -1,4 +1,3 @@
 Timestamp,Operator,URL,Issue
-2023-06-15T07:54:17.450643+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WMS&Version=1.3.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
-2023-06-15T07:58:03.043742+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/sirenenstandorte?service=WMS&version=1.3.0&request=GetCapabilities,"syntax error: line 1, column 0"
-2023-06-15T08:01:22.040087+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WFS&Version=2.0.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
+2023-06-16T07:48:08.293831+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WMS&Version=1.3.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
+2023-06-16T07:55:18.859780+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WFS&Version=2.0.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
