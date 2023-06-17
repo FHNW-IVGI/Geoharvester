@@ -1,3 +1,2 @@
 Timestamp,Operator,URL,Issue
-2023-06-16T06:21:02.053270+02:00,KT_GE,https://ge.ch/sitgags1/services/VECTOR/SITG_OPENDATA_02/MapServer/WMSServer?request=GetCapabilities&service=WMS,"GET requested yielded HTTP response status code 400"
-2023-06-16T06:21:15.859272+02:00,KT_GE,https://ge.ch/sitgags1/services/VECTOR/SITG_OPENDATA_03/MapServer/WMSServer?request=GetCapabilities&service=WMS,"'NoneType' object has no attribute 'identification'"
+2023-06-17T06:08:56.457416+02:00,KT_GE,https://ge.ch/sitgags1/services/VECTOR/SITG_OPENDATA_02/MapServer/WMSServer?request=GetCapabilities&service=WMS,"GET requested yielded HTTP response status code 400"
