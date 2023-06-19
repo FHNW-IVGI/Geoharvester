@@ -634,7 +634,7 @@ class NLP_spacy():
 
 
 def check_metadata_quality(database, search_word='nan',
-                           search_columns=['ABSTRACT', 'KEYWORDS', 'CONTACT', 'METADATA'],
+                           search_columns=['ABSTRACT', 'KEYWORDS', 'METADATA'],
                            case_sensitive=False):
     """
     Calculate a metadata quality score
