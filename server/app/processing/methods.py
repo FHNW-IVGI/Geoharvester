@@ -12,7 +12,9 @@ def import_csv_into_dataframe(url, column_limit=None):
     if(column_limit):
         dataframe = pd.read_csv(url, nrows=column_limit)
     else: 
-        dataframe = pd.read_csv(url)
+        dataframe = pd.read_csv(url, low_memory=False)
+
+        dataframe.fillna('', inplace=True)
     return dataframe
 
 def import_pkl_into_dataframe(url):

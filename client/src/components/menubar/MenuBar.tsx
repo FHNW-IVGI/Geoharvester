@@ -14,18 +14,18 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { MenuDropdown } from "./MenuDropdown";
 import { Filter } from "./Filter";
 import "../../styles.css";
-import { PROVIDERTYPE, SERVICETYPE } from "src/constants";
+import { PROVIDERTYPE, SERVICE } from "src/constants";
 import { useState } from "react";
 
 export type SearchBarProps = {
   triggerSearch: (
     searchString: string | undefined,
-    servicetype: SERVICETYPE | undefined,
+    servicetype: SERVICE | undefined,
     provider: PROVIDERTYPE | undefined,
     page: number
   ) => void;
-  servicetypeState: SERVICETYPE;
-  setServiceState: (serviceState: SERVICETYPE) => void;
+  servicetypeState: SERVICE;
+  setServiceState: (serviceState: SERVICE) => void;
   providerState: PROVIDERTYPE;
   setProviderState: (serviceState: PROVIDERTYPE) => void;
   setSearchString: (searchString: string) => void;
@@ -47,13 +47,8 @@ export const MenuBar = ({
   const [localSearchString, setlocalSearchString] = useState("");
 
   const handleChangeService = (event: SelectChangeEvent) => {
-    setServiceState(event.target.value as SERVICETYPE);
-    triggerSearch(
-      undefined,
-      event.target.value as SERVICETYPE,
-      undefined,
-      page
-    );
+    setServiceState(event.target.value as SERVICE);
+    triggerSearch(undefined, event.target.value as SERVICE, undefined, page);
   };
 
   const handleChangeProvider = (event: SelectChangeEvent) => {

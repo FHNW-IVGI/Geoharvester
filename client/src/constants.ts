@@ -40,7 +40,7 @@ export enum PROVIDERTYPE {
     FL_LI = "FL_LI",
 }
 
-export enum SERVICETYPE {
+export enum SERVICE {
     WFS = "wfs",
     WMS = "wms",
     WMTS = "wmts",

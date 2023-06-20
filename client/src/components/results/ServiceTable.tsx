@@ -24,7 +24,7 @@ import {
   DEFAULTPAGE,
   PROVIDERTYPE,
   RESPONSESTATE,
-  SERVICETYPE,
+  SERVICE,
 } from "src/constants";
 import LinearProgress from "@mui/material/LinearProgress";
 
@@ -42,11 +42,11 @@ type TableProps = {
   rowsPerPage: number;
   triggerSearch: (
     searchString: string | undefined,
-    servicetype: SERVICETYPE | undefined,
+    servicetype: SERVICE | undefined,
     provider: PROVIDERTYPE | undefined,
     pageIndex: number
   ) => void;
-  servicetypeState: SERVICETYPE;
+  servicetypeState: SERVICE;
   providerState: PROVIDERTYPE;
   searchStringState: string;
 };
@@ -218,7 +218,7 @@ export const ServiceTable = ({
     </div>
   );
 
-  const columns = ["TITLE", "ABSTRACT", "OWNER", "SERVICETYPE", "METAQUALITY"];
+  const columns = ["title", "abstract", "provider", "service", "metaquality"];
 
   switch (responseState) {
     case RESPONSESTATE.UNINITIALIZED:

@@ -42,3 +42,11 @@ services:
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
     command: redis-stack-server --requirepass ${REDIS_HOST_PASSWORD}
+
+#Restart server to ingest new csv file, once per day
+  restarter:
+    container_name: fastapi-restarter
+    image: docker:cli
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    command: ["/bin/sh", "-c", "while true; do sleep 86400; docker restart fastapi; done"]
+    restart: unless-stopped

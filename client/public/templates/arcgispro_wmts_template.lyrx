@@ -8,7 +8,7 @@
   "layerDefinitions" : [
     {
       "type" : "CIMTiledServiceLayer",
-      "name" : "{{TITLE}}",
+      "name" : "{{title}}",
       "uRI" : "CIMPATH=",
       "sourceModifiedTime" : {
         "type" : "TimeInstant"
@@ -32,18 +32,18 @@
       "allowDrapingOnIntegratedMesh" : true,
       "serviceConnection" : {
         "type" : "CIMWMTSServiceConnection",
-        "layerName" : "{{NAME}}",
+        "layerName" : "{{name}}",
         "version" : "1.0.0",
         "serverConnection" : {
           "type" : "CIMProjectServerConnection",
           "anonymous" : true,
           "hideUserProperty" : true,
-          "url" : "{{SERVICELINK}}",
+          "url" : "{{endpoint}}",
           "connectionMode" : "Consumer",
           "serverType" : "WMTS",
           "useDefaultStagingFolder" : true
         },
-        "style" : "{{NAME}}",
+        "style" : "{{name}}",
         "dimensions" : {
           "type" : "PropertySet",
           "propertySetItems" : [

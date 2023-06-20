@@ -4,38 +4,38 @@
  * 
  */
 
-import { PROVIDERTYPE, SERVICETYPE } from "./constants";
+import { PROVIDERTYPE, SERVICE } from "./constants";
 
 export interface Geoservice {
-    OWNER: PROVIDERTYPE;
-    TITLE: string;
-    NAME: string;
-    MAPGEO: string;
-    TREE: string;
-    GROUP: string;
-    ABSTRACT: string;
-    KEYWORDS: string;
-    LEGEND: string;
-    CONTACT: string;
-    SERVICELINK: string;
-    METADATA: string;
+    provider: PROVIDERTYPE;
+    title: string;
+    name: string;
+    preview: string;
+    tree: string;
+    group: string;
+    abstract: string;
+    keywords: string;
+    legend: string;
+    contact: string;
+    endpoint: string;
+    metadata: string;
     UPDATE: string;
-    SERVICETYPE: SERVICETYPE;
-    MAX_ZOOM: number;
-    CENTER_LAT: string;
-    CENTER_LON: string;
-    BBOX: string;
-    METAQUALITY: number;
+    service: SERVICE;
+    max_zoom: number;
+    center_lat: string;
+    center_lon: string;
+    bbox: string;
+    metaquality: number;
 }
 
 export interface Geodata {
-    OWNER: PROVIDERTYPE;
-    TITLE: string;
-    NAME: string;
-    MAPGEO: string;
-    ABSTRACT: string;
-    KEYWORDS: string;
-    CONTACT: string;
+    provider: PROVIDERTYPE;
+    title: string;
+    name: string;
+    preview: string;
+    abstract: string;
+    keywords: string;
+    contact: string;
     WMSGetCap: string;
     WMTSGetCap: string;
     WFSGetCap: string;
