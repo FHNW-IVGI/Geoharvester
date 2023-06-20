@@ -3,7 +3,7 @@ import axios from "axios";
 import { Geoservice } from "./types";
 import { parseQgisTemplate } from "./templateParser/qgisParser";
 import { parseArcgisWFS, parseArcgisWMSorWMTS } from "./templateParser/arcgisParser";
-import { LANG, SERVICE, DEFAULTOFFSET, DEFAULTCHUNKSIZE, PROVIDERTYPE } from "./constants";
+import { LANG, SERVICE, DEFAULTCHUNKSIZE, PROVIDERTYPE } from "./constants";
 
 
 const routes = {
