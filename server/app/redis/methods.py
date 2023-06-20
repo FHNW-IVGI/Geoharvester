@@ -43,8 +43,7 @@ def create_index(PREFIX, INDEX_ID, schema):
 def drop_redis_db(PREFIX):
     "Drop redis records with given prefix. Return database size"
 
-    for key in r.keys('{}*'.format(PREFIX)):
-        r.delete(key)
+    r.flushdb()
 
     remaining_records = r.dbsize()
     fastapi_logger.info("Redis dropped with {} records remaining".format(remaining_records))
