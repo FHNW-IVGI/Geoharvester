@@ -49,14 +49,14 @@ class GeoserviceModel(BaseModel):
     group: str
     abstract: str
     keywords: str
-    keywords_nlp:  str
+    keywords_nlp:  Optional[str]
     legend: str
     contact: str
     endpoint: str
     metadata: Optional[str]
     update: Optional[str]
     service: str
-    max_zoom: str
+    max_zoom: int
     center_lat: float
     center_lon: float
     bbox: str
