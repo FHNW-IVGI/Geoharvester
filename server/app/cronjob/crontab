@@ -1,2 +1,0 @@
-*/1 * * * * python /cronjob/cronjob.py >> /cronjob/logfile
-  

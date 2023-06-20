@@ -71,7 +71,7 @@ async def startup_event():
 
     try:
         # Flush DB on startup
-        drop_redis_db(SVC_PREFIX)
+        drop_redis_db()
 
         create_index(SVC_PREFIX, SVC_INDEX_ID, geoservices_schema)
 

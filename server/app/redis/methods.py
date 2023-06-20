@@ -40,7 +40,7 @@ def create_index(PREFIX, INDEX_ID, schema):
     return
 
 
-def drop_redis_db(PREFIX):
+def drop_redis_db():
     "Drop redis records with given prefix. Return database size"
 
     r.flushdb()
