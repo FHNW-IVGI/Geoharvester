@@ -93,15 +93,15 @@ def scrape(source,service,i,layertree, group,layer_data,prefix):
     
     Notes:
     The extracted metadata information includes the following fields:
-    - OWNER: Description of the source of the service
-    - TITLE: Title of the layer
-    - NAME: Name of the layer
-    - TREE: Tree structure of the layer
-    - GROUP: Name of the parent layer group
-    - ABSTRACT: Abstract information of the layer and access constraints of the service
-    - KEYWORDS: Keywords associated with the layer and the service
-    - LEGEND: Legend URL of the layer
-    - CONTACT: Contact information of the provider of the service
+    - provider: Description of the source of the service
+    - title: Title of the layer
+    - name: Name of the layer
+    - tree: Tree structure of the layer
+    - group: Name of the parent layer group
+    - abstract: Abstract information of the layer and access constraints of the service
+    - keywords: Keywords associated with the layer and the service
+    - legend: Legend URL of the layer
+    - contact: Contact information of the provider of the service
     """
     type=source['URL']
     #breakpoint()
@@ -221,7 +221,7 @@ def scrape(source,service,i,layertree, group,layer_data,prefix):
     else:
         layer_data["center_lon"] = 7.88932
     
-    #BBOX
+    #bbox
     bbox = None
     if 'boundingBoxWGS84' in service.contents[i].__dict__:
         bbox = service.contents[i].boundingBoxWGS84
@@ -301,10 +301,10 @@ def scrape(source,service,i,layertree, group,layer_data,prefix):
         if source['Description'] != "Bund":
         # for re3 
             # UNCOMMENT THIS SECTION and REMOVE SECTION below when not running on github since shortening takes time!
-            # layer_data["MAPGEO"]= shorten_mapgeo(r""+prefix+"layers=WMS||"+service.contents[i].title+"||"+service.url+"?||"+\
+            # layer_data["preview"]= shorten_mapgeo(r""+prefix+"layers=WMS||"+service.contents[i].title+"||"+service.url+"?||"+\
             #    service.contents[i].id+"||"\
             #    +service.identification.version+"&E="+str(lon_lv95)+\
-            #    "&N="+str(lat_lv95)+"&zoom="+str(layer_data["MAX_ZOOM"]))
+            #    "&N="+str(lat_lv95)+"&zoom="+str(layer_data["max_zoom"]))
 
             layer_data["preview"]= r""+prefix+"layers=WMS||"+service.contents[i].title+"||"+service.url+"?||"+\
                 service.contents[i].id+"||"\
@@ -312,13 +312,13 @@ def scrape(source,service,i,layertree, group,layer_data,prefix):
                 "&N="+str(lat_lv95)+"&zoom="+str(layer_data["max_zoom"])
             
         #for web-mapviewer    
-        #    layer_data["MAPGEO"]= shorten_mapgeo(r""+prefix+"layers=WMS||"+service.contents[i].title+"||"+service.url+"?||"+\
+        #    layer_data["preview"]= shorten_mapgeo(r""+prefix+"layers=WMS||"+service.contents[i].title+"||"+service.url+"?||"+\
         #        service.contents[i].id+"||"\
-        #        +service.identification.version+"&lat="+str(layer_data["CENTER_LAT"])+"&lon="+\
-        #        str(layer_data["CENTER_LON"])+"&z="+str(layer_data["MAX_ZOOM"]))
+        #        +service.identification.version+"&lat="+str(layer_data["center_lat"])+"&lon="+\
+        #        str(layer_data["center_lon"])+"&z="+str(layer_data["max_zoom"]))
         else:
             # UNCOMMENT THIS SECTION and REMOVE SECTION below when not running on github since shortening takes time!
-            #layer_data["MAPGEO"]= shorten_mapgeo(r""+prefix+"layers=WMS||"+service.contents[i].title+"||"+service.provider.url+"?||"+\
+            #layer_data["preview"]= shorten_mapgeo(r""+prefix+"layers=WMS||"+service.contents[i].title+"||"+service.provider.url+"?||"+\
             #service.contents[i].id+"||"+service.identification.version)
             layer_data["preview"]= r""+prefix+"layers=WMS||"+service.contents[i].title+"||"+service.provider.url+"?||"+\
             service.contents[i].id+"||"+service.identification.version
@@ -333,17 +333,17 @@ def scrape(source,service,i,layertree, group,layer_data,prefix):
         if source['Description'] != "Bund":
         # for re3    
          # UNCOMMENT THIS SECTION and REMOVE SECTION below when not running on github since shortening takes time!
-         #   layer_data["MAPGEO"]= shorten_mapgeo(r""+prefix+"layers=WMTS||"+service.contents[i].id+"||"\
+         #   layer_data["preview"]= shorten_mapgeo(r""+prefix+"layers=WMTS||"+service.contents[i].id+"||"\
          #       +service.url+"&E="+str(lon_lv95)+\
-         #       "&N="+str(lat_lv95)+"&zoom="+str(layer_data["MAX_ZOOM"]))
+         #       "&N="+str(lat_lv95)+"&zoom="+str(layer_data["max_zoom"]))
             
             layer_data["preview"]= r""+prefix+"layers=WMTS||"+service.contents[i].id+"||"\
                 +service.url+"&E="+str(lon_lv95)+\
                 "&N="+str(lat_lv95)+"&zoom="+str(layer_data["max_zoom"])
         #for web-mapviewer
-        #    layer_data["MAPGEO"]= shorten_mapgeo(r""+prefix+"layers=WMTS||"+service.contents[i].id+"||"\
-        #        +service.url+"&lat="+str(layer_data["CENTER_LAT"])+"&lon="+\
-        #        str(layer_data["CENTER_LON"])+"&z="+str(layer_data["MAX_ZOOM"]))
+        #    layer_data["preview"]= shorten_mapgeo(r""+prefix+"layers=WMTS||"+service.contents[i].id+"||"\
+        #        +service.url+"&lat="+str(layer_data["center_lat"])+"&lon="+\
+        #        str(layer_data["center_lon"])+"&z="+str(layer_data["max_zoom"]))
 
         else:
             layer_data["preview"]= shorten_mapgeo(r""+prefix+"layers="+service.contents[i].id)

@@ -2,29 +2,32 @@
 Utilities for the elaboration of texts with NLP and TF-IDF
 """
 
-from string import punctuation
-import openai #0.27.0
-import os
 import itertools
-import spacy #3.3.1 and spacy-legacy 3.0.12 + pretrained models
-import numpy as np #1.23.5
-import pandas as pd #1.5.2
+import os
+from string import punctuation
+
 import matplotlib.pyplot as plt
-import translators as ts #5.5.6
-from langdetect import detect #1.0.9
-from nltk.corpus import stopwords #nltk 3.7
-from nltk.tokenize import word_tokenize, sent_tokenize
-from nltk.stem import SnowballStemmer, PorterStemmer
-from sklearn.feature_extraction.text import TfidfVectorizer # scikit-learn 1.2.0
-from rake_nltk import Rake # 1.0.6
-from scipy import sparse # 1.9.3
-from gensim import corpora # gensim 4.3.0
+import numpy as np  # 1.23.5
+import openai  # 0.27.0
+import pandas as pd  # 1.5.2
+import pyLDAvis.gensim_models as genvis  # 3.4.0
+import spacy  # 3.3.1 and spacy-legacy 3.0.12 + pretrained models
+import translators as ts  # 5.5.6
+from gensim import corpora  # gensim 4.3.0
 from gensim.models import LsiModel
-from gensim.models.ldamodel import LdaModel
 from gensim.models.coherencemodel import CoherenceModel
-from summarizer.sbert import SBertSummarizer # bert-extractive-summarizer 0.10.1
+from gensim.models.ldamodel import LdaModel
+from langdetect import detect  # 1.0.9
+from nltk.corpus import stopwords  # nltk 3.7
+from nltk.stem import PorterStemmer, SnowballStemmer
+from nltk.tokenize import sent_tokenize, word_tokenize
+from rake_nltk import Rake  # 1.0.6
+from scipy import sparse  # 1.9.3
+from sklearn.feature_extraction.text import \
+    TfidfVectorizer  # scikit-learn 1.2.0
+from summarizer.sbert import \
+    SBertSummarizer  # bert-extractive-summarizer 0.10.1
 from tqdm import tqdm
-import pyLDAvis.gensim_models as genvis # 3.4.0
 
 
 def progress(token):
@@ -167,7 +170,7 @@ class TFIDF_BM25():
         self.abstracts, self.results = [], []
         self.index = np.array([])
 
-    def cleansing_ranking(self, texts, column='ABSTRACT') -> None:
+    def cleansing_ranking(self, texts, column='abstract') -> None:
         """
         It saves the index of the pandas.dataframe and apply the tokenize function to one column.
         
@@ -176,7 +179,7 @@ class TFIDF_BM25():
         texts : pandas.dataframe
             Dataframe with a text column
         column : str
-            name of the text column, default "ABSTRACT"
+            name of the text column, default "abstract"
         
         """
         self.index = texts.index.values
@@ -250,7 +253,7 @@ class TFIDF_BM25():
                 and w not in list(punctuation)]# remove stop words and punctuation
         return keywords
         
-    def extract_keywords(self, texts, column='ABSTRACT', keyword_length=3, score=False):
+    def extract_keywords(self, texts, column='abstract', keyword_length=3, score=False):
         self.index = texts.index.values
         self.keywords = [self.rake_keywords(text, score=score, keyword_length=keyword_length)
                         for text in texts[column].values.tolist()]
@@ -268,7 +271,7 @@ class LSI_LDA():
         self.coherence_values = []
         self.model_list = []
 
-    def preprocess(self, texts, column='ABSTRACT'):
+    def preprocess(self, texts, column='abstract'):
         """
         Preprocess a set of texts in a pandas dataframe cleaning and tokenizing the texts.
 
@@ -277,7 +280,7 @@ class LSI_LDA():
         texts : pandas.dataframe
             Dataframe with a text column
         column : str
-            name of the text column, default "ABSTRACT"
+            name of the text column, default "abstract"
         Returns
         -------
         _ : [list, list]
@@ -350,7 +353,7 @@ class LSI_LDA():
         texts : pandas.dataframe
             Dataframe with a text column
         column : str
-            name of the text column, default "ABSTRACT"
+            name of the text column, default "abstract"
         Returns
         -------
         _ : [list, list]
@@ -372,7 +375,7 @@ class LSI_LDA():
         categories : pandas.dataframe
             Dataframe with a text column
         column : str
-            name of the text column, default "ABSTRACT"
+            name of the text column, default "abstract"
         Returns
         -------
         _ : list
@@ -526,7 +529,7 @@ class NLP_spacy():
         cleaned_keywords = {' '.join(kw) for kw in keywords if any(pos_dict.get(w) in ['NOUN', 'PROPN', 'NUM'] for w in kw)}
         return list(cleaned_keywords)
     
-    def extract_refined_keywords(self, texts, use_rake=True, column='ABSTRACT', keyword_length=3, num_keywords=10):
+    def extract_refined_keywords(self, texts, use_rake=True, column='abstract', keyword_length=3, num_keywords=10):
         """
         Applies the keyword extraction and cleansing to a whole dataset of texts
         
@@ -600,7 +603,7 @@ class NLP_spacy():
             summarized_text = model(text, num_sentences=4)
         return summarized_text
     
-    def summarize_texts(self, texts, column='ABSTRACT', use_GPT=False):
+    def summarize_texts(self, texts, column='abstract', use_GPT=False):
         """
         Applies the summariation function to a pandas dataframe
         
@@ -611,7 +614,7 @@ class NLP_spacy():
         use_GPT : bool
             Use a GPT model oterwise a Sbert model
         column : str
-            Text column, default "ABSTRACT"
+            Text column, default "abstract"
         Returns
         -------
         _ : list
@@ -634,11 +637,11 @@ class NLP_spacy():
 
 
 def check_metadata_quality(database, search_word='nan',
-                           search_columns=['ABSTRACT', 'KEYWORDS', 'METADATA'],
+                           search_columns=['abstract', 'keywords', 'contact', 'metadata'],
                            case_sensitive=False):
     """
     Calculate a metadata quality score
     """
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
-    database['METAQUALITY'] = mask.sum(axis=1)*25 # Scoring with 4 fields
+    database['metaquality'] = mask.sum(axis=1)*25 # Scoring with 4 fields
     return database

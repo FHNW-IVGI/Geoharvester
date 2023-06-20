@@ -4,7 +4,8 @@ import logging
 from typing import Union
 
 from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
-from app.processing.methods import (import_pkl_into_dataframe,
+from app.processing.methods import (import_csv_into_dataframe,
+                                    import_pkl_into_dataframe,
                                     split_search_string)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters, results_ranking,
@@ -62,9 +63,12 @@ async def startup_event():
     # Overwrite config limit for a maximum of 10000 search results:
     r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
-    url_geoservices_CH_pkl = "app/tmp/rawdata_scraper.pkl" # preprocessed data with NLP!
     global dataframe
-    dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
+    #url_geoservices_CH_pkl = "app/tmp/rawdata_scraper.pkl" #// We  need to automate this as the csv file is now updated once a week!
+    # dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
+
+    url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
+    dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
     
     global datajson
     datajson = json.loads(dataframe.to_json(orient='records'))

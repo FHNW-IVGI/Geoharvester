@@ -41,7 +41,7 @@ def create_index(PREFIX, INDEX_ID, schema):
 
 
 def drop_redis_db():
-    "Drop redis records with given prefix. Return database size"
+    "Drop redis. Return database size"
 
     r.flushdb()
 
@@ -92,22 +92,22 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
 
     if (bool(query_string)):
         queryable_parameters.append(
-            '@TITLE|ABSTRACT|KEYWORDS|KEYWORDS_NLP|SUMMARY:({})'.format(query_string)
+            '@title|abstract|keywords|keywords_nlp|summary:({})'.format(query_string)
         )
 
     if (bool(service)):
         queryable_parameters.append(
-            '@SERVICETYPE:({})'.format(service)
+            '@service:({})'.format(service)
         )
 
     if (bool(owner)):
         queryable_parameters.append(
-            '@OWNER:({})'.format(owner)
+            '@provider:({})'.format(owner)
         )
 
     if (len(queryable_parameters) < 1):
         # In this case all available datasets should be returned:
-        return '@SERVICETYPE:(WMS | WMTS | WFS)'
+        return '@service:(WMS | WMTS | WFS)'
     elif (len(queryable_parameters) == 1):
         return queryable_parameters[0]
     else:
@@ -118,27 +118,27 @@ def search_redis(redis_query, lang, offset, limit):
     return r.ft(SVC_INDEX_ID).search(Query(redis_query)
             .language(lang)                                   
             .paging(offset, 50000)
-            .return_field('TITLE')
-            .return_field('ABSTRACT')
-            .return_field('OWNER')
-            .return_field('SERVICETYPE')
-            .return_field('NAME')
-            .return_field('MAPGEO')
-            .return_field('TREE')
-            .return_field('GROUP')
-            .return_field('KEYWORDS')
-            .return_field('KEYWORDS_NLP')
-            .return_field('LEGEND')
-            .return_field('CONTACT')
-            .return_field('SERVICELINK')
-            .return_field('METADATA')
-            .return_field('MAX_ZOOM')
-            .return_field('CENTER_LAT')
-            .return_field('CENTER_LON')
-            .return_field('BBOX')
-            .return_field('SUMMARY')
-            .return_field('LANG_3')
-            .return_field('METAQUALITY')
+            .return_field('title')
+            .return_field('abstract')
+            .return_field('provider')
+            .return_field('service')
+            .return_field('name')
+            .return_field('preview')
+            .return_field('tree')
+            .return_field('group')
+            .return_field('keywords')
+            .return_field('keywords_nlp')
+            .return_field('legend')
+            .return_field('contact')
+            .return_field('endpoint')
+            .return_field('metadata')
+            .return_field('max_zoom')
+            .return_field('center_lat')
+            .return_field('center_lon')
+            .return_field('bbox')
+            .return_field('summary')
+            .return_field('lang_3')
+            .return_field('metaquality')
             )
 
 ######################################################################################################################################
@@ -264,17 +264,17 @@ def results_ranking(redis_output, query_words_list):
     print('ranking...')
     # initialize ranking score and the length counter
     query_results_df['score'] = 0
-    query_results_df['inv_title_length'] = query_results_df['TITLE'].apply(lambda x: 200 - len(x))
-    query_results_df['METAQUALITY'] = query_results_df['METAQUALITY'].astype('int')
+    query_results_df['inv_title_length'] = query_results_df['title'].apply(lambda x: 200 - len(x))
+    query_results_df['metaquality'] = query_results_df['metaquality'].astype('int')
     # Calculate the scores
     for query_word in query_words_list:
         print(query_word)
-        query_results_df = contains_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_word, 7)
-        query_results_df = contains_match_scoring(query_results_df, ['KEYWORDS_NLP', 'SUMMARY'], query_word, 2)
-        query_results_df = exact_match_scoring(query_results_df, ['TITLE', 'KEYWORDS'], query_word, 10)
-        query_results_df = exact_match_scoring(query_results_df, ['KEYWORDS_NLP', 'SUMMARY'], query_word, 5)
+        query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 7)
+        query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp', 'summary'], query_word, 2)
+        query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 10)
+        query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp', 'summary'], query_word, 5)
 
-    query_results_df.sort_values(by=['score', 'inv_title_length', 'TITLE'], axis=0, inplace=True, ascending=False)
+    query_results_df.sort_values(by=['score', 'inv_title_length', 'title'], axis=0, inplace=True, ascending=False)
     # replace nans with empty str
     query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
     t1 = time() # end time

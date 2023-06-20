@@ -30,7 +30,9 @@ export const ServiceRow = ({
 
   const getIcon = () => {
     const target =
-      row.OWNER === "Bund" ? "ch" : row.OWNER.slice(3, 5).toLocaleLowerCase();
+      row.provider === "Bund"
+        ? "ch"
+        : row.provider.slice(3, 5).toLocaleLowerCase();
     return `/cantonIcons/${target}.svg`;
   };
 
@@ -58,11 +60,11 @@ export const ServiceRow = ({
   }));
 
   const abstract =
-    row && row.ABSTRACT && row.ABSTRACT.length > 450
-      ? `${row.ABSTRACT.slice(0, 450)}...`
-      : row.ABSTRACT;
+    row && row.abstract && row.abstract.length > 450
+      ? `${row.abstract.slice(0, 450)}...`
+      : row.abstract;
 
-  const qualitynum = `chart x-${row.METAQUALITY}`;
+  const qualitynum = `chart x-${row.metaquality}`;
 
   return (
     <>
@@ -77,19 +79,19 @@ export const ServiceRow = ({
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <LeftAlignedTableCellMaxWidth>{row.TITLE}</LeftAlignedTableCellMaxWidth>
+        <LeftAlignedTableCellMaxWidth>{row.title}</LeftAlignedTableCellMaxWidth>
         <LeftAlignedTableCell>{abstract}</LeftAlignedTableCell>
         <CenteredTableCell>
-          <Tooltip title={row.OWNER}>
+          <Tooltip title={row.provider}>
             <Icon>
               <img alt="sourceIcon" src={getIcon()} height={25} width={25} />
             </Icon>
           </Tooltip>
         </CenteredTableCell>
-        <CenteredTableCell>{row.SERVICETYPE}</CenteredTableCell>
+        <CenteredTableCell>{row.service}</CenteredTableCell>
         <CenteredTableCell>
           <div id="metaqual" className={qualitynum}>
-            <p className="percentage">{row.METAQUALITY}</p>
+            <p className="percentage">{row.metaquality}</p>
           </div>
         </CenteredTableCell>
       </TableRow>

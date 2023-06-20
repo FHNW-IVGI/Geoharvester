@@ -29,30 +29,30 @@ export const SubRow = ({
   index: number;
 }) => {
   const rowsToInclude = [
-    "NAME",
-    "CONTACT",
-    "ABSTRACT",
-    "TREE",
-    "GROUP",
-    "KEYWORDS",
-    "METADATA",
-    "SERVICELINK",
+    "name",
+    "contact",
+    "abstract",
+    "tree",
+    "group",
+    "keywords",
+    "metadata",
+    "endpoint",
   ];
 
   const routeObjectBuilder = () => {
-    if (!row || !row.SERVICETYPE) {
+    if (!row || !row.service) {
       return {
         arcgis_handler: () => "error",
         qgis_handler: () => "error",
       };
     }
 
-    return row.SERVICETYPE.includes("WFS")
+    return row.service.includes("WFS")
       ? {
           arcgis_handler: () => getArcgisproWFS(row),
           qgis_handler: () => getQgisWFS(row),
         }
-      : row.SERVICETYPE.includes("WMS")
+      : row.service.includes("WMS")
       ? {
           arcgis_handler: () => getArcgisproWMS(row),
           qgis_handler: () => getQgisWMS(row),
@@ -136,15 +136,15 @@ export const SubRow = ({
                     marginLeft: -24,
                   }}
                 >
-                  <Tooltip title={row.MAPGEO} arrow>
+                  <Tooltip title={row.preview} arrow>
                     <Button
                       style={{ padding: 0 }}
                       variant="text"
-                      onClick={() => window.open(row.MAPGEO)}
+                      onClick={() => window.open(row.preview)}
                       disabled={
-                        row.MAPGEO === "n.a." ||
-                        row.MAPGEO === null ||
-                        row.MAPGEO === ""
+                        row.preview === "n.a." ||
+                        row.preview === null ||
+                        row.preview === ""
                       }
                     >
                       Service in MapGeo öffnen
@@ -178,14 +178,14 @@ export const SubRow = ({
                     marginLeft: -24,
                   }}
                 >
-                  <Tooltip title={row.LEGEND} arrow>
+                  <Tooltip title={row.legend} arrow>
                     <Button
-                      onClick={() => window.open(row.LEGEND)}
+                      onClick={() => window.open(row.legend)}
                       style={{ padding: 0 }}
                       disabled={
-                        row.LEGEND === "n.a." ||
-                        row.LEGEND === null ||
-                        row.LEGEND === ""
+                        row.legend === "n.a." ||
+                        row.legend === null ||
+                        row.legend === ""
                       }
                     >
                       Legende öffnen

@@ -8,7 +8,7 @@
   "layerDefinitions" : [
     {
       "type" : "CIMFeatureLayer",
-      "name" : "{{TITLE}}",
+      "name" : "{{title}}",
       "uRI" : "CIMPATH=",
       "sourceModifiedTime" : {
         "type" : "TimeInstant"
@@ -39,9 +39,9 @@
         "editable" : true,
         "dataConnection" : {
           "type" : "CIMStandardDataConnection",
-          "workspaceConnectionString" : "LAYERNAME={{NAME}};SWAPXY=FALSE;SWAPXYFILTER=FALSE;URL={{SERVICELINK}}",
+          "workspaceConnectionString" : "LAYERNAME={{name}};SWAPXY=FALSE;SWAPXYFILTER=FALSE;URL={{endpoint}}",
           "workspaceFactory" : "WFS",
-          "dataset" : "{{NAME}}",
+          "dataset" : "{{name}}",
           "datasetType" : "esriDTFeatureClass"
         },
         "studyAreaSpatialRel" : "esriSpatialRelUndefined",

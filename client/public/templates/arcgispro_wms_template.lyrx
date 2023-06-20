@@ -8,7 +8,7 @@
   "layerDefinitions" : [
     {
       "type" : "CIMWMSLayer",
-      "name" : "WMS {{OWNER}}",
+      "name" : "WMS {{provider}}",
       "uRI" : "CIMPATH=",
       "sourceModifiedTime" : {
         "type" : "TimeInstant"
@@ -33,13 +33,13 @@
       "allowDrapingOnIntegratedMesh" : true,
       "serviceConnection" : {
         "type" : "CIMWMSServiceConnection",
-        "layerName" : "{{NAME}}",
+        "layerName" : "{{name}}",
         "version" : "1.3.0",
         "serverConnection" : {
           "type" : "CIMProjectServerConnection",
           "anonymous" : true,
           "hideUserProperty" : true,
-          "url" : "{{SERVICELINK}}",
+          "url" : "{{endpoint}}",
           "connectionMode" : "Consumer",
           "serverType" : "WMS",
           "useDefaultStagingFolder" : true
@@ -49,9 +49,9 @@
         {
           "type" : "CIMWMSSubLayer",
           "description" : "",
-          "name" : "{{TITLE}}",
+          "name" : "{{title}}",
           "showLegends" : true,
-          "subLayerID" : "{{NAME}}",
+          "subLayerID" : "{{name}}",
           "visibility" : true,
           "serviceLayerID" : -1
         }
