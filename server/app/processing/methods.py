@@ -12,7 +12,11 @@ def import_csv_into_dataframe(url, column_limit=None):
     if(column_limit):
         dataframe = pd.read_csv(url, nrows=column_limit)
     else: 
-        dataframe = pd.read_csv(url)
+        dataframe = pd.read_csv(url, keep_default_na=False, dtype={
+            'provider': 'str', 'title' : 'str', 'name' : 'str', 'preview' : 'str', 'tree' : 'str', 'group' : 'str', 'abstract' : 'str',
+            'keywords' : 'str', 'legend' : 'str', 'contact' : 'str', 'endpoint' : 'str', 'metadata' : 'str', 'update' : 'str',
+            'service' : 'str', 'max_zoom' : 'str', 'center_lat' : 'str', 'center_lon' : 'str', 'bbox' : 'str'
+        })
     return dataframe
 
 def import_pkl_into_dataframe(url):

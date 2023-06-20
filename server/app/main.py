@@ -111,21 +111,21 @@ async def get_data_by_id(id: str):
 
 
 @app.get("/api/getData", response_model=Page[GeoserviceModel])
-async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:EnumProviderType = EnumProviderType.none, lang: str = "german", page: int = 0, limit: int = 1000):
+async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, provider:EnumProviderType = EnumProviderType.none, lang: str = "german", page: int = 0, limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
         service: Service filter - wms, wmts, wfs
-        owner: Owner filter
+        provider: Provider filter
         lang: Language parameter to optimize search
         limit: Redis returns 10 results by default, allow more results to be returned
         service: Service enum, either WMS, WMTS, WFS
     """
 
     if (query_string == None or query_string == ""):
-        redis_query = redis_query_from_parameters("", service, owner)
+        redis_query = redis_query_from_parameters("", service, provider)
         fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
-        redis_data = search_redis(redis_query, lang, 0, 30000)
+        redis_data = search_redis(redis_query, lang, 0, 50000)
         return paginate(redis_data.docs)
 
 
@@ -133,18 +133,19 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         word_list = split_search_string(query_string)
         text_query = transform_wordlist_to_query(word_list)
 
-        redis_query = redis_query_from_parameters(text_query, service, owner)
+        redis_query = redis_query_from_parameters(text_query, service, provider)
         fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
-        redis_data = search_redis(redis_query, lang, 0, 30000)
+        redis_data = search_redis(redis_query, lang, 0, 50000)
+        print(redis_data)
 
         ############################################################################################################################
         # Testing ranking function from the ranking functions in methods.py
         # If you want the results from redis you can just set this section as comment
 
         if (query_string != None and len(redis_data.docs) > 0):
-            ranked_results = results_ranking(redis_data.docs, word_list)
-            return paginate(ranked_results)
+            # ranked_results = results_ranking(redis_data.docs, word_list)
+            return paginate(redis_data.docs)
         else:
             pass
         ############################################################################################################################ 

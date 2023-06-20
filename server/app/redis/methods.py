@@ -85,7 +85,7 @@ def transform_wordlist_to_query(wordlist: list[str]):
     return query_string
 
 
-def redis_query_from_parameters(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, owner:str = ""):
+def redis_query_from_parameters(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, provider:str = ""):
     """Build a query string based on the parameters provided.
     """
     queryable_parameters = []
@@ -100,9 +100,9 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
             '@service:({})'.format(service)
         )
 
-    if (bool(owner)):
+    if (bool(provider)):
         queryable_parameters.append(
-            '@provider:({})'.format(owner)
+            '@provider:({})'.format(provider)
         )
 
     if (len(queryable_parameters) < 1):

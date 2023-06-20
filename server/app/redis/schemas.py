@@ -53,37 +53,17 @@ class GeoserviceModel(BaseModel):
     legend: str
     contact: str
     endpoint: str
-    metadata: str
+    metadata: Optional[str]
     update: Optional[str]
     service: str
-    max_zoom: int
+    max_zoom: str
     center_lat: float
     center_lon: float
     bbox: str
-    summary: str
+    summary: Optional[str]
     lang_3:  Optional[str]
     lang_2:  Optional[str]
     metaquality: Optional[int]
 
     class Config:
         orm_mode = True
-
-### Geodata
-# Source data:  https://github.com/davidoesch/geoservice_harvester_poc/tree/main/data/geodata_CH.csv
-
-DTA_PREFIX = "dta:"    
-DTA_KEY = DTA_PREFIX + '{}'
-DTA_INDEX_ID = "py_{}_idx".format(DTA_PREFIX)
-
-geodata_schema = (
-    TextField('$.provider', as_name='provider', no_stem=True),
-    TextField('$.title', as_name='title'),
-    TextField('$.name', as_name='name'),
-    TextField('$.preview', as_name='preview'),
-    TextField('$.abstract', as_name='abstract'),
-    TagField('$.keywords', as_name='keywords'),
-    TextField('$.contact', as_name='contact', no_stem=True),
-    TextField('$.WMSGetCap', as_name='WMSGetCap', no_stem=True),
-    TextField('$.WMTSGetCap', as_name='WMTSGetCap', no_stem=True),
-    TextField('$.WFSGetCap', as_name='WFSGetCap', no_stem=True)
-)
