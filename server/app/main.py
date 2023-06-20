@@ -72,7 +72,6 @@ async def startup_event():
     
     global datajson
     datajson = json.loads(dataframe.to_json(orient='records'))
-    # print(json.loads(json.dumps(datajson)))
 
     try:
         # Flush DB on startup
@@ -138,7 +137,6 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
         redis_data = search_redis(redis_query, lang, 0, 50000)
-        print(redis_data)
 
         ############################################################################################################################
         # Testing ranking function from the ranking functions in methods.py
