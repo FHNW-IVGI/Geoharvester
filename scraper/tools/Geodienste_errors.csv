@@ -1,0 +1,4 @@
+Timestamp,Operator,URL,Issue
+2023-06-20T08:27:18.636892+02:00,Geodienste,https://geodienste.ch/db/fruchtfolgeflaechen/deu?SERVICE=WFS&REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
+2023-06-20T08:27:25.533335+02:00,Geodienste,https://geodienste.ch/db/kataster_belasteter_standorte/deu?SERVICE=WFS&REQUEST=GetCapabilities,"not well-formed (invalid token): line 6, column 31"
+2023-06-20T08:27:27.756214+02:00,Geodienste,https://geodienste.ch/db/lwb_bewirtschaftungseinheit/deu?SERVICE=WFS&REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
