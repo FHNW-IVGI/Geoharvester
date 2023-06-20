@@ -24,7 +24,7 @@ import {
   DEFAULTPAGE,
   PROVIDERTYPE,
   RESPONSESTATE,
-  service,
+  SERVICE,
 } from "src/constants";
 import LinearProgress from "@mui/material/LinearProgress";
 
@@ -42,11 +42,11 @@ type TableProps = {
   rowsPerPage: number;
   triggerSearch: (
     searchString: string | undefined,
-    servicetype: service | undefined,
+    servicetype: SERVICE | undefined,
     provider: PROVIDERTYPE | undefined,
     pageIndex: number
   ) => void;
-  servicetypeState: service;
+  servicetypeState: SERVICE;
   providerState: PROVIDERTYPE;
   searchStringState: string;
 };

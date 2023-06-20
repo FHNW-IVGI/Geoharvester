@@ -4,7 +4,7 @@
  * 
  */
 
-import { PROVIDERTYPE, service } from "./constants";
+import { PROVIDERTYPE, SERVICE } from "./constants";
 
 export interface Geoservice {
     provider: PROVIDERTYPE;
@@ -20,7 +20,7 @@ export interface Geoservice {
     endpoint: string;
     metadata: string;
     UPDATE: string;
-    service: service;
+    service: SERVICE;
     max_zoom: number;
     center_lat: string;
     center_lon: string;

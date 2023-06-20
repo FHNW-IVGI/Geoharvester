@@ -1,7 +1,7 @@
 import { FormControl } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { PROVIDERTYPE, service } from "src/constants";
+import { PROVIDERTYPE, SERVICE } from "src/constants";
 import "../../styles.css";
 
 export type SearchBarProps = {
@@ -13,7 +13,7 @@ type FilterProps = {
   handleChangeService: (event: SelectChangeEvent) => void;
   handleChangeProvider: (event: SelectChangeEvent) => void;
   provider: PROVIDERTYPE;
-  servicetype: service;
+  servicetype: SERVICE;
 };
 
 export const Filter = ({
@@ -80,10 +80,10 @@ export const Filter = ({
             color: "#007CC3",
           }}
         >
-          {(Object.values(service) as service[]).map((servicetype) => {
+          {(Object.values(SERVICE) as SERVICE[]).map((servicetype) => {
             return (
               <MenuItem key={servicetype} value={servicetype}>
-                {servicetype === service.NONE ? "Alle Services" : servicetype}
+                {servicetype === SERVICE.NONE ? "Alle Services" : servicetype}
               </MenuItem>
             );
           })}

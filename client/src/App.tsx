@@ -10,7 +10,7 @@ import {
   DEFAULTPAGE,
   PROVIDERTYPE,
   RESPONSESTATE,
-  service,
+  SERVICE,
   DEFAULTROWSPERPAGE,
   DEFAULTCHUNKSIZE,
 } from "./constants";
@@ -49,7 +49,7 @@ function App() {
   const [offset, setOffset] = useState(DEFAULTOFFSET);
   const [language, setLanguage] = useState(DEFAULTLANGUAGE);
   const [searchStringState, setSearchString] = useState("");
-  const [servicetypeState, setServiceState] = useState<service>(service.NONE);
+  const [servicetypeState, setServiceState] = useState<SERVICE>(SERVICE.NONE);
   const [providerState, setProviderState] = useState<PROVIDERTYPE>(
     PROVIDERTYPE.NONE
   );
@@ -59,7 +59,7 @@ function App() {
 
   const triggerSearch = async (
     searchString: string | undefined,
-    servicetype: service | undefined,
+    servicetype: SERVICE | undefined,
     provider: PROVIDERTYPE | undefined,
     page: number,
     offset?: number
