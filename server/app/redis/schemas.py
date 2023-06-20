@@ -21,21 +21,22 @@ geoservices_schema = (
     TextField('$.group', as_name='group', no_stem=True,),
     TextField('$.abstract', as_name='abstract'),
     TagField('$.keywords', as_name='keywords'),
-    TagField('$.keywords_nlp', as_name='keywords_nlp'),
+    # TagField('$.keywords_nlp', as_name='keywords_nlp'),
     TextField('$.legend', as_name='legend', no_stem=True,),
     TextField('$.contact', as_name='contact', no_stem=True,),
     TextField('$.endpoint', as_name='endpoint', no_stem=True,),
     TextField('$.metadata', as_name='metadata', no_stem=True,),
     TextField('$.update', as_name='update', no_stem=True,),
     TextField('$.service', as_name='service'),
-    NumericField('$.max_zoom', as_name='max_zoom'),
-    NumericField('$.center_lat', as_name='center_lat'),
-    NumericField('$.center_lon', as_name='center_lon'),
+    TextField('$.max_zoom', as_name='max_zoom'),
+    TextField('$.center_lat', as_name='center_lat'),
+    TextField('$.center_lon', as_name='center_lon'),
     TextField('$.bbox', as_name='bbox', no_stem=True,),
-    TextField('$.summary', as_name='summary', no_stem=True,),
-    TagField('$.lang_3', as_name='lang_3'),
-    TagField('$.lang_2', as_name='lang_2'),
-    NumericField('$.metaquality', as_name='metaquality'))
+    # TextField('$.summary', as_name='summary', no_stem=True,),
+    # TagField('$.lang_3', as_name='lang_3'),
+    # TagField('$.lang_2', as_name='lang_2'),
+    # NumericField('$.metaquality', as_name='metaquality')
+    )
 
 
 class GeoserviceModel(BaseModel):
@@ -49,21 +50,21 @@ class GeoserviceModel(BaseModel):
     group: str
     abstract: str
     keywords: str
-    keywords_nlp:  Optional[str]
+    # keywords_nlp:  Optional[str]
     legend: str
     contact: str
     endpoint: str
-    metadata: Optional[str]
-    update: Optional[str]
+    metadata: str
+    # update: Optional[str]
     service: str
-    max_zoom: int
-    center_lat: float
-    center_lon: float
+    max_zoom: str
+    center_lat: str
+    center_lon: str
     bbox: str
-    summary: Optional[str]
-    lang_3:  Optional[str]
-    lang_2:  Optional[str]
-    metaquality: Optional[int]
+    # summary: Optional[str]
+    # lang_3:  Optional[str]
+    # lang_2:  Optional[str]
+    # metaquality: Optional[int]
 
     class Config:
         orm_mode = True
