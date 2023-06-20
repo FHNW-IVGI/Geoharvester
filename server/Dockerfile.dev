@@ -7,5 +7,5 @@ COPY ./app server/app
 EXPOSE 8000
 RUN cd /server
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-config", "/server/app/logging.yaml" ,"--reload"]
-# Backend will be available in browser with http://localhost:8000/
+# Backend will be available in browser with http://localhost:8000/api/docs
 

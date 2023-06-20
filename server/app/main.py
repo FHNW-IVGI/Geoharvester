@@ -125,7 +125,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_query = redis_query_from_parameters("", service, provider)
         fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
-        redis_data = search_redis(redis_query, lang, 0, 50000)
+        redis_data = search_redis(redis_query, lang, 0, 40000)
         return paginate(redis_data.docs)
 
 
@@ -136,7 +136,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_query = redis_query_from_parameters(text_query, service, provider)
         fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
-        redis_data = search_redis(redis_query, lang, 0, 50000)
+        redis_data = search_redis(redis_query, lang, 0, 40000)
 
         ############################################################################################################################
         # Testing ranking function from the ranking functions in methods.py
