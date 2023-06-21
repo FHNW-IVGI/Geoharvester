@@ -20,6 +20,7 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 import pandas as pd
+import subprocess as sub
 from collections import defaultdict
 from statistics import mean
 import scraper.preprocessing.utils as utils  # preprocessing functions
@@ -658,6 +659,8 @@ if __name__ == "__main__":
 
     write_dataset_info(config.GEOSERVICES_CH_CSV,config.GEOSERVICES_CH_CSV)
     print("\nScraper run completed")
+
+    
     # here comes the preprocessing function preprocessing_NLP()
     print("\nPreprocessing completed")
     logger.info("Scraper run completed")
