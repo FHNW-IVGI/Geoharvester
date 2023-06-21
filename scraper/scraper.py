@@ -560,6 +560,7 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     raw_data = raw_data.replace(to_replace='\"', value="-", regex=True)
     raw_data = raw_data.replace(to_replace="  ", value = " ", regex=True)
     raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
+    # TODO replace nan with " "
     # Save data as pickle for a faster reading/writing
     raw_data.to_pickle(output_folder+'/rawdata_scraper.pkl')
 
@@ -659,8 +660,8 @@ if __name__ == "__main__":
 
     write_dataset_info(config.GEOSERVICES_CH_CSV,config.GEOSERVICES_CH_CSV)
     print("\nScraper run completed")
-
-    
-    # here comes the preprocessing function preprocessing_NLP()
-    print("\nPreprocessing completed")
     logger.info("Scraper run completed")
+
+    preprocessing_NLP(config.GEOSERVICES_CH_CSV, "data", column='abstract')
+    print("\nPreprocessing completed")
+    logger.info("Preprocessing completed")
