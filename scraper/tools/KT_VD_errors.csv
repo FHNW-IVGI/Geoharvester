@@ -1,0 +1,2 @@
+Timestamp,Operator,URL,Issue
+2023-06-21T07:54:56.008346+02:00,KT_VD,https://www.ogc.vd.ch/public/services/OGC/wmsVD/Mapserver/WMSServer?,"('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))"
