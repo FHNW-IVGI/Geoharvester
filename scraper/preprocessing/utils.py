@@ -3,26 +3,29 @@ Utilities for the elaboration of texts with NLP and TF-IDF
 """
 
 import itertools
-import os
+# import os
 from string import punctuation
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np  # 1.23.5
-import openai  # 0.27.0
+# import openai  # 0.27.0
 import pandas as pd  # 1.5.2
-import pyLDAvis.gensim_models as genvis  # 3.4.0
+# import pyLDAvis.gensim_models as genvis  # 3.4.0
 import spacy  # 3.3.1 and spacy-legacy 3.0.12 + pretrained models
 import translators as ts  # 5.5.6
-from gensim import corpora  # gensim 4.3.0
-from gensim.models import LsiModel
-from gensim.models.coherencemodel import CoherenceModel
-from gensim.models.ldamodel import LdaModel
+import warnings
+warnings.filterwarnings(action='ignore', category=UserWarning)
+warnings.filterwarnings(action='ignore', category=FutureWarning)
+# from gensim import corpora  # gensim 4.3.0
+# from gensim.models import LsiModel
+# from gensim.models.coherencemodel import CoherenceModel
+# from gensim.models.ldamodel import LdaModel
 from langdetect import detect  # 1.0.9
 from nltk.corpus import stopwords  # nltk 3.7
 from nltk.stem import PorterStemmer, SnowballStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from rake_nltk import Rake  # 1.0.6
-from scipy import sparse  # 1.9.3
+# from scipy import sparse  # 1.9.3
 from sklearn.feature_extraction.text import \
     TfidfVectorizer  # scikit-learn 1.2.0
 from summarizer.sbert import \
@@ -157,7 +160,7 @@ def tokenize_abstract(text, output_scores=True, stem_words=True):
 
 
 
-class TFIDF_BM25():
+'''class TFIDF_BM25():
     """
     This class contains all the functions for keyword extraction and search with TF-IDF and BM25.
     https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
@@ -222,45 +225,10 @@ class TFIDF_BM25():
                 document + (self.k1 * (1 - self.b + self.b * doc_length / self.avd1))[:, None]).sum(1).A1
         scores = [round(score, 2) for score in scores if score != 0.0 and not np.isnan(score)]
         scores_idx = [self.index[i] for i in range(0, len(scores)) if scores[i] > 0]
-        return scores_idx, scores
+        return scores_idx, scores'''
 
 
-'''class KeywordsRake():
-    """
-    DEPRECATED!
-
-    The class contains all the functions to extract keywords from a text
-    using RAKE https://csurfer.github.io/rake-nltk/_build/html/index.html
-
-    """
-    def __init__(self) -> None:
-        self.keywords = []
-
-    def rake_keywords(self, text, score=False, keyword_length = 3):
-        """
-        Extracts the keywords from a text, returning 
-        """
-        lang = detect_language(text)
-        rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
-        rake_nltk.extract_keywords_from_text(text)
-        if score:
-            keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
-            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]# remove stop words and punctuation
-        else:
-            keywords = rake_nltk.get_ranked_phrases()# limit by number of results [:5]
-            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]# remove stop words and punctuation
-        return keywords
-        
-    def extract_keywords(self, texts, column='abstract', keyword_length=3, score=False):
-        self.index = texts.index.values
-        self.keywords = [self.rake_keywords(text, score=score, keyword_length=keyword_length)
-                        for text in texts[column].values.tolist()]
-        return self.keywords'''
-
-
-class LSI_LDA():
+'''class LSI_LDA():
     """
     The class contains all the functions to summarize the text with Latent Semantic Analysis
     and Latent Dirchlet Allocation.
@@ -404,7 +372,7 @@ class LSI_LDA():
                 Parameters for the dataset's visualisation
         """
         vis = genvis.prepare(self.main_topics_lda, self.doc_term_matrix, self.dictionary)
-        return vis
+        return vis'''
 
 
 # WARNING spacy is not good in detecting topcis for geodata but it can be useful to summarize texts or analyse the grammar
@@ -524,7 +492,6 @@ class NLP_spacy():
         positionals = [token.pos_ for token in dataset if not 
                       (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
         # refine the keywords using just the relevant ones
-        print('Finalizing the keywords with SpaCy...')
         pos_dict = dict(zip(words, positionals))
         cleaned_keywords = {' '.join(kw) for kw in keywords if any(pos_dict.get(w) in ['NOUN', 'PROPN', 'NUM'] for w in kw)}
         return list(cleaned_keywords)
@@ -551,8 +518,8 @@ class NLP_spacy():
         self.index = texts.index.values
         # NOTE: score method not expected for the rake keywords
         if use_rake:
-            print('Wxtracting keywords with RAKE...')
-            keywords = [self.analyse_text_keywords(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
+            print('Extracting keywords with RAKE...')
+            keywords = [self.analyse_text_keywords(text, keyword_length=keyword_length) for text in tqdm(texts[column].values.tolist())]
             # [self.topics.update(dataset[:num_keywords]) for dataset in datasets]
             # self.topics = list(self.topics)
             self.topics = keywords
@@ -584,7 +551,8 @@ class NLP_spacy():
         """
         lang = detect_language(text)
         if use_GPT:
-            if lang == 'german':
+            raise NotImplementedError("ChatGPT must be activated first!")
+            """if lang == 'german':
                 prompt='Diesen Text zusammenfassen'
             elif lang == 'french':
                 prompt='Résumez ce texte'
@@ -594,7 +562,7 @@ class NLP_spacy():
                 prompt='Summarize this text'
             openai.api_key = os.getenv('OPENAI_KEY') # WARNING: limits of tokens for free version!
             summarized_text = openai.Completion.create(model='text-davinci-003', prompt=f"{prompt}: {text}",
-                                                       temperature=.2, max_tokens=1000,)["choices"][0]['text']
+                                                       temperature=.2, max_tokens=1000,)["choices"][0]['text']"""
         else:
             if lang == 'english':
                 model = SBertSummarizer('all-MiniLM-L12-v2')
@@ -633,15 +601,14 @@ class NLP_spacy():
     # More trainingsdata needed! (one possibility is to use the data from Wmts.geo.admi.ch … WMTSCapabilities.xml)
     # To find the category we will have to check the link to geocatalog (geocat) and use the id  of the link to 
     # automate a search in geocat and retrieve the class.
-    # TODO
-
 
 def check_metadata_quality(database, search_word='nan',
                            search_columns=['abstract', 'keywords', 'contact', 'metadata'],
                            case_sensitive=False):
     """
-    Calculate a metadata quality score
+    Calculate a metadata quality score for each field containing the search_word
+    it removes 25 points from 100 points.
     """
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
-    database['metaquality'] = mask.sum(axis=1)*25 # Scoring with 4 fields
+    database['metaquality'] = 100 - mask.sum(axis=1)*25 # Scoring with 4 fields!
     return database
