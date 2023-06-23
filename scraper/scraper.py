@@ -562,7 +562,7 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
     # TODO replace nan with " "
     # Save data as pickle for a faster reading/writing
-    raw_data.to_pickle(output_folder+'/rawdata_scraper.pkl')
+    raw_data.to_pickle(output_folder+'/preprocessed_data.pkl')
 
 if __name__ == "__main__":
     """
