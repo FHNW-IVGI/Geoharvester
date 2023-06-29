@@ -1,0 +1,4 @@
+Timestamp,Operator,URL,Issue
+2023-06-29T03:32:31.297328+02:00,KT_BE,http://www.geoservice.apps.be.ch/geoservice2/services/a42geo/a42geo_grenzenwms_d_fk/MapServer/WMSServer,"GET requested yielded HTTP response status code 404"
+2023-06-29T03:32:32.248511+02:00,KT_BE,http://www.geoservice.apps.be.ch/geoservice2/services/a42geo/a42geo_planungwms_d_fk/MapServer/WMSServer,"GET requested yielded HTTP response status code 404"
+2023-06-29T03:32:33.202010+02:00,KT_BE,http://www.geoservice.apps.be.ch/geoservice2/services/a42geo/a42geo_umweltwms_d_fk/MapServer/WMSServer,"GET requested yielded HTTP response status code 404"
