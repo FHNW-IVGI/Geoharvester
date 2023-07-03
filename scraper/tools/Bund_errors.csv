@@ -1,2 +1,0 @@
-Timestamp,Operator,URL,Issue
-2023-07-02T06:56:16.568897+02:00,Bund,ch.swisstopo.vec25-primaerflaechen,"('Connection aborted.', OSError(107, 'Transport endpoint is not connected'))"
