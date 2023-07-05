@@ -60,7 +60,7 @@ export const MenuDropdown = () => {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            window.location.replace("/api/docs/");
+            window.location.replace(`${window.location.origin}/api/docs/`); // This should work for the prod version
           }}
         >
           <TerminalIcon style={{ marginRight: 14 }} />
