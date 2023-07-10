@@ -1,2 +1,0 @@
-Timestamp,Operator,URL,Issue
-2023-07-09T05:44:40.307376+02:00,KT_VD,https://www.ogc.vd.ch/public/services/OGC/wmsVD/Mapserver/WMSServer?,"'NoneType' object has no attribute 'identification'"
