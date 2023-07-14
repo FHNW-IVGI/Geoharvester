@@ -1,0 +1,3 @@
+Timestamp,Operator,URL,Issue
+2023-07-14T03:19:51.091203+02:00,KT_BS,https://wfs.geo.bs.ch/?SERVICE=WFS&REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
+2023-07-14T03:20:24.565406+02:00,KT_BS,https://wms.geo.bs.ch/?SERVICE=WMS&REQUEST=GetCapabilities,"expected string or bytes-like object"
