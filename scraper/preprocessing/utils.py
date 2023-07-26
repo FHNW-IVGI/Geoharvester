@@ -6,11 +6,11 @@ import itertools
 # import os
 from string import punctuation
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np  # 1.23.5
 # import openai  # 0.27.0
 import pandas as pd  # 1.5.2
-# import pyLDAvis.gensim_models as genvis  # 3.4.0
+import pyLDAvis.gensim_models as genvis  # 3.4.0
 import spacy  # 3.3.1 and spacy-legacy 3.0.12 + pretrained models
 import translators as ts  # 5.5.6
 import warnings
@@ -25,7 +25,7 @@ from nltk.corpus import stopwords  # nltk 3.7
 from nltk.stem import PorterStemmer, SnowballStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from rake_nltk import Rake  # 1.0.6
-# from scipy import sparse  # 1.9.3
+from scipy import sparse  # 1.9.3
 from sklearn.feature_extraction.text import \
     TfidfVectorizer  # scikit-learn 1.2.0
 from summarizer.sbert import \
@@ -159,7 +159,7 @@ def tokenize_abstract(text, output_scores=True, stem_words=True):
     return output
 
 
-'''
+
 class TFIDF_BM25():
     """
     This class contains all the functions for keyword extraction and search with TF-IDF and BM25.
@@ -226,9 +226,9 @@ class TFIDF_BM25():
         scores = [round(score, 2) for score in scores if score != 0.0 and not np.isnan(score)]
         scores_idx = [self.index[i] for i in range(0, len(scores)) if scores[i] > 0]
         return scores_idx, scores
-'''
 
-'''class KeywordsRake():
+
+class KeywordsRake():
     """
     DEPRECATED!
 
@@ -260,9 +260,9 @@ class TFIDF_BM25():
         self.index = texts.index.values
         self.keywords = [self.rake_keywords(text, score=score, keyword_length=keyword_length)
                         for text in texts[column].values.tolist()]
-        return self.keywords'''
+        return self.keywords
 
-'''
+
 class LSI_LDA():
     """
     The class contains all the functions to summarize the text with Latent Semantic Analysis
@@ -408,7 +408,7 @@ class LSI_LDA():
         """
         vis = genvis.prepare(self.main_topics_lda, self.doc_term_matrix, self.dictionary)
         return vis
-'''
+
 
 # WARNING spacy is not good in detecting topcis for geodata but it can be useful to summarize texts or analyse the grammar
 class NLP_spacy():

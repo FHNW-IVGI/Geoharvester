@@ -20,7 +20,6 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 import pandas as pd
-import subprocess as sub
 import scraper.preprocessing.utils as utils # preprocessing functions
 from collections import defaultdict
 from statistics import mean
