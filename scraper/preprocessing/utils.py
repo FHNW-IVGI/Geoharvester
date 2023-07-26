@@ -527,7 +527,7 @@ class NLP_spacy():
         positionals = [token.pos_ for token in dataset if not 
                       (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
         # refine the keywords using just the relevant ones
-        print('Finalizing the keywords with SpaCy...')
+        # print('Finalizing the keywords with SpaCy...')
         pos_dict = dict(zip(words, positionals))
         cleaned_keywords = {' '.join(kw) for kw in keywords if any(pos_dict.get(w) in ['NOUN', 'PROPN', 'NUM'] for w in kw)}
         return list(cleaned_keywords)
