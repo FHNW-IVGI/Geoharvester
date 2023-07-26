@@ -1,4 +1,4 @@
-
+import os
 import json
 import logging
 from typing import Union
@@ -64,11 +64,13 @@ async def startup_event():
     r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
     global dataframe
-    #url_geoservices_CH_pkl = "app/tmp/rawdata_scraper.pkl" #// We  need to automate this as the csv file is now updated once a week!
-    # dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
+    #WARNING: it should work, but it has not been tested yet!
+    working_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
+    url_geoservices_CH_pkl = os.path.join(working_dir, "scraper/data/preprocessed_data.pkl") # NOTE: It will take the preprocessed data from the scraper folder
+    dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
 
-    url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
-    dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
+    # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
+    # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
     
     global datajson
     datajson = json.loads(dataframe.to_json(orient='records'))
@@ -139,12 +141,12 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_data = search_redis(redis_query, lang, 0, 40000)
 
         ############################################################################################################################
-        # Testing ranking function from the ranking functions in methods.py
-        # If you want the results from redis you can just set this section as comment
+        # Testing ranking function in methods.py
+        # For raw results from redis comment this section
 
         if (query_string != None and len(redis_data.docs) > 0):
-            # ranked_results = results_ranking(redis_data.docs, word_list)
-            return paginate(redis_data.docs)
+            ranked_results = results_ranking(redis_data.docs, word_list)
+            return paginate(ranked_results)
         else:
             pass
         ############################################################################################################################ 

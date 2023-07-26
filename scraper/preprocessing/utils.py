@@ -16,10 +16,10 @@ import translators as ts  # 5.5.6
 import warnings
 warnings.filterwarnings(action='ignore', category=UserWarning)
 warnings.filterwarnings(action='ignore', category=FutureWarning)
-from gensim import corpora  # gensim 4.3.0
-from gensim.models import LsiModel
-from gensim.models.coherencemodel import CoherenceModel
-from gensim.models.ldamodel import LdaModel
+# from gensim import corpora  # gensim 4.3.0
+# from gensim.models import LsiModel
+# from gensim.models.coherencemodel import CoherenceModel
+# from gensim.models.ldamodel import LdaModel
 from langdetect import detect  # 1.0.9
 from nltk.corpus import stopwords  # nltk 3.7
 from nltk.stem import PorterStemmer, SnowballStemmer
