@@ -65,8 +65,11 @@ async def startup_event():
 
     global dataframe
     #WARNING: it should work, but it has not been tested yet!
-    working_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
-    url_geoservices_CH_pkl = os.path.join(working_dir, "scraper/data/preprocessed_data.pkl") # NOTE: It will take the preprocessed data from the scraper folder
+    #working_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
+    # print('_________________________')
+    # print(f'working directory: {os.listdir(working_dir+"/server")}')
+    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main_preprocessing/scraper/data/"
+    url_geoservices_CH_pkl = os.path.join(url_github_repo, "preprocessed_data.pkl") # NOTE: It will take the preprocessed data from the scraper folder
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
 
     # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
