@@ -77,7 +77,6 @@ async def startup_event():
     
     global datajson
     datajson = json.loads(dataframe.to_json(orient='records'))
-    print(datajson)
 
     try:
         # Flush DB on startup
