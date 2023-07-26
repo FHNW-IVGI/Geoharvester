@@ -64,12 +64,12 @@ async def startup_event():
     r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
     global dataframe
-    #WARNING: it should work, but it has not been tested yet!
+    #WARNING: the path to repo must be adjusted
     #working_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
     # print('_________________________')
     # print(f'working directory: {os.listdir(working_dir+"/server")}')
     url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main_preprocessing/scraper/data/"
-    url_geoservices_CH_pkl = os.path.join(url_github_repo, "preprocessed_data.pkl") # NOTE: It will take the preprocessed data from the scraper folder
+    url_geoservices_CH_pkl = os.path.join(url_github_repo, "preprocessed_data.csv") # NOTE: It will take the preprocessed data from the scraper folder
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
 
     # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"

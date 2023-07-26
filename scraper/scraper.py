@@ -574,7 +574,7 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     raw_data = raw_data.replace(to_replace="  ", value = " ", regex=True)
     raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
     # Save data as pickle for a faster reading/writing
-    raw_data.to_pickle(output_folder+'/preprocessed_data.pkl')
+    raw_data.to_csv(output_folder+'/preprocessed_data.csv')
 
 if __name__ == "__main__":
     """
