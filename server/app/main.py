@@ -71,6 +71,7 @@ async def startup_event():
     url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main_preprocessing/scraper/data/"
     url_geoservices_CH_pkl = os.path.join(url_github_repo, "preprocessed_data.pkl") # NOTE: It will take the preprocessed data from the scraper folder
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
+    print(dataframe.head())
 
     # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
     # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
