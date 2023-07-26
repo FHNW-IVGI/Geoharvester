@@ -65,13 +65,9 @@ async def startup_event():
 
     global dataframe
     #WARNING: the path to repo must be adjusted
-    #working_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
-    # print('_________________________')
-    # print(f'working directory: {os.listdir(working_dir+"/server")}')
     url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main_preprocessing/scraper/data/"
-    url_geoservices_CH_pkl = os.path.join(url_github_repo, "preprocessed_data.pkl") # NOTE: It will take the preprocessed data from the scraper folder
+    url_geoservices_CH_pkl = os.path.join(url_github_repo, "preprocessed_data.pkl")
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
-
     # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
     # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
     
@@ -144,9 +140,6 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_data = search_redis(redis_query, lang, 0, 40000)
 
         ############################################################################################################################
-        # Testing ranking function in methods.py
-        # For raw results from redis comment this section
-
         if (query_string != None and len(redis_data.docs) > 0):
             ranked_results = results_ranking(redis_data.docs, word_list)
             return paginate(ranked_results)
