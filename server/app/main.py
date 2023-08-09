@@ -64,8 +64,7 @@ async def startup_event():
     r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
     global dataframe
-    #WARNING: the path to repo must be adjusted
-    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main_preprocessing/scraper/data/"
+    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main/scraper/data/"
     url_geoservices_CH_pkl = os.path.join(url_github_repo, "preprocessed_data.pkl")
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
     # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
