@@ -530,6 +530,50 @@ def write_dataset_info(csv_filename, output_file):
             geo_data_done.append(checklayer)
     return
 
+def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
+    """
+    Preprocesses the data collected by the scraper using different NLP
+    functions, which are stored in preprocessing/utils.py
+
+    Parameters
+    ----------
+    raw_data_path : str
+        path of csv file containing the raw data output of the scraper
+    output_folder : str
+        path-to-folder where the elaborated data will be saved as pkl
+    column : str
+        column of the dataframe to be used for the NLP preprocessing
+    """
+    # Read the data
+    raw_data = pd.read_csv(raw_data_path, usecols=["provider","title", "keywords", "abstract", "service", "endpoint", "preview"])
+    raw_data = raw_data.fillna("nan") # needed for the preprocessing
+    # Extract the keywords and add them to the data
+    NLP = utils.NLP_spacy()
+    keywords_dataset = NLP.extract_refined_keywords(raw_data, use_rake=True, column=column, keyword_length=3, num_keywords=15)
+    def join_keywords(keywords_list):
+        keywords = ', '.join(kw for kw in keywords_list)
+        return keywords
+    raw_data['keywords_nlp'] = list(map(join_keywords, keywords_dataset))
+    # Summarize the abstracts and add them to the data
+    summaries = NLP.summarize_texts(raw_data, column=column)
+    raw_data['summary'] = summaries
+    # Add the detected dataset language (applied on title)
+    language_dict = {'english':('EN', 'ENG'), 'french':('FR','FRA'), 'german':('DE','DEU'), 'italian':('IT','ITA')}
+    raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'])][1], axis=1)
+    # WARNING: we can remove the lang_2 form the dataset as it is not used!
+    raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'])][0], axis=1)
+    # Check and add metadata quality
+    raw_data = utils.check_metadata_quality(raw_data, search_word='nan',
+                                            search_columns=['abstract', 'keywords', 'metadata'],
+                                            case_sensitive=False)
+    # Characters cleaning for compatibility with redis
+    raw_data = raw_data.replace(to_replace="'", value="-", regex=True)
+    raw_data = raw_data.replace(to_replace='\"', value="-", regex=True)
+    raw_data = raw_data.replace(to_replace="  ", value = " ", regex=True)
+    raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
+    # Save data as pickle for a faster reading/writing
+    raw_data.to_csv(output_folder+'/preprocessed_data.csv')
+
 if __name__ == "__main__":
     """
     This code block is the main function of the script. It performs the 

@@ -26,7 +26,7 @@ geoservices_schema = (
     TextField('$.contact', as_name='contact', no_stem=True,),
     TextField('$.endpoint', as_name='endpoint', no_stem=True,),
     TextField('$.metadata', as_name='metadata', no_stem=True,),
-    TextField('$.update', as_name='update', no_stem=True,),
+    # TextField('$.update', as_name='update', no_stem=True,),# WARNING: field not used
     TextField('$.service', as_name='service'),
     NumericField('$.max_zoom', as_name='max_zoom'),
     NumericField('$.center_lat', as_name='center_lat'),
@@ -34,7 +34,7 @@ geoservices_schema = (
     TextField('$.bbox', as_name='bbox', no_stem=True,),
     TextField('$.summary', as_name='summary', no_stem=True,),
     TagField('$.lang_3', as_name='lang_3'),
-    TagField('$.lang_2', as_name='lang_2'),
+    # TagField('$.lang_2', as_name='lang_2'), # WARNING field not used
     NumericField('$.metaquality', as_name='metaquality')
     )
 
@@ -55,7 +55,7 @@ class GeoserviceModel(BaseModel):
     contact: str
     endpoint: str
     metadata: str
-    update: Optional[str]
+    # update: Optional[str] # WARNING: field not used
     service: str
     max_zoom: int
     center_lat: float
@@ -63,7 +63,7 @@ class GeoserviceModel(BaseModel):
     bbox: str
     summary: Optional[str]
     lang_3:  Optional[str]
-    lang_2:  Optional[str]
+    # lang_2:  Optional[str] # WARNING: field not used
     metaquality: Optional[int]
 
     class Config:
