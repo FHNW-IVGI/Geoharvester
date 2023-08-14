@@ -1,7 +1,14 @@
 
 import json
 import logging
+import os
 from typing import Union
+
+from fastapi import FastAPI
+from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import Page, add_pagination, paginate
+from pydantic import Field
 
 from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
@@ -12,12 +19,6 @@ from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                search_redis, transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                GeoserviceModel, geoservices_schema)
-from fastapi import FastAPI
-from fastapi.logger import logger as fastapi_logger
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_pagination import Page, add_pagination, paginate
-from pydantic import Field
-
 from server.app.redis.redis_manager import r
 
 origins = [
