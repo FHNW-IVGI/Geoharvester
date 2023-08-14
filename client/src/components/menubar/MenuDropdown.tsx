@@ -60,7 +60,7 @@ export const MenuDropdown = () => {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            window.open("https://geoharvester.ch");
+            window.open("https://geoharvester.ch/api/docs");
           }}
         >
           <TerminalIcon style={{ marginRight: 14 }} />
