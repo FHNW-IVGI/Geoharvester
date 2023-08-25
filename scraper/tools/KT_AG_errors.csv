@@ -1,0 +1,2 @@
+Timestamp,Operator,URL,Issue
+2023-08-25T02:08:39.231906+02:00,KT_AG,https://wms.geo.ag.ch/public/ows?SERVICE=WMS,"GET requested yielded HTTP response status code 504"
