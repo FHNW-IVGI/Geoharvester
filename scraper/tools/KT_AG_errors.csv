@@ -1,2 +1,2 @@
 Timestamp,Operator,URL,Issue
-2023-09-05T02:07:15.915046+02:00,KT_AG,https://wms.geo.ag.ch/public/ows?SERVICE=WMS,"GET requested yielded HTTP response status code 500"
+2023-09-06T02:07:55.204002+02:00,KT_AG,https://wms.geo.ag.ch/public/ows?SERVICE=WMS,"GET requested yielded HTTP response status code 500"
