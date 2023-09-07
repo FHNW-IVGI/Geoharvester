@@ -1,0 +1,2 @@
+Timestamp,Operator,URL,Issue
+2023-09-07T02:31:07.134578+02:00,KT_BE,https://www.geoservice.apps.be.ch/geoservice2/services/a42geo/a42geo_florafaunawms_d_fk/MapServer/WMSServer?,"GET requested yielded HTTP response status code 404"
