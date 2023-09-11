@@ -1,3 +1,3 @@
 Timestamp,Operator,URL,Issue
-2023-09-10T03:01:45.987534+02:00,KT_GR,https://wms.geo.gr.ch/amtlichevermessung?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
-2023-09-10T03:02:57.971221+02:00,KT_GR,https://wfs.geo.gr.ch/amtlichevermessung?service=WFS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2023-09-11T03:04:41.734494+02:00,KT_GR,https://wms.geo.gr.ch/amtlichevermessung?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2023-09-11T03:05:58.028804+02:00,KT_GR,https://wfs.geo.gr.ch/amtlichevermessung?service=WFS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
