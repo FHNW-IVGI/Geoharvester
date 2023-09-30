@@ -1,5 +1,5 @@
 Timestamp,Operator,URL,Issue
-2023-09-29T03:25:23.891708+02:00,KT_SO,https://geo.so.ch/api/wfs?SERVICE=WFS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
-2023-09-29T03:25:24.387188+02:00,KT_SO,https://geo.so.ch/api/wms?SERVICE=WMS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
-2023-09-29T03:25:25.097610+02:00,KT_SO,https://geo.so.ch/api/wmts/1.0.0/WMTSCapabilities.xml,"GET requested yielded HTTP response status code 403"
-2023-09-29T03:25:25.584957+02:00,KT_SO,https://geo.so.ch/wms/oereb?SERVICE=WMS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
+2023-09-30T03:33:57.199941+02:00,KT_SO,https://geo.so.ch/api/wfs?SERVICE=WFS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
+2023-09-30T03:33:57.830821+02:00,KT_SO,https://geo.so.ch/api/wms?SERVICE=WMS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
+2023-09-30T03:33:58.620984+02:00,KT_SO,https://geo.so.ch/api/wmts/1.0.0/WMTSCapabilities.xml,"GET requested yielded HTTP response status code 403"
+2023-09-30T03:33:59.261111+02:00,KT_SO,https://geo.so.ch/wms/oereb?SERVICE=WMS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
