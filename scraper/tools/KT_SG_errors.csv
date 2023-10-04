@@ -1,3 +1,3 @@
 Timestamp,Operator,URL,Issue
-2023-10-03T03:12:01.148395+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00015_WMTS/guest?REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
-2023-10-03T03:12:09.933716+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00014_WMTS/guest?REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
+2023-10-04T03:46:44.136254+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00015_WMTS/guest?REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
+2023-10-04T03:46:56.153028+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00014_WMTS/guest?REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
