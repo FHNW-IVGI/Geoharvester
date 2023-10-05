@@ -1,2 +1,4 @@
 Timestamp,Operator,URL,Issue
-2023-10-04T02:52:12.626540+02:00,KT_GE,https://ge.ch/sitgags1/services/VECTOR/SITG_OPENDATA_02/MapServer/WMSServer?request=GetCapabilities&service=WMS,"GET requested yielded HTTP response status code 400"
+2023-10-05T02:49:49.779789+02:00,KT_GE,https://ge.ch/sitgags1/services/VECTOR/SITG_OPENDATA_02/MapServer/WMSServer?request=GetCapabilities&service=WMS,"GET requested yielded HTTP response status code 400"
+2023-10-05T02:49:51.092452+02:00,KT_GE,https://ge.ch/sitgags1/services/VECTOR/SITG_OPENDATA_03/MapServer/WMSServer?request=GetCapabilities&service=WMS,"GET requested yielded HTTP response status code 400"
+2023-10-05T02:49:55.387742+02:00,KT_GE,https://ge.ch/sitgags1/services/VECTOR/SITG_OPENDATA_04/MapServer/WMSServer?request=GetCapabilities&service=WMS,"GET requested yielded HTTP response status code 400"
