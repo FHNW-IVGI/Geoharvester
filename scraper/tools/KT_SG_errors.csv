@@ -1,2 +1,0 @@
-Timestamp,Operator,URL,Issue
-2023-10-09T03:20:36.053872+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00015_WMTS/guest?REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
