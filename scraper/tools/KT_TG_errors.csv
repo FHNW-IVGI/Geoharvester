@@ -1,3 +1,3 @@
 Timestamp,Operator,URL,Issue
-2023-10-13T03:52:05.264771+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WMS&Version=1.3.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
-2023-10-13T03:56:27.880185+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WFS&Version=2.0.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
+2023-10-14T03:42:30.089482+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WMS&Version=1.3.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
+2023-10-14T03:46:08.634483+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WFS&Version=2.0.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
