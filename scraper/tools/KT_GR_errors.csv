@@ -1,3 +1,4 @@
 Timestamp,Operator,URL,Issue
-2023-10-17T03:10:29.144840+02:00,KT_GR,https://wms.geo.gr.ch/amtlichevermessung?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
-2023-10-17T03:12:23.429526+02:00,KT_GR,https://wfs.geo.gr.ch/amtlichevermessung?service=WFS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2023-10-18T03:15:49.853965+02:00,KT_GR,https://wms.geo.gr.ch/nutzungsplanung_kommunal?service=WMS&request=GetCapabilities,"mismatched tag: line 1, column 234"
+2023-10-18T03:24:57.283284+02:00,KT_GR,https://wms.geo.gr.ch/amtlichevermessung?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2023-10-18T03:26:27.278289+02:00,KT_GR,https://wfs.geo.gr.ch/amtlichevermessung?service=WFS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
