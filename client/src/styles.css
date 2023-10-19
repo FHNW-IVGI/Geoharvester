@@ -1,3 +1,11 @@
+@media all and (max-width: 1100px) {
+
+  /* Move Pagination UI for table */
+  .MuiTablePagination-spacer {
+    flex: none !important;
+  }
+}
+
 @media all and (max-width: 600px) {
   #GeoharvesterLogo {
     display: none;
@@ -8,7 +16,9 @@
     min-width: 80px;
   }
 
+
 }
+
 
 /* .appheader {
   display: flex;

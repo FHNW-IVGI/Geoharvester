@@ -25,8 +25,10 @@ import {
   PROVIDERTYPE,
   RESPONSESTATE,
   SERVICE,
+  BREAKPOINT,
 } from "src/constants";
 import LinearProgress from "@mui/material/LinearProgress";
+import { useViewport } from "src/custom/ViewportHook";
 
 type TableProps = {
   docs: Geoservice[];
@@ -72,6 +74,8 @@ export const ServiceTable = ({
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
   const [tableRef, setTableReference] = useState<any>();
+
+  const { width } = useViewport();
 
   const theme = useTheme();
 
@@ -288,24 +292,18 @@ export const ServiceTable = ({
               ))}
             </TableBody>
             <TableFooter
-              sx={{ position: "sticky" }}
-              // sx={{
-              //   // width: "100%",
-              //   display: "flex",
-              //   flexDirection: "row",
-              //   //     left: 0,
-              //   //     bottom: 0,
-              //   //     zIndex: 2,
-              //
-              //   //     backgroundColor: "white",
-              // }}
+              sx={{
+                position: "sticky",
+                bottom: 0,
+                zIndex: 20,
+                backgroundColor: theme.palette.secondary.main,
+              }}
             >
               <TableRow>
-                {/* <TableRow>
-                <TableCell colSpan={5}> */}
                 <TablePagination
+                  sx={{ width: "100%" }}
                   rowsPerPageOptions={[20, 50, 100, 200]}
-                  colSpan={5}
+                  colSpan={6}
                   count={total}
                   rowsPerPage={rowsPerPage}
                   page={page}
@@ -315,10 +313,12 @@ export const ServiceTable = ({
                     count,
                     page,
                   }): React.ReactNode => {
-                    return `${displayedRecordsStart}–${Math.min(
-                      total,
-                      displayedRecordsEnd
-                    )} of ${count !== -1 ? count : `more than ${to}`}`;
+                    return width > BREAKPOINT
+                      ? `${displayedRecordsStart}–${Math.min(
+                          total,
+                          displayedRecordsEnd
+                        )} of ${count !== -1 ? count : `more than ${to}`}`
+                      : "";
                   }}
                   SelectProps={{
                     inputProps: {

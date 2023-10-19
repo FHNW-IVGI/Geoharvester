@@ -61,7 +61,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
   };
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+    <Box sx={{ flexShrink: 0, ml: 3.5 }}>
       <IconButton
         onClick={handleFirstPageButtonClick}
         disabled={page === 0 && currentApiPage === 0}
@@ -90,6 +90,13 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
         ) : (
           <KeyboardArrowRight />
         )}
+      </IconButton>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled
+        aria-label="first page"
+      >
+        {theme.direction === "ltr" ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
     </Box>
   );
