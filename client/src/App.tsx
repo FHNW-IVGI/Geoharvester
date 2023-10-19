@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { ServiceTable } from "./components/results/ServiceTable";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { MenuBar } from "./components/menubar/MenuBar";
-import { Box } from "@mui/material";
+import { Header } from "./components/menubar/Header";
 import { Geoservice } from "./types";
 import {
   DEFAULTLANGUAGE,
@@ -15,16 +14,22 @@ import {
   DEFAULTCHUNKSIZE,
 } from "./constants";
 import { getData } from "./requests";
+import { Footer } from "./components/Footer";
 
 const theme = createTheme({
   palette: {
     primary: {
       main: "#007CC3",
-      contrastText: "#000000",
+      light: "#7FBDE1",
+      contrastText: "#ffffff",
     },
     secondary: {
-      main: "#7FBDE1",
-      contrastText: "#000000",
+      main: "#ffffff",
+      contrastText: "#007CC3",
+    },
+    info: {
+      main: "#E8E8E8",
+      contrastText: "#ffffff",
     },
   },
 });
@@ -101,54 +106,41 @@ function App() {
       });
   };
 
-  const Footer = () => {
-    return (
-      <Box
-        sx={{
-          minHeight: "25px",
-          backgroundColor: "#7FBDE1",
-
-          color: "white",
-          textAlign: "center",
-        }}
-      >
-        © 2023 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut
-        Geomatik, FHNW und swisstopo
-      </Box>
-    );
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <section>
-        <header className="appheader">
-          <MenuBar
-            {...{
-              triggerSearch,
-              setServiceState,
-              servicetypeState,
-              setProviderState,
-              providerState,
-              setSearchString,
-              searchStringState,
-              resetPageToZero,
-            }}
-          />
-        </header>
+        {/* <header className="appheader"> */}
+        <Header
+          {...{
+            triggerSearch,
+            setServiceState,
+            servicetypeState,
+            setProviderState,
+            providerState,
+            setSearchString,
+            searchStringState,
+            resetPageToZero,
+          }}
+        />
+        {/* </header> */}
         <ServiceTable
           docs={items || []}
           fields={[]}
-          total={total}
-          offset={offset}
-          currentApiPage={currentApiPage}
-          setOffset={setOffset}
-          setRowsPerPage={setSize}
           rowsPerPage={size}
-          responseState={responseState}
-          triggerSearch={triggerSearch}
-          searchStringState={searchStringState}
-          providerState={providerState}
-          servicetypeState={servicetypeState}
+          setRowsPerPage={setSize}
+          {...{
+            responseState,
+            triggerSearch,
+            providerState,
+            servicetypeState,
+            page,
+            setPage,
+            offset,
+            setOffset,
+            total,
+            currentApiPage,
+            searchStringState,
+          }}
           page={page}
           setPage={setPage}
         />
