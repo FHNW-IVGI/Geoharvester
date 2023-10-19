@@ -1,12 +1,14 @@
 import { Toolbar, AppBar } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { MenuDropdown } from "./MenuDropdown";
+import { MenuComponent } from "./MenuComponent";
 import { Filter } from "./Filter";
-import { PROVIDERTYPE, SERVICE } from "src/constants";
+import { PROVIDERTYPE, SERVICE, BREAKPOINT } from "src/constants";
 import { SearchField } from "./SearchField";
 import geoharvesterLogo from "./logo.png";
 
+import { useTheme } from "@mui/material/styles";
 import "../../styles.css";
+import { useViewport } from "src/custom/ViewportHook";
 
 export type SearchBarProps = {
   triggerSearch: (
@@ -32,6 +34,9 @@ export const Header = ({
   setSearchString,
   resetPageToZero,
 }: SearchBarProps) => {
+  const theme = useTheme();
+  const { width } = useViewport();
+
   const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
 
   const handleChangeService = (event: SelectChangeEvent) => {
@@ -50,9 +55,9 @@ export const Header = ({
   };
 
   return (
-    <AppBar>
-      <Toolbar variant="dense" id="menubar">
-        <MenuDropdown />
+    <AppBar sx={{ backgroundColor: theme.palette.secondary.main }}>
+      <Toolbar sx={{ padding: 0 }}>
+        <MenuComponent />
         <img
           id="GeoharvesterLogo"
           alt="GeoharvesterLogo"
@@ -61,13 +66,17 @@ export const Header = ({
           height="29"
           style={{ marginLeft: -10 }}
         />
-        <SearchField
-          {...{
-            triggerSearch,
-            setSearchString,
-            resetPageToZero,
-          }}
-        />
+        {width < BREAKPOINT ? (
+          <div>none</div>
+        ) : (
+          <SearchField
+            {...{
+              triggerSearch,
+              setSearchString,
+              resetPageToZero,
+            }}
+          />
+        )}
         <Filter
           handleChangeService={handleChangeService}
           handleChangeProvider={handleChangeProvider}

@@ -109,7 +109,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Stack>
+      <Stack sx={{ height: "100vh" }}>
         {/* <header className="appheader"> */}
         <Header
           {...{

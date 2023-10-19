@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import "../../styles.css";
 
-export const MenuDropdown = () => {
+export const MenuComponent = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openImpressum, setOpenImpressum] = useState(false);
 
@@ -25,13 +25,12 @@ export const MenuDropdown = () => {
   };
 
   return (
-    // <div style={{ minWidth: 300, display: "flex", alignItems: "center" }}>
     <Box>
       <IconButton
         size="large"
-        edge="end"
+        // edge="end"
         aria-label="menu"
-        sx={{ mr: 1, color: theme.palette.secondary.main }}
+        sx={{ color: theme.palette.primary.main }}
         onClick={handleClick}
       >
         <MenuIcon />
@@ -72,10 +71,7 @@ export const MenuDropdown = () => {
         </MenuItem>
       </Menu>
 
-      <ImpressumDialog
-        open={openImpressum}
-        setOpen={setOpenImpressum}
-      ></ImpressumDialog>
+      <ImpressumDialog open={openImpressum} setOpen={setOpenImpressum} />
     </Box>
   );
 };

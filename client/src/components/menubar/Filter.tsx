@@ -1,6 +1,12 @@
-import { FormControl } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import {
+  FormControl,
+  useTheme,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
+// import MenuItem from "@mui/material/MenuItem";
+// import Select from "@mui/material/Select";
 import { PROVIDERTYPE, SERVICE } from "src/constants";
 import "../../styles.css";
 
@@ -22,6 +28,8 @@ export const Filter = ({
   provider,
   servicetype,
 }: FilterProps) => {
+  const theme = useTheme();
+
   return (
     <div
       style={{
@@ -31,24 +39,19 @@ export const Filter = ({
         width: 500,
       }}
     >
-      <FormControl
-        variant="outlined"
-        sx={{
-          minWidth: 140,
-          marginRight: 3,
-        }}
-      >
+      <FormControl variant="outlined">
         <Select
+          className="Dropdown"
           autoComplete="off"
           labelId="select-provider-label"
           id="select-provider"
           value={provider}
           onChange={handleChangeProvider}
           style={{
-            backgroundColor: "white",
+            backgroundColor: theme.palette.secondary.main,
             textAlign: "center",
             height: 32,
-            color: "#007CC3",
+            color: theme.palette.primary.main,
           }}
         >
           {(Object.values(PROVIDERTYPE) as PROVIDERTYPE[]).map((provider) => {
@@ -60,13 +63,9 @@ export const Filter = ({
           })}
         </Select>
       </FormControl>
-      <FormControl
-        variant="outlined"
-        sx={{
-          minWidth: 140,
-        }}
-      >
+      <FormControl variant="outlined">
         <Select
+          className="Dropdown"
           autoComplete="off"
           defaultValue={""}
           labelId="select-service-label"
@@ -74,10 +73,10 @@ export const Filter = ({
           value={servicetype}
           onChange={handleChangeService}
           style={{
-            backgroundColor: "white",
+            backgroundColor: theme.palette.secondary.main,
             textAlign: "center",
             height: 32,
-            color: "#007CC3",
+            color: theme.palette.primary.main,
           }}
         >
           {(Object.values(SERVICE) as SERVICE[]).map((servicetype) => {
@@ -89,7 +88,6 @@ export const Filter = ({
           })}
         </Select>
       </FormControl>
-      <div style={{ width: 20 }} />
     </div>
   );
 };

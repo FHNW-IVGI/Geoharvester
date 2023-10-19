@@ -3,6 +3,11 @@
     display: none;
   }
 
+  .Dropdown {
+    max-width: 90px;
+    min-width: 80px;
+  }
+
 }
 
 /* .appheader {
