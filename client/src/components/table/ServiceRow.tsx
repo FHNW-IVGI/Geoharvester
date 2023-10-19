@@ -12,6 +12,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { SubRow } from "./SubRow";
 import "../../styles.css";
+import { getIcon } from "src/custom/getIcon";
 
 export const ServiceRow = ({
   row,
@@ -27,14 +28,6 @@ export const ServiceRow = ({
   const [open, setOpen] = useState(false);
 
   useEffect(() => setOpen(false), [page, total]);
-
-  const getIcon = () => {
-    const target =
-      row.provider === "Bund"
-        ? "ch"
-        : row.provider.slice(3, 5).toLocaleLowerCase();
-    return `/cantonIcons/${target}.svg`;
-  };
 
   const CenteredTableCell = styled(TableCell)(() => ({
     "&": {
@@ -84,7 +77,12 @@ export const ServiceRow = ({
         <CenteredTableCell>
           <Tooltip title={row.provider}>
             <Icon>
-              <img alt="sourceIcon" src={getIcon()} height={25} width={25} />
+              <img
+                alt="sourceIcon"
+                src={getIcon(row.provider)}
+                height={25}
+                width={25}
+              />
             </Icon>
           </Tooltip>
         </CenteredTableCell>

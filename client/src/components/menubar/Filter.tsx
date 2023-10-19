@@ -5,10 +5,9 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-// import MenuItem from "@mui/material/MenuItem";
-// import Select from "@mui/material/Select";
 import { PROVIDERTYPE, SERVICE } from "src/constants";
 import "../../styles.css";
+import { getIcon } from "src/custom/getIcon";
 
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
@@ -36,7 +35,7 @@ export const Filter = ({
         display: "flex",
         flexDirection: "row",
         justifyContent: "end",
-        marginLeft: 10,
+        marginRight: 10,
       }}
     >
       <FormControl variant="outlined">
@@ -57,6 +56,15 @@ export const Filter = ({
           {(Object.values(PROVIDERTYPE) as PROVIDERTYPE[]).map((provider) => {
             return (
               <MenuItem key={provider} value={provider}>
+                {provider !== PROVIDERTYPE.NONE && (
+                  <img
+                    alt="sourceIcon"
+                    src={getIcon(provider)}
+                    height={25}
+                    width={25}
+                    style={{ marginRight: 8 }}
+                  />
+                )}
                 {provider}
               </MenuItem>
             );
@@ -67,7 +75,6 @@ export const Filter = ({
         <Select
           className="Dropdown"
           autoComplete="off"
-          defaultValue={""}
           labelId="select-service-label"
           id="select-service"
           value={servicetype}
