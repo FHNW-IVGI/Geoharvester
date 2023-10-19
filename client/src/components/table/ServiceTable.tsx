@@ -11,7 +11,6 @@ import {
   TableSortLabel,
   Paper,
   Box,
-  Typography,
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -25,10 +24,10 @@ import {
   PROVIDERTYPE,
   RESPONSESTATE,
   SERVICE,
-  BREAKPOINT,
+  BREAKPOINT600,
 } from "src/constants";
-import LinearProgress from "@mui/material/LinearProgress";
 import { useViewport } from "src/custom/ViewportHook";
+import { PlaceholderWidget } from "./PlaceholderUI";
 
 type TableProps = {
   docs: Geoservice[];
@@ -171,7 +170,7 @@ export const ServiceTable = ({
       backgroundColor: theme.palette.secondary.main,
       padding: "0 1px",
       textAlign: "center",
-      color: "white",
+      color: theme.palette.secondary.main,
     },
   }));
   const LeftAlignedTableCell = styled(TableCell)(() => ({
@@ -179,49 +178,9 @@ export const ServiceTable = ({
       backgroundColor: theme.palette.secondary.main,
       padding: 8,
       textAlign: "left",
-      color: "white",
+      color: theme.palette.secondary.main,
     },
   }));
-
-  // const StyledTableFooter = styled(TableFooter)(() => ({
-  //   "&": {
-  //     left: 0,
-  //     bottom: 0,
-  //     zIndex: 2,
-  //     position: "sticky",
-  //     backgroundColor: "white",
-
-  //   },
-  // }));
-
-  const PlaceholderWidget = ({
-    placeholderText,
-  }: {
-    placeholderText?: string;
-  }) => (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-        flex: 1,
-      }}
-    >
-      {placeholderText ? (
-        <Typography variant="h3" component="h3" color="#C0C0C0">
-          {placeholderText}
-        </Typography>
-      ) : (
-        <div>
-          <Typography variant="h5" component="h3" color="#C0C0C0">
-            Suche...
-          </Typography>
-          <LinearProgress style={{ width: 300 }} />
-        </div>
-      )}
-    </div>
-  );
 
   const columns = ["title", "abstract", "provider", "service", "metaquality"];
 
@@ -259,7 +218,7 @@ export const ServiceTable = ({
                         sortDirection={orderBy === col_header ? order : false}
                       >
                         <TableSortLabel
-                          style={{ color: "white" }}
+                          sx={{ color: theme.palette.secondary.main }}
                           active={true}
                           direction={orderBy === col_header ? order : "desc"}
                           onClick={createSortHandler(col_header)}
@@ -313,7 +272,7 @@ export const ServiceTable = ({
                     count,
                     page,
                   }): React.ReactNode => {
-                    return width > BREAKPOINT
+                    return width > BREAKPOINT600
                       ? `${displayedRecordsStart}–${Math.min(
                           total,
                           displayedRecordsEnd
@@ -340,8 +299,6 @@ export const ServiceTable = ({
                     />
                   )}
                 />
-                {/* </TableCell>
-              </TableRow> */}
               </TableRow>
             </TableFooter>
           </Table>

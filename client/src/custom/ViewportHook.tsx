@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 // Custom Hook for responsive UI
 export const useViewport = () => {
-  const [width, setWidth] = useState(1000);
+  const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);

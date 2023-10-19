@@ -36,7 +36,7 @@ export const Filter = ({
         display: "flex",
         flexDirection: "row",
         justifyContent: "end",
-        width: 500,
+        marginLeft: 10,
       }}
     >
       <FormControl variant="outlined">
@@ -50,7 +50,7 @@ export const Filter = ({
           style={{
             backgroundColor: theme.palette.secondary.main,
             textAlign: "center",
-            height: 32,
+            height: 40,
             color: theme.palette.primary.main,
           }}
         >
@@ -75,7 +75,7 @@ export const Filter = ({
           style={{
             backgroundColor: theme.palette.secondary.main,
             textAlign: "center",
-            height: 32,
+            height: 40,
             color: theme.palette.primary.main,
           }}
         >

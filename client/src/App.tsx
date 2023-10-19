@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ServiceTable } from "./components/results/ServiceTable";
+import { ServiceTable } from "./components/table/ServiceTable";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Header } from "./components/menubar/Header";
 import { Geoservice } from "./types";
@@ -15,7 +15,7 @@ import {
 } from "./constants";
 import { getData } from "./requests";
 import { Footer } from "./components/Footer";
-import { Box, Container, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 
 const theme = createTheme({
   palette: {
@@ -26,10 +26,12 @@ const theme = createTheme({
     },
     secondary: {
       main: "#ffffff",
+
       contrastText: "#007CC3",
     },
     info: {
       main: "#E8E8E8",
+      light: "#C0C0C0",
       contrastText: "#ffffff",
     },
   },
@@ -110,7 +112,6 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Stack sx={{ height: "100vh" }}>
-        {/* <header className="appheader"> */}
         <Header
           {...{
             triggerSearch,
@@ -123,7 +124,6 @@ function App() {
             resetPageToZero,
           }}
         />
-        {/* </header> */}
         <ServiceTable
           docs={items || []}
           fields={[]}

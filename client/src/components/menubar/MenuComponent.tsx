@@ -28,7 +28,6 @@ export const MenuComponent = () => {
     <Box>
       <IconButton
         size="large"
-        // edge="end"
         aria-label="menu"
         sx={{ color: theme.palette.primary.main }}
         onClick={handleClick}
