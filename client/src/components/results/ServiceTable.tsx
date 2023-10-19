@@ -300,49 +300,49 @@ export const ServiceTable = ({
               //   //     backgroundColor: "white",
               // }}
             >
-              {/* <TableRow> */}
-              {/* <TableRow>
+              <TableRow>
+                {/* <TableRow>
                 <TableCell colSpan={5}> */}
-              <TablePagination
-                rowsPerPageOptions={[20, 50, 100, 200]}
-                colSpan={5}
-                count={total}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                labelDisplayedRows={({
-                  from,
-                  to,
-                  count,
-                  page,
-                }): React.ReactNode => {
-                  return `${displayedRecordsStart}–${Math.min(
-                    total,
-                    displayedRecordsEnd
-                  )} of ${count !== -1 ? count : `more than ${to}`}`;
-                }}
-                SelectProps={{
-                  inputProps: {
-                    "aria-label": "rows per page",
-                  },
-                  native: true,
-                }}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                onPageChange={() => null}
-                ActionsComponent={(props) => (
-                  <TablePaginationActions
-                    handleChangePageForward={handleChangePageForward}
-                    handleChangePageBackward={handleChangePageBackward}
-                    currentApiPage={currentApiPage}
-                    displayedRecordsStart={displayedRecordsStart}
-                    displayedRecordsEnd={displayedRecordsEnd}
-                    handleSetPageZero={handleSetPageZero}
-                    {...props}
-                  />
-                )}
-              />
-              {/* </TableCell>
+                <TablePagination
+                  rowsPerPageOptions={[20, 50, 100, 200]}
+                  colSpan={5}
+                  count={total}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  labelDisplayedRows={({
+                    from,
+                    to,
+                    count,
+                    page,
+                  }): React.ReactNode => {
+                    return `${displayedRecordsStart}–${Math.min(
+                      total,
+                      displayedRecordsEnd
+                    )} of ${count !== -1 ? count : `more than ${to}`}`;
+                  }}
+                  SelectProps={{
+                    inputProps: {
+                      "aria-label": "rows per page",
+                    },
+                    native: true,
+                  }}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  onPageChange={() => null}
+                  ActionsComponent={(props) => (
+                    <TablePaginationActions
+                      handleChangePageForward={handleChangePageForward}
+                      handleChangePageBackward={handleChangePageBackward}
+                      currentApiPage={currentApiPage}
+                      displayedRecordsStart={displayedRecordsStart}
+                      displayedRecordsEnd={displayedRecordsEnd}
+                      handleSetPageZero={handleSetPageZero}
+                      {...props}
+                    />
+                  )}
+                />
+                {/* </TableCell>
               </TableRow> */}
-              {/* </TableRow> */}
+              </TableRow>
             </TableFooter>
           </Table>
         </TableContainer>

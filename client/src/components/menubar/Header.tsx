@@ -66,9 +66,7 @@ export const Header = ({
           height="29"
           style={{ marginLeft: -10 }}
         />
-        {width < BREAKPOINT ? (
-          <div>none</div>
-        ) : (
+        {width > BREAKPOINT ? (
           <SearchField
             {...{
               triggerSearch,
@@ -76,6 +74,8 @@ export const Header = ({
               resetPageToZero,
             }}
           />
+        ) : (
+          <div>none</div>
         )}
         <Filter
           handleChangeService={handleChangeService}
