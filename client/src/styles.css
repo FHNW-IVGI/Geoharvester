@@ -1,3 +1,10 @@
+@media all and (max-width: 600px) {
+  #GeoharvesterLogo {
+    display: none;
+  }
+
+}
+
 /* .appheader {
   display: flex;
   flex-direction: column;

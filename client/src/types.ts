@@ -40,3 +40,4 @@ export interface Geodata {
     WMTSGetCap: string;
     WFSGetCap: string;
 }
+

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ImpressumDialog } from "../ImpressumDialog";
-import { IconButton, Menu, Divider, useTheme } from "@mui/material";
+import { IconButton, Menu, Divider, useTheme, Box } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import MenuIcon from "@mui/icons-material/Menu";
 import DescriptionIcon from "@mui/icons-material/Description";
@@ -24,10 +24,9 @@ export const MenuDropdown = () => {
     setAnchorEl(null);
   };
 
-  const geoharvesterLogo = require("../../img/geoharvester_logo_blue.png");
-
   return (
-    <div style={{ minWidth: 300, display: "flex", alignItems: "center" }}>
+    // <div style={{ minWidth: 300, display: "flex", alignItems: "center" }}>
+    <Box>
       <IconButton
         size="large"
         edge="end"
@@ -72,17 +71,11 @@ export const MenuDropdown = () => {
           Impressum
         </MenuItem>
       </Menu>
-      <img
-        alt="geoharvester-logo"
-        src={String(geoharvesterLogo)}
-        width="242"
-        height="29"
-        style={{ marginLeft: -10 }}
-      />
+
       <ImpressumDialog
         open={openImpressum}
         setOpen={setOpenImpressum}
       ></ImpressumDialog>
-    </div>
+    </Box>
   );
 };

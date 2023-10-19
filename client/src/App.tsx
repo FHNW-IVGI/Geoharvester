@@ -15,6 +15,7 @@ import {
 } from "./constants";
 import { getData } from "./requests";
 import { Footer } from "./components/Footer";
+import { Box, Container, Stack } from "@mui/material";
 
 const theme = createTheme({
   palette: {
@@ -108,7 +109,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <section>
+      <Stack>
         {/* <header className="appheader"> */}
         <Header
           {...{
@@ -145,7 +146,7 @@ function App() {
           setPage={setPage}
         />
         <Footer />
-      </section>
+      </Stack>
     </ThemeProvider>
   );
 }

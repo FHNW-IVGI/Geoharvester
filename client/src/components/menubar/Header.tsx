@@ -1,10 +1,11 @@
 import { Toolbar, AppBar } from "@mui/material";
-
 import { SelectChangeEvent } from "@mui/material/Select";
 import { MenuDropdown } from "./MenuDropdown";
 import { Filter } from "./Filter";
 import { PROVIDERTYPE, SERVICE } from "src/constants";
 import { SearchField } from "./SearchField";
+import geoharvesterLogo from "./logo.png";
+
 import "../../styles.css";
 
 export type SearchBarProps = {
@@ -52,15 +53,21 @@ export const Header = ({
     <AppBar>
       <Toolbar variant="dense" id="menubar">
         <MenuDropdown />
-        <div style={{ display: "flex", flex: "1 1 auto" }}>
-          <SearchField
-            {...{
-              triggerSearch,
-              setSearchString,
-              resetPageToZero,
-            }}
-          />
-        </div>
+        <img
+          id="GeoharvesterLogo"
+          alt="GeoharvesterLogo"
+          src={String(geoharvesterLogo)}
+          width="242"
+          height="29"
+          style={{ marginLeft: -10 }}
+        />
+        <SearchField
+          {...{
+            triggerSearch,
+            setSearchString,
+            resetPageToZero,
+          }}
+        />
         <Filter
           handleChangeService={handleChangeService}
           handleChangeProvider={handleChangeProvider}
