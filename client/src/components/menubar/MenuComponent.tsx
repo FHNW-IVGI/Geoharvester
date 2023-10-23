@@ -7,6 +7,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import MenuItem from "@mui/material/MenuItem";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import "../../styles.css";
+import geoharvesterLogo from "./logo.png";
 
 export const MenuComponent = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -26,14 +27,24 @@ export const MenuComponent = () => {
 
   return (
     <Box>
-      <IconButton
-        size="large"
-        aria-label="menu"
-        sx={{ color: theme.palette.primary.main }}
-        onClick={handleClick}
-      >
-        <MenuIcon />
-      </IconButton>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          size="large"
+          aria-label="menu"
+          sx={{ color: theme.palette.primary.main }}
+          onClick={handleClick}
+        >
+          <MenuIcon />
+        </IconButton>
+        <img
+          id="GeoharvesterLogo"
+          alt="GeoharvesterLogo"
+          src={String(geoharvesterLogo)}
+          width="242"
+          height="29"
+          style={{ marginLeft: -10 }}
+        />
+      </div>
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}

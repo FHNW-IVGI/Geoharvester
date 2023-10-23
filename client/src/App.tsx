@@ -16,6 +16,7 @@ import {
 import { getData } from "./requests";
 import { Footer } from "./components/Footer";
 import { Stack } from "@mui/material";
+import { FirstSearchUI } from "./components/table/FirstSearchUI";
 
 const theme = createTheme({
   palette: {
@@ -50,6 +51,7 @@ function App() {
   const [responseState, setResponseState] = useState(
     RESPONSESTATE.UNINITIALIZED
   );
+  console.log(responseState);
   const { items, total } = searchResult;
 
   const [currentApiPage, setCurrentApiPage] = useState(DEFAULTPAGE);
@@ -122,29 +124,42 @@ function App() {
             setSearchString,
             searchStringState,
             resetPageToZero,
-          }}
-        />
-        <ServiceTable
-          docs={items || []}
-          fields={[]}
-          rowsPerPage={size}
-          setRowsPerPage={setSize}
-          {...{
             responseState,
-            triggerSearch,
-            providerState,
-            servicetypeState,
-            page,
-            setPage,
-            offset,
-            setOffset,
-            total,
-            currentApiPage,
-            searchStringState,
           }}
-          page={page}
-          setPage={setPage}
         />
+        {responseState === RESPONSESTATE.UNINITIALIZED ? (
+          <FirstSearchUI
+            setDrawerOpen={() => false}
+            fromDrawer={false}
+            {...{
+              triggerSearch,
+              setSearchString,
+              resetPageToZero,
+            }}
+          />
+        ) : (
+          <ServiceTable
+            docs={items || []}
+            fields={[]}
+            rowsPerPage={size}
+            setRowsPerPage={setSize}
+            {...{
+              responseState,
+              triggerSearch,
+              providerState,
+              servicetypeState,
+              page,
+              setPage,
+              offset,
+              setOffset,
+              total,
+              currentApiPage,
+              searchStringState,
+            }}
+            page={page}
+            setPage={setPage}
+          />
+        )}
         <Footer />
       </Stack>
     </ThemeProvider>

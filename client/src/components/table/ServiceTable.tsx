@@ -185,8 +185,6 @@ export const ServiceTable = ({
   const columns = ["title", "abstract", "provider", "service", "metaquality"];
 
   switch (responseState) {
-    case RESPONSESTATE.UNINITIALIZED:
-      return <PlaceholderWidget placeholderText="Webservice suchen..." />;
     case RESPONSESTATE.EMPTY:
       return <PlaceholderWidget placeholderText="Keine Treffer..." />;
     case RESPONSESTATE.ERROR:

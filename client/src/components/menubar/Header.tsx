@@ -7,14 +7,14 @@ import {
   SERVICE,
   BREAKPOINT600,
   BREAKPOINT1000,
+  RESPONSESTATE,
 } from "src/constants";
 import { SearchField } from "./SearchField";
-import geoharvesterLogo from "./logo.png";
 import { useTheme } from "@mui/material/styles";
-import "../../styles.css";
 import { useViewport } from "src/custom/ViewportHook";
 import { SearchDrawer } from "./SearchDrawer";
 import { useState } from "react";
+import "../../styles.css";
 
 export type SearchBarProps = {
   triggerSearch: (
@@ -29,6 +29,7 @@ export type SearchBarProps = {
   setProviderState: (serviceState: PROVIDERTYPE) => void;
   setSearchString: (searchString: string) => void;
   resetPageToZero: () => void;
+  responseState: RESPONSESTATE;
 };
 
 export const Header = ({
@@ -39,6 +40,7 @@ export const Header = ({
   providerState,
   setSearchString,
   resetPageToZero,
+  responseState,
 }: SearchBarProps) => {
   const theme = useTheme();
   const { width } = useViewport();
@@ -76,15 +78,9 @@ export const Header = ({
         }}
       >
         <MenuComponent />
-        <img
-          id="GeoharvesterLogo"
-          alt="GeoharvesterLogo"
-          src={String(geoharvesterLogo)}
-          width="242"
-          height="29"
-          style={{ marginLeft: -10 }}
-        />
-        {width > BREAKPOINT1000 ? (
+        {responseState === RESPONSESTATE.UNINITIALIZED ? (
+          <div />
+        ) : width > BREAKPOINT1000 ? (
           <SearchField
             fromDrawer={false}
             {...{

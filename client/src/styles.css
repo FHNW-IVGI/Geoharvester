@@ -12,12 +12,27 @@
   }
 
   .Dropdown {
-    max-width: 90px;
     min-width: 80px;
   }
 }
 
+.PageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+  min-width: 50vh;
+}
 
+.SearchBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80 px;
+
+}
 
 
 /* .appheader {

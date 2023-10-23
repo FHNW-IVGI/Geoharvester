@@ -15,7 +15,7 @@ import { useViewport } from "src/custom/ViewportHook";
 
 const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
 
-export type SearchFieldProps = {
+export type SearchProps = {
   triggerSearch: (
     searchString: string | undefined,
     servicetype: SERVICE | undefined,
@@ -24,9 +24,12 @@ export type SearchFieldProps = {
   ) => void;
   setSearchString: (searchString: string) => void;
   resetPageToZero: () => void;
-  setDrawerOpen: (drawerState: boolean) => void;
-  fromDrawer: boolean;
+  setDrawerOpen: (state: boolean) => void;
 };
+
+export type SearchFieldProps = {
+  fromDrawer: boolean;
+} & SearchProps;
 
 export const SearchField = ({
   triggerSearch,

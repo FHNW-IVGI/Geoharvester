@@ -7,20 +7,8 @@ import {
   BREAKPOINT600,
   BREAKPOINT1000,
 } from "src/constants";
-import { SearchField } from "./SearchField";
-
-type SearchDrawerProps = {
-  triggerSearch: (
-    searchString: string | undefined,
-    servicetype: SERVICE | undefined,
-    provider: PROVIDERTYPE | undefined,
-    page: number
-  ) => void;
-  setSearchString: (searchString: string) => void;
-  resetPageToZero: () => void;
-  setDrawerOpen: (state: boolean) => void;
-  drawerOpen: boolean;
-};
+import { SearchField, SearchProps } from "./SearchField";
+import "../../styles.css";
 
 export const SearchDrawer = ({
   triggerSearch,
@@ -28,7 +16,7 @@ export const SearchDrawer = ({
   resetPageToZero,
   setDrawerOpen,
   drawerOpen,
-}: SearchDrawerProps) => {
+}: SearchProps & { drawerOpen: boolean }) => {
   return (
     <div>
       <Button variant="contained" onClick={() => setDrawerOpen(true)}>
@@ -40,14 +28,7 @@ export const SearchDrawer = ({
         onClose={() => setDrawerOpen(false)}
         onOpen={() => setDrawerOpen(true)}
       >
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: 80,
-          }}
-        >
+        <Box className="SearchBox">
           <SearchField
             fromDrawer
             {...{
