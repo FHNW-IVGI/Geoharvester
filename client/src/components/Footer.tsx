@@ -7,7 +7,6 @@ export const Footer = () => {
   return (
     <Box
       sx={{
-        minHeight: "25px",
         backgroundColor: theme.palette.primary.light,
         color: theme.palette.secondary.main,
         textAlign: "center",
