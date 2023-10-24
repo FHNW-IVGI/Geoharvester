@@ -46,6 +46,15 @@ export const Filter = ({
           id="select-provider"
           value={provider}
           onChange={handleChangeProvider}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                display: "flex",
+                alignItem: "center",
+                height: "80vh",
+              },
+            },
+          }}
           style={{
             backgroundColor: theme.palette.secondary.main,
             textAlign: "center",
@@ -55,7 +64,11 @@ export const Filter = ({
         >
           {(Object.values(PROVIDERTYPE) as PROVIDERTYPE[]).map((provider) => {
             return (
-              <MenuItem key={provider} value={provider}>
+              <MenuItem
+                key={provider}
+                value={provider}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
                 {provider !== PROVIDERTYPE.NONE && (
                   <img
                     alt="sourceIcon"

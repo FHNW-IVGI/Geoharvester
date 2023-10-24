@@ -33,6 +33,11 @@
   min-height: 80 px;
 }
 
+#select-provider {
+  display: flex;
+  align-items: center;
+}
+
 
 
 /* .appheader {
