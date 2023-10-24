@@ -23,10 +23,12 @@ export const SubRow = ({
   row,
   open,
   index,
+  mobileMode,
 }: {
   row: Geoservice;
   open: boolean;
   index: number;
+  mobileMode: boolean;
 }) => {
   const rowsToInclude = [
     "name",
@@ -85,7 +87,7 @@ export const SubRow = ({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                marginLeft: -10,
+                marginLeft: mobileMode ? -75 : -10,
               }}
             >
               {rowsToInclude.map((prop) => (

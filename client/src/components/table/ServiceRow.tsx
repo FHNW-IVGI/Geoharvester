@@ -11,19 +11,21 @@ import { Geoservice } from "../../types";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { SubRow } from "./SubRow";
-import "../../styles.css";
 import { getIcon } from "src/custom/getIcon";
+import "../../styles.css";
 
 export const ServiceRow = ({
   row,
   index,
   page,
   total,
+  mobileMode,
 }: {
   row: Geoservice;
   index: number;
   page: number;
   total: number;
+  mobileMode: boolean;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -47,7 +49,7 @@ export const ServiceRow = ({
     "&": {
       padding: 8,
       textAlign: "left",
-      minWidth: 180,
+      minWidth: mobileMode ? 60 : 180,
       wordBreak: "break-word",
     },
   }));
@@ -73,7 +75,7 @@ export const ServiceRow = ({
           </IconButton>
         </TableCell>
         <LeftAlignedTableCellMaxWidth>{row.title}</LeftAlignedTableCellMaxWidth>
-        <LeftAlignedTableCell>{abstract}</LeftAlignedTableCell>
+        {!mobileMode && <LeftAlignedTableCell>{abstract}</LeftAlignedTableCell>}
         <CenteredTableCell>
           <Tooltip title={row.provider}>
             <Icon>
@@ -93,7 +95,7 @@ export const ServiceRow = ({
           </div>
         </CenteredTableCell>
       </TableRow>
-      <SubRow row={row} open={open} index={index} />
+      <SubRow row={row} open={open} index={index} mobileMode={mobileMode} />
     </>
   );
 };

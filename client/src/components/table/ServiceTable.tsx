@@ -28,6 +28,7 @@ import {
 } from "src/constants";
 import { useViewport } from "src/custom/ViewportHook";
 import { PlaceholderWidget } from "./PlaceholderUI";
+import "../../styles.css";
 
 type TableProps = {
   docs: Geoservice[];
@@ -75,6 +76,7 @@ export const ServiceTable = ({
   const [tableRef, setTableReference] = useState<any>();
 
   const { width } = useViewport();
+  console.log(width < BREAKPOINT600);
 
   const theme = useTheme();
 
@@ -167,22 +169,19 @@ export const ServiceTable = ({
 
   const CenteredTableCell = styled(TableCell)(() => ({
     "&": {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.primary.main,
       padding: "0 1px",
       textAlign: "center",
-      color: theme.palette.secondary.main,
     },
   }));
   const LeftAlignedTableCell = styled(TableCell)(() => ({
     "&": {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.primary.main,
       padding: 8,
       textAlign: "left",
       color: theme.palette.secondary.main,
     },
   }));
-
-  const columns = ["title", "abstract", "provider", "service", "metaquality"];
 
   switch (responseState) {
     case RESPONSESTATE.EMPTY:
@@ -195,46 +194,59 @@ export const ServiceTable = ({
       return (
         <TableContainer
           component={Paper}
-          sx={{ cursor: "pointer", overflowX: "auto" }}
+          sx={{
+            cursor: "pointer",
+            overflowX: "auto",
+            marginTop: "50px",
+          }}
         >
           <Table stickyHeader aria-label="sticky table" ref={setTableReference}>
             <TableHead>
               <TableRow>
                 <CenteredTableCell></CenteredTableCell>
-                {columns.map((col_header, index) => {
-                  const commonCasedHeader =
-                    col_header.charAt(0).toUpperCase() +
-                    col_header.slice(1).toLocaleLowerCase();
-                  return index < 2 ? (
-                    <LeftAlignedTableCell key={index}>
-                      {commonCasedHeader}
-                    </LeftAlignedTableCell>
-                  ) : (
-                    <>
-                      <CenteredTableCell
-                        key={index}
-                        sortDirection={orderBy === col_header ? order : false}
-                      >
-                        <TableSortLabel
-                          sx={{ color: theme.palette.secondary.main }}
-                          active={true}
-                          direction={orderBy === col_header ? order : "desc"}
-                          onClick={createSortHandler(col_header)}
+                <LeftAlignedTableCell>Title</LeftAlignedTableCell>
+                {width > BREAKPOINT600 && (
+                  <LeftAlignedTableCell>Abstract</LeftAlignedTableCell>
+                )}
+                {["Provider", "Service", "Metaquality"].map(
+                  (col_header, index) => {
+                    const commonCasedHeader =
+                      col_header.charAt(0).toUpperCase() +
+                      col_header.slice(1).toLocaleLowerCase();
+                    return (
+                      <>
+                        <CenteredTableCell
+                          key={index}
+                          sortDirection={orderBy === col_header ? order : false}
                         >
-                          {commonCasedHeader}
-                          {orderBy === col_header ? (
-                            <Box component="span" sx={visuallyHidden}>
-                              {order === "desc"
-                                ? "sorted descending"
-                                : "sorted ascending"}
-                              + ro
-                            </Box>
-                          ) : null}
-                        </TableSortLabel>
-                      </CenteredTableCell>
-                    </>
-                  );
-                })}
+                          <TableSortLabel
+                            sx={{
+                              "& .MuiTableSortLabel-icon": {
+                                color: "white !important",
+                              },
+                              "& .MuiTableSortLabel-root": {
+                                color: "white !important",
+                              },
+                            }}
+                            active={true}
+                            direction={orderBy === col_header ? order : "desc"}
+                            onClick={createSortHandler(col_header)}
+                          >
+                            {commonCasedHeader}
+                            {orderBy === col_header ? (
+                              <Box component="span" sx={visuallyHidden}>
+                                {order === "desc"
+                                  ? "sorted descending"
+                                  : "sorted ascending"}
+                                + ro
+                              </Box>
+                            ) : null}
+                          </TableSortLabel>
+                        </CenteredTableCell>
+                      </>
+                    );
+                  }
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -245,7 +257,13 @@ export const ServiceTable = ({
                   )
                 : sortedData
               ).map((row, index) => (
-                <ServiceRow row={row} index={index} page={page} total={total} />
+                <ServiceRow
+                  row={row}
+                  index={index}
+                  page={page}
+                  total={total}
+                  mobileMode={width < BREAKPOINT600}
+                />
               ))}
             </TableBody>
             <TableFooter

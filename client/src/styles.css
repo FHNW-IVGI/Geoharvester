@@ -38,6 +38,9 @@
   align-items: center;
 }
 
+tr th span {
+  color: white !important;
+}
 
 
 /* .appheader {
