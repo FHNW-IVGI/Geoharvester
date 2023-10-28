@@ -1,4 +1,4 @@
 Timestamp,Operator,URL,Issue
-2023-10-27T05:03:00.158579+02:00,KT_ZH,DPRSF,"can only concatenate str (not "NoneType") to str"
-2023-10-27T05:04:38.580290+02:00,KT_ZH,https://wms.zh.ch/AwelWindpotenzialZHWMS?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
-2023-10-27T05:08:48.151488+02:00,KT_ZH,https://maps.zh.ch/wfs/AwelWbAbflussZHWFS?service=WFS&request=GetCapabilities,"expected string or bytes-like object"
+2023-10-28T04:03:55.681888+02:00,KT_ZH,DPRSF,"can only concatenate str (not "NoneType") to str"
+2023-10-28T04:05:06.025900+02:00,KT_ZH,https://wms.zh.ch/AwelWindpotenzialZHWMS?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
+2023-10-28T04:08:09.430638+02:00,KT_ZH,https://maps.zh.ch/wfs/AwelWbAbflussZHWFS?service=WFS&request=GetCapabilities,"expected string or bytes-like object"

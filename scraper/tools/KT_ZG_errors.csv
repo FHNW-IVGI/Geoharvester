@@ -1,3 +1,3 @@
 Timestamp,Operator,URL,Issue
-2023-10-27T04:58:59.759268+02:00,KT_ZG,https://services.geo.zg.ch/ows/Zonenplan?SERVICE=WMS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 404"
-2023-10-27T05:00:53.157404+02:00,KT_ZG,https://services.geo.zg.ch/ows/Zonenplan?SERVICE=WFS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2023-10-28T04:01:08.397452+02:00,KT_ZG,https://services.geo.zg.ch/ows/Zonenplan?SERVICE=WMS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2023-10-28T04:02:29.344287+02:00,KT_ZG,https://services.geo.zg.ch/ows/Zonenplan?SERVICE=WFS&REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 404"
