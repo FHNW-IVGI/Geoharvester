@@ -20,14 +20,14 @@ import { SearchParameters } from "src/types";
 export type SearchBarProps = {
   updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
   searchParameters: SearchParameters;
-  resetPageToZero: () => void;
+  // resetPageToZero: () => void;
   responseState: RESPONSESTATE;
 };
 
 export const Header = ({
   updateSearchParameters,
   searchParameters,
-  resetPageToZero,
+  // resetPageToZero,
   responseState,
 }: SearchBarProps) => {
   const theme = useTheme();
@@ -69,7 +69,7 @@ export const Header = ({
             fromDrawer={false}
             {...{
               updateSearchParameters,
-              resetPageToZero,
+              // resetPageToZero,
               setDrawerOpen,
             }}
           />
@@ -77,7 +77,7 @@ export const Header = ({
           <SearchDrawer
             {...{
               updateSearchParameters,
-              resetPageToZero,
+              // resetPageToZero,
               setDrawerOpen,
             }}
             drawerOpen={drawerOpen}

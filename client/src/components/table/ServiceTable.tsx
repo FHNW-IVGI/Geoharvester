@@ -18,29 +18,20 @@ import { Geoservice, SearchParameters } from "../../types";
 import { visuallyHidden } from "@mui/utils";
 import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
-import {
-  DEFAULTCHUNKSIZE,
-  DEFAULTPAGE,
-  RESPONSESTATE,
-  BREAKPOINT600,
-} from "src/constants";
+import { DEFAULTCHUNKSIZE, RESPONSESTATE, BREAKPOINT600 } from "src/constants";
 import { useViewport } from "src/custom/ViewportHook";
 import { PlaceholderWidget } from "./PlaceholderUI";
 import "../../styles.css";
 
 type TableProps = {
   updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
-  searchParameters: SearchParameters;
   docs: Geoservice[];
   responseState: RESPONSESTATE;
-  fields: string[];
-  offset: number;
   total: number;
-  page: number;
   currentApiPage: number;
-  setOffset: (offset: number) => void;
   setRowsPerPage: (size: number) => void;
-  setPage: (page: number) => void;
+  tablePage: number;
+  setTablePage: (page: number) => void;
   rowsPerPage: number;
 };
 
@@ -48,15 +39,12 @@ type Order = "asc" | "desc";
 
 export const ServiceTable = ({
   updateSearchParameters,
-  searchParameters,
   docs,
   responseState,
-  fields,
-  offset,
   total,
   currentApiPage,
-  page,
-  setPage,
+  tablePage,
+  setTablePage,
   setRowsPerPage,
   rowsPerPage,
 }: TableProps) => {
@@ -71,7 +59,7 @@ export const ServiceTable = ({
   const scrollToTop = () => tableRef && tableRef.scrollIntoView();
 
   const displayedRecordsStart =
-    currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage;
+    currentApiPage * DEFAULTCHUNKSIZE + tablePage * rowsPerPage;
   const displayedRecordsEnd = displayedRecordsStart + rowsPerPage;
 
   const handleChangePageForward = (
@@ -81,9 +69,9 @@ export const ServiceTable = ({
     const processedResults = rowsPerPage * newPage;
     if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
       updateSearchParameters({ page: currentApiPage + 1 });
-      setPage(0);
+      setTablePage(0);
     } else {
-      setPage(newPage);
+      setTablePage(newPage);
     }
     scrollToTop();
   };
@@ -99,20 +87,20 @@ export const ServiceTable = ({
       processedResults > 0
     ) {
       updateSearchParameters({ page: currentApiPage - 1 });
-
-      setPage(Math.abs(pagesBeforeReload) - 1);
+      setTablePage(Math.abs(pagesBeforeReload) - 1);
     } else {
-      setPage(newPage);
+      setTablePage(newPage);
     }
     scrollToTop();
   };
 
   const handleSetPageZero = () => {
     if (currentApiPage > 0) {
-      // triggerSearch(searchStringState, servicetypeState, providerState, 0);
+      // Reset results
       updateSearchParameters({ page: 0 });
     }
-    setPage(0);
+    // Reset UI is sufficent
+    setTablePage(0);
     scrollToTop();
   };
 
@@ -120,7 +108,7 @@ export const ServiceTable = ({
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(DEFAULTPAGE);
+    setTablePage(0);
   };
 
   const handleRequestSort = (
@@ -232,15 +220,15 @@ export const ServiceTable = ({
             <TableBody>
               {(rowsPerPage > 0
                 ? sortedData.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
+                    tablePage * rowsPerPage,
+                    tablePage * rowsPerPage + rowsPerPage
                   )
                 : sortedData
               ).map((row, index) => (
                 <ServiceRow
                   row={row}
                   index={index}
-                  page={page}
+                  page={tablePage}
                   total={total}
                   mobileMode={width < BREAKPOINT600}
                 />
@@ -261,7 +249,7 @@ export const ServiceTable = ({
                   colSpan={6}
                   count={total}
                   rowsPerPage={rowsPerPage}
-                  page={page}
+                  page={tablePage}
                   labelDisplayedRows={({
                     from,
                     to,

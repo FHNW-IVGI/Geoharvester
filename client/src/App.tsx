@@ -5,8 +5,6 @@ import { Header } from "./components/menubar/Header";
 import { Geoservice, SearchParameters } from "./types";
 import {
   DEFAULTLANGUAGE,
-  DEFAULTOFFSET,
-  DEFAULTPAGE,
   PROVIDER,
   RESPONSESTATE,
   SERVICE,
@@ -51,12 +49,10 @@ function App() {
   const [responseState, setResponseState] = useState(
     RESPONSESTATE.UNINITIALIZED
   );
-  console.log(responseState);
-  const { items, total } = searchResult;
 
-  const [currentApiPage, setCurrentApiPage] = useState(DEFAULTPAGE);
+  const [tablePage, setTablePage] = useState<number>(0); // Needed for the table UI and to dertermine when to make an API call
+  const [currentApiPage, setCurrentApiPage] = useState(0); // Page of the paginated API, different than the UI table page.
   const [size, setSize] = useState(DEFAULTROWSPERPAGE);
-  const [offset, setOffset] = useState(DEFAULTOFFSET);
 
   const defaultSearchParameter = {
     searchString: "",
@@ -68,6 +64,7 @@ function App() {
   const [searchParameters, setSearchParameters] = useState<SearchParameters>(
     defaultSearchParameter
   );
+  const { items, total } = searchResult;
 
   const updateSearchParameters = (parameter: Partial<SearchParameters>) => {
     responseState === RESPONSESTATE.UNINITIALIZED &&
@@ -84,11 +81,8 @@ function App() {
     searchParameters.page,
   ]);
 
-  const [page, setPage] = useState<number>(0);
-  const resetPageToZero = () => setPage(0);
-
   const triggerSearch = async () => {
-    const { searchString, service, provider } = searchParameters;
+    const { searchString, service, provider, page } = searchParameters;
 
     setResponseState(RESPONSESTATE.WAITING);
 
@@ -125,7 +119,6 @@ function App() {
           {...{
             updateSearchParameters,
             searchParameters,
-            resetPageToZero,
             responseState,
           }}
         />
@@ -136,28 +129,22 @@ function App() {
             {...{
               updateSearchParameters,
               triggerSearch,
-              resetPageToZero,
             }}
           />
         ) : (
           <ServiceTable
             docs={items || []}
-            fields={[]}
             rowsPerPage={size}
             setRowsPerPage={setSize}
             {...{
               updateSearchParameters,
               searchParameters,
               responseState,
-              page,
-              setPage,
-              offset,
-              setOffset,
               total,
               currentApiPage,
             }}
-            page={page}
-            setPage={setPage}
+            tablePage={tablePage}
+            setTablePage={setTablePage}
           />
         )}
         <Footer />
