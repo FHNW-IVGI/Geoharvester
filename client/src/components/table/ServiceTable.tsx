@@ -134,7 +134,7 @@ export const ServiceTable = ({
 
   const createSortHandler =
     (property: string) => (event: React.MouseEvent<unknown>) => {
-      handleRequestSort(event, property);
+      handleRequestSort(event, property.toLocaleLowerCase());
     };
 
   const sortedData = docs.sort((a: Geoservice, b: Geoservice) =>
