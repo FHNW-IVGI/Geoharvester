@@ -186,6 +186,7 @@ export const ServiceTable = ({
                         <CenteredTableCell
                           key={index}
                           sortDirection={orderBy === col_header ? order : false}
+                          sx={{ padding: "0 !important" }}
                         >
                           <TableSortLabel
                             sx={{

@@ -10,6 +10,7 @@ import {
 import { Geoservice } from "../../types";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+
 import { SubRow } from "./SubRow";
 import { getIcon } from "src/custom/getIcon";
 import "../../styles.css";
@@ -34,20 +35,24 @@ export const ServiceRow = ({
   const CenteredTableCell = styled(TableCell)(() => ({
     "&": {
       width: 120,
-      padding: 8,
+      padding: mobileMode ? 0 : 8,
       textAlign: "center",
     },
   }));
 
   const LeftAlignedTableCell = styled(TableCell)(() => ({
     "&": {
-      padding: 8,
+      // padding: 8,
+      padding: mobileMode ? 0 : 8,
+
       textAlign: "left",
     },
   }));
   const LeftAlignedTableCellMaxWidth = styled(TableCell)(() => ({
     "&": {
-      padding: 8,
+      // padding: 8,
+      padding: mobileMode ? 0 : 8,
+
       textAlign: "left",
       minWidth: mobileMode ? 60 : 180,
       wordBreak: "break-word",
@@ -64,16 +69,16 @@ export const ServiceRow = ({
   return (
     <>
       <TableRow key={index} onClick={() => setOpen(!open)}>
-        <TableCell>
+        <CenteredTableCell>
           <IconButton
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
-            style={{ color: "#007CC3" }}
+            style={{ color: "#007CC3", padding: 0 }}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
-        </TableCell>
+        </CenteredTableCell>
         <LeftAlignedTableCellMaxWidth>{row.title}</LeftAlignedTableCellMaxWidth>
         {!mobileMode && <LeftAlignedTableCell>{abstract}</LeftAlignedTableCell>}
         <CenteredTableCell>
