@@ -3,7 +3,7 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { MenuComponent } from "./MenuComponent";
 import { Filter } from "./Filter";
 import {
-  PROVIDERTYPE,
+  PROVIDER,
   SERVICE,
   BREAKPOINT600,
   BREAKPOINT1000,
@@ -15,51 +15,35 @@ import { useViewport } from "src/custom/ViewportHook";
 import { SearchDrawer } from "./SearchDrawer";
 import { useState } from "react";
 import "../../styles.css";
+import { SearchParameters } from "src/types";
 
 export type SearchBarProps = {
-  triggerSearch: (
-    searchString: string | undefined,
-    servicetype: SERVICE | undefined,
-    provider: PROVIDERTYPE | undefined,
-    page: number
-  ) => void;
-  servicetypeState: SERVICE;
-  setServiceState: (serviceState: SERVICE) => void;
-  providerState: PROVIDERTYPE;
-  setProviderState: (serviceState: PROVIDERTYPE) => void;
-  setSearchString: (searchString: string) => void;
+  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
+  searchParameters: SearchParameters;
   resetPageToZero: () => void;
   responseState: RESPONSESTATE;
 };
 
 export const Header = ({
-  triggerSearch,
-  setServiceState,
-  servicetypeState,
-  setProviderState,
-  providerState,
-  setSearchString,
+  updateSearchParameters,
+  searchParameters,
   resetPageToZero,
   responseState,
 }: SearchBarProps) => {
   const theme = useTheme();
   const { width } = useViewport();
-  const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
+  // const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleChangeService = (event: SelectChangeEvent) => {
-    setServiceState(event.target.value as SERVICE);
-    triggerSearch(undefined, event.target.value as SERVICE, undefined, page);
+    updateSearchParameters({ service: event.target.value as SERVICE, page: 0 });
   };
 
   const handleChangeProvider = (event: SelectChangeEvent) => {
-    setProviderState(event.target.value as PROVIDERTYPE);
-    triggerSearch(
-      undefined,
-      undefined,
-      event.target.value as PROVIDERTYPE,
-      page
-    );
+    updateSearchParameters({
+      provider: event.target.value as PROVIDER,
+      page: 0,
+    });
   };
   return (
     <AppBar
@@ -84,8 +68,7 @@ export const Header = ({
           <SearchField
             fromDrawer={false}
             {...{
-              triggerSearch,
-              setSearchString,
+              updateSearchParameters,
               resetPageToZero,
               setDrawerOpen,
             }}
@@ -93,8 +76,7 @@ export const Header = ({
         ) : (
           <SearchDrawer
             {...{
-              triggerSearch,
-              setSearchString,
+              updateSearchParameters,
               resetPageToZero,
               setDrawerOpen,
             }}
@@ -104,8 +86,7 @@ export const Header = ({
         <Filter
           handleChangeService={handleChangeService}
           handleChangeProvider={handleChangeProvider}
-          provider={providerState}
-          servicetype={servicetypeState}
+          searchParameters={searchParameters}
         />
       </div>
     </AppBar>

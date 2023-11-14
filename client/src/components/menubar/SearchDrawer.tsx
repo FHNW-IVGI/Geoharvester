@@ -1,19 +1,11 @@
 import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
-import {
-  PROVIDERTYPE,
-  SERVICE,
-  BREAKPOINT600,
-  BREAKPOINT1000,
-} from "src/constants";
 import { SearchField, SearchProps } from "./SearchField";
 import "../../styles.css";
 
 export const SearchDrawer = ({
-  triggerSearch,
-  setSearchString,
-  resetPageToZero,
+  updateSearchParameters,
   setDrawerOpen,
   drawerOpen,
 }: SearchProps & { drawerOpen: boolean }) => {
@@ -32,9 +24,7 @@ export const SearchDrawer = ({
           <SearchField
             fromDrawer
             {...{
-              triggerSearch,
-              setSearchString,
-              resetPageToZero,
+              updateSearchParameters,
               setDrawerOpen,
             }}
           />

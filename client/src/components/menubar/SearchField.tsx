@@ -5,25 +5,16 @@ import {
   InputAdornment,
   FormControl,
   Button,
-  styled,
   useTheme,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
-import { PROVIDERTYPE, SERVICE, BREAKPOINT1000 } from "src/constants";
+import { BREAKPOINT1000 } from "src/constants";
 import { useViewport } from "src/custom/ViewportHook";
-
-const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
+import { SearchParameters } from "src/types";
 
 export type SearchProps = {
-  triggerSearch: (
-    searchString: string | undefined,
-    servicetype: SERVICE | undefined,
-    provider: PROVIDERTYPE | undefined,
-    page: number
-  ) => void;
-  setSearchString: (searchString: string) => void;
-  resetPageToZero: () => void;
+  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
   setDrawerOpen: (state: boolean) => void;
 };
 
@@ -32,9 +23,7 @@ export type SearchFieldProps = {
 } & SearchProps;
 
 export const SearchField = ({
-  triggerSearch,
-  setSearchString,
-  resetPageToZero,
+  updateSearchParameters,
   setDrawerOpen,
   fromDrawer,
 }: SearchFieldProps) => {
@@ -70,7 +59,7 @@ export const SearchField = ({
         onChange={(e) => setLocalSearchString(e.target.value)}
         onKeyDown={(e) =>
           e.key === "Enter" &&
-          triggerSearch(localSearchString, undefined, undefined, page)
+          updateSearchParameters({ searchString: localSearchString, page: 0 })
         }
         startAdornment={
           <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
@@ -80,7 +69,6 @@ export const SearchField = ({
             <IconButton
               aria-label="clear search"
               onClick={() => {
-                setSearchString("");
                 setLocalSearchString("");
               }}
             >
@@ -93,9 +81,7 @@ export const SearchField = ({
         id="search-button"
         size="small"
         onClick={() => {
-          resetPageToZero();
-          setSearchString(localSearchString);
-          triggerSearch(localSearchString, undefined, undefined, page);
+          updateSearchParameters({ searchString: localSearchString, page: 0 });
           drawerEnabled && setDrawerOpen(false);
         }}
         sx={{

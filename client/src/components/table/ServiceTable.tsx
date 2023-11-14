@@ -14,16 +14,14 @@ import {
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Geoservice } from "../../types";
+import { Geoservice, SearchParameters } from "../../types";
 import { visuallyHidden } from "@mui/utils";
 import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
 import {
   DEFAULTCHUNKSIZE,
   DEFAULTPAGE,
-  PROVIDERTYPE,
   RESPONSESTATE,
-  SERVICE,
   BREAKPOINT600,
 } from "src/constants";
 import { useViewport } from "src/custom/ViewportHook";
@@ -31,6 +29,8 @@ import { PlaceholderWidget } from "./PlaceholderUI";
 import "../../styles.css";
 
 type TableProps = {
+  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
+  searchParameters: SearchParameters;
   docs: Geoservice[];
   responseState: RESPONSESTATE;
   fields: string[];
@@ -42,20 +42,13 @@ type TableProps = {
   setRowsPerPage: (size: number) => void;
   setPage: (page: number) => void;
   rowsPerPage: number;
-  triggerSearch: (
-    searchString: string | undefined,
-    servicetype: SERVICE | undefined,
-    provider: PROVIDERTYPE | undefined,
-    pageIndex: number
-  ) => void;
-  servicetypeState: SERVICE;
-  providerState: PROVIDERTYPE;
-  searchStringState: string;
 };
 
 type Order = "asc" | "desc";
 
 export const ServiceTable = ({
+  updateSearchParameters,
+  searchParameters,
   docs,
   responseState,
   fields,
@@ -66,17 +59,12 @@ export const ServiceTable = ({
   setPage,
   setRowsPerPage,
   rowsPerPage,
-  triggerSearch,
-  servicetypeState,
-  providerState,
-  searchStringState,
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
   const [tableRef, setTableReference] = useState<any>();
 
   const { width } = useViewport();
-  console.log(width < BREAKPOINT600);
 
   const theme = useTheme();
 
@@ -92,13 +80,8 @@ export const ServiceTable = ({
   ) => {
     const processedResults = rowsPerPage * newPage;
     if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
+      updateSearchParameters({ page: currentApiPage + 1 });
       setPage(0);
-      triggerSearch(
-        searchStringState,
-        servicetypeState,
-        providerState,
-        currentApiPage + 1 //
-      );
     } else {
       setPage(newPage);
     }
@@ -115,12 +98,8 @@ export const ServiceTable = ({
       processedResults <= DEFAULTCHUNKSIZE * currentApiPage &&
       processedResults > 0
     ) {
-      triggerSearch(
-        searchStringState,
-        servicetypeState,
-        providerState,
-        currentApiPage - 1
-      );
+      updateSearchParameters({ page: currentApiPage - 1 });
+
       setPage(Math.abs(pagesBeforeReload) - 1);
     } else {
       setPage(newPage);
@@ -130,7 +109,8 @@ export const ServiceTable = ({
 
   const handleSetPageZero = () => {
     if (currentApiPage > 0) {
-      triggerSearch(searchStringState, servicetypeState, providerState, 0);
+      // triggerSearch(searchStringState, servicetypeState, providerState, 0);
+      updateSearchParameters({ page: 0 });
     }
     setPage(0);
     scrollToTop();

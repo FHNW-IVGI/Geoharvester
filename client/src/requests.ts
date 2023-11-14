@@ -3,7 +3,7 @@ import axios from "axios";
 import { Geoservice } from "./types";
 import { parseQgisTemplate } from "./templateParser/qgisParser";
 import { parseArcgisWFS, parseArcgisWMSorWMTS } from "./templateParser/arcgisParser";
-import { LANG, SERVICE, DEFAULTCHUNKSIZE, PROVIDERTYPE } from "./constants";
+import { LANG, SERVICE, DEFAULTCHUNKSIZE, PROVIDER } from "./constants";
 
 
 const routes = {
@@ -16,11 +16,11 @@ const routes = {
     getQgisWMTS: "/templates/qgis_wmts_template.qlr",
 }
 
-export const getData = async (query_string: string, servicetype: SERVICE = SERVICE.NONE, providertype: PROVIDERTYPE = PROVIDERTYPE.NONE, lang: string = LANG.GER, pageParam: number = 0, size: number = DEFAULTCHUNKSIZE) => {
+export const getData = async (query_string: string, servicetype: SERVICE = SERVICE.NONE, providertype: PROVIDER = PROVIDER.NONE, lang: string = LANG.GER, pageParam: number = 0, size: number = DEFAULTCHUNKSIZE) => {
     const page = pageParam + 1 // FastAPI Pagination uses 1 as first index
     const offset = 0
     const service = servicetype === SERVICE.NONE ? "" : servicetype
-    const provider = providertype === PROVIDERTYPE.NONE ? "" : providertype
+    const provider = providertype === PROVIDER.NONE ? "" : providertype
     console.log("request", { query_string, service, provider, lang, offset, page, size })
     const response = await axios(routes.getData, { params: { query_string, service, provider, lang, offset, page, size } });
     console.log("response", response.data)

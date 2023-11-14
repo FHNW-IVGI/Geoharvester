@@ -4,10 +4,10 @@
  * 
  */
 
-import { PROVIDERTYPE, SERVICE } from "./constants";
+import { PROVIDER, SERVICE } from "./constants";
 
 export interface Geoservice {
-    provider: PROVIDERTYPE;
+    provider: PROVIDER;
     title: string;
     name: string;
     preview: string;
@@ -29,7 +29,7 @@ export interface Geoservice {
 }
 
 export interface Geodata {
-    provider: PROVIDERTYPE;
+    provider: PROVIDER;
     title: string;
     name: string;
     preview: string;
@@ -41,3 +41,10 @@ export interface Geodata {
     WFSGetCap: string;
 }
 
+export type SearchParameters = {
+    searchString: string;
+    service: SERVICE;
+    provider: PROVIDER;
+    page: number;
+
+}

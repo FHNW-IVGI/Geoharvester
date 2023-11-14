@@ -1,12 +1,9 @@
 import { SearchField, SearchProps } from "../menubar/SearchField";
 import Box from "@mui/material/Box";
-
 import "../../styles.css";
 
 export const FirstSearchUI = ({
-  triggerSearch,
-  setSearchString,
-  resetPageToZero,
+  updateSearchParameters,
   setDrawerOpen,
   fromDrawer,
 }: SearchProps & {
@@ -18,9 +15,7 @@ export const FirstSearchUI = ({
       <Box className="SearchBox" sx={{ width: 700 }}>
         <SearchField
           {...{
-            triggerSearch,
-            setSearchString,
-            resetPageToZero,
+            updateSearchParameters,
             setDrawerOpen,
             fromDrawer,
           }}

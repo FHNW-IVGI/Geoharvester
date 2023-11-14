@@ -14,7 +14,7 @@ export enum LANG {
 }
 export const DEFAULTLANGUAGE = LANG.GER;
 
-export enum PROVIDERTYPE {
+export enum PROVIDER {
     NONE = "Alle Quellen",
     BUND = "Bund",
     GEODIENSTE = "Geodienste",

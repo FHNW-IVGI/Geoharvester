@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ServiceTable } from "./components/table/ServiceTable";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Header } from "./components/menubar/Header";
-import { Geoservice } from "./types";
+import { Geoservice, SearchParameters } from "./types";
 import {
   DEFAULTLANGUAGE,
   DEFAULTOFFSET,
   DEFAULTPAGE,
-  PROVIDERTYPE,
+  PROVIDER,
   RESPONSESTATE,
   SERVICE,
   DEFAULTROWSPERPAGE,
@@ -57,39 +57,46 @@ function App() {
   const [currentApiPage, setCurrentApiPage] = useState(DEFAULTPAGE);
   const [size, setSize] = useState(DEFAULTROWSPERPAGE);
   const [offset, setOffset] = useState(DEFAULTOFFSET);
-  const [language, setLanguage] = useState(DEFAULTLANGUAGE);
-  const [searchStringState, setSearchString] = useState("");
-  const [servicetypeState, setServiceState] = useState<SERVICE>(SERVICE.NONE);
-  const [providerState, setProviderState] = useState<PROVIDERTYPE>(
-    PROVIDERTYPE.NONE
+
+  const defaultSearchParameter = {
+    searchString: "",
+    service: SERVICE.NONE,
+    provider: PROVIDER.NONE,
+    page: 0,
+  };
+
+  const [searchParameters, setSearchParameters] = useState<SearchParameters>(
+    defaultSearchParameter
   );
+
+  const updateSearchParameters = (parameter: Partial<SearchParameters>) => {
+    responseState === RESPONSESTATE.UNINITIALIZED &&
+      setResponseState(RESPONSESTATE.WAITING);
+    setSearchParameters({ ...searchParameters, ...parameter });
+  };
+
+  useEffect(() => {
+    responseState !== RESPONSESTATE.UNINITIALIZED && triggerSearch();
+  }, [
+    searchParameters.searchString,
+    searchParameters.provider,
+    searchParameters.service,
+    searchParameters.page,
+  ]);
 
   const [page, setPage] = useState<number>(0);
   const resetPageToZero = () => setPage(0);
 
-  const triggerSearch = async (
-    searchString: string | undefined,
-    servicetype: SERVICE | undefined,
-    provider: PROVIDERTYPE | undefined,
-    page: number,
-    offset?: number
-  ) => {
-    // Fall back to state if an argument is not provided
-    const queryParameter =
-      searchString === undefined ? searchStringState : searchString;
-
-    const svcParameter =
-      servicetype === undefined ? servicetypeState : servicetype;
-
-    const provParameter = provider === undefined ? providerState : provider;
+  const triggerSearch = async () => {
+    const { searchString, service, provider } = searchParameters;
 
     setResponseState(RESPONSESTATE.WAITING);
 
     await getData(
-      queryParameter,
-      svcParameter,
-      provParameter,
-      language,
+      searchString,
+      service,
+      provider,
+      DEFAULTLANGUAGE,
       page,
       DEFAULTCHUNKSIZE
     )
@@ -116,13 +123,8 @@ function App() {
       <Stack sx={{ height: "100vh" }}>
         <Header
           {...{
-            triggerSearch,
-            setServiceState,
-            servicetypeState,
-            setProviderState,
-            providerState,
-            setSearchString,
-            searchStringState,
+            updateSearchParameters,
+            searchParameters,
             resetPageToZero,
             responseState,
           }}
@@ -132,8 +134,8 @@ function App() {
             setDrawerOpen={() => false}
             fromDrawer={false}
             {...{
+              updateSearchParameters,
               triggerSearch,
-              setSearchString,
               resetPageToZero,
             }}
           />
@@ -144,17 +146,15 @@ function App() {
             rowsPerPage={size}
             setRowsPerPage={setSize}
             {...{
+              updateSearchParameters,
+              searchParameters,
               responseState,
-              triggerSearch,
-              providerState,
-              servicetypeState,
               page,
               setPage,
               offset,
               setOffset,
               total,
               currentApiPage,
-              searchStringState,
             }}
             page={page}
             setPage={setPage}

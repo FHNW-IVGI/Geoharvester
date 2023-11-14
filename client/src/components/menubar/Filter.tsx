@@ -5,9 +5,10 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { PROVIDERTYPE, SERVICE } from "src/constants";
+import { PROVIDER, SERVICE } from "src/constants";
 import "../../styles.css";
 import { getIcon } from "src/custom/getIcon";
+import { SearchParameters } from "src/types";
 
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
@@ -17,16 +18,18 @@ export type SearchBarProps = {
 type FilterProps = {
   handleChangeService: (event: SelectChangeEvent) => void;
   handleChangeProvider: (event: SelectChangeEvent) => void;
-  provider: PROVIDERTYPE;
-  servicetype: SERVICE;
+  searchParameters: SearchParameters;
+  // provider: PROVIDER;
+  // servicetype: SERVICE;
 };
 
 export const Filter = ({
   handleChangeService,
   handleChangeProvider,
-  provider,
-  servicetype,
-}: FilterProps) => {
+  searchParameters,
+}: // provider,
+// servicetype,
+FilterProps) => {
   const theme = useTheme();
 
   return (
@@ -44,7 +47,7 @@ export const Filter = ({
           autoComplete="off"
           labelId="select-provider-label"
           id="select-provider"
-          value={provider}
+          value={searchParameters.provider}
           onChange={handleChangeProvider}
           MenuProps={{
             PaperProps: {
@@ -62,14 +65,14 @@ export const Filter = ({
             color: theme.palette.primary.main,
           }}
         >
-          {(Object.values(PROVIDERTYPE) as PROVIDERTYPE[]).map((provider) => {
+          {(Object.values(PROVIDER) as PROVIDER[]).map((provider) => {
             return (
               <MenuItem
                 key={provider}
                 value={provider}
                 sx={{ display: "flex", alignItems: "center" }}
               >
-                {provider !== PROVIDERTYPE.NONE && (
+                {provider !== PROVIDER.NONE && (
                   <img
                     alt="sourceIcon"
                     src={getIcon(provider)}
@@ -90,7 +93,7 @@ export const Filter = ({
           autoComplete="off"
           labelId="select-service-label"
           id="select-service"
-          value={servicetype}
+          value={searchParameters.service}
           onChange={handleChangeService}
           style={{
             backgroundColor: theme.palette.secondary.main,
