@@ -201,7 +201,9 @@ export const ServiceTable = ({
                             direction={orderBy === col_header ? order : "desc"}
                             onClick={createSortHandler(col_header)}
                           >
-                            {commonCasedHeader}
+                            {width < BREAKPOINT600
+                              ? commonCasedHeader.slice(0, 8)
+                              : commonCasedHeader}
                             {orderBy === col_header ? (
                               <Box component="span" sx={visuallyHidden}>
                                 {order === "desc"

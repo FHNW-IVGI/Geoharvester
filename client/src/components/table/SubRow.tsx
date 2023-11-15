@@ -41,6 +41,8 @@ export const SubRow = ({
     "endpoint",
   ];
 
+  console.log(row);
+
   const routeObjectBuilder = () => {
     if (!row || !row.service) {
       return {
@@ -79,20 +81,30 @@ export const SubRow = ({
           padding: 0,
           boxShadow: "inset 0px 0px 6px 0px rgba(0, 0, 0, 0.15)",
         }}
-        colSpan={6}
+        colSpan={mobileMode ? 5 : 6}
       >
         <Collapse in={open} timeout="auto" unmountOnExit>
-          <Box sx={{ margin: 1 }}>
+          <Box
+            sx={{
+              margin: mobileMode ? 0 : 1,
+              // padding: mobileMode ? "15px -5px 5px 15px" : 0,
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                marginLeft: mobileMode ? -75 : -10,
+                marginLeft: mobileMode ? -70 : -10,
               }}
             >
               {rowsToInclude.map((prop) => (
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                  }}
+                >
+                  <div style={{ width: 180 }}>
                     <p
                       style={{
                         width: 140,
@@ -118,7 +130,12 @@ export const SubRow = ({
                   </div>
                 </div>
               ))}
-              <div style={{ display: "flex", flexDirection: "row" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
                 <div>
                   <p
                     style={{
@@ -135,7 +152,7 @@ export const SubRow = ({
                     color: "#909090",
                     display: "flex",
                     wordBreak: "break-word",
-                    marginLeft: -24,
+                    marginLeft: -90,
                   }}
                 >
                   <Tooltip title={row.preview} arrow>
@@ -177,7 +194,7 @@ export const SubRow = ({
                     color: "#909090",
                     display: "flex",
                     wordBreak: "break-word",
-                    marginLeft: -24,
+                    marginLeft: -90,
                   }}
                 >
                   <Tooltip title={row.legend} arrow>
@@ -197,7 +214,7 @@ export const SubRow = ({
               </div>
               <div
                 style={{
-                  marginLeft: 270,
+                  marginLeft: 200,
                   marginTop: 12,
                   marginBottom: 10,
                   display: "flex",
@@ -210,14 +227,14 @@ export const SubRow = ({
                   onClick={routeObjectBuilder().arcgis_handler}
                   startIcon={<DownloadIcon />}
                 >
-                  For ArcGIS Pro
+                  {mobileMode ? "ArcGIS" : "For ArcGIS Pro"}
                 </Button>
                 <Button
                   variant="outlined"
                   onClick={routeObjectBuilder().qgis_handler}
                   startIcon={<DownloadIcon />}
                 >
-                  For QGIS
+                  {mobileMode ? "QGIS" : " For QGIS"}
                 </Button>
               </div>
             </div>
