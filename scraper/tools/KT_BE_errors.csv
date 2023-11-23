@@ -1,2 +1,2 @@
 Timestamp,Operator,URL,Issue
-2023-11-22T01:38:49.339312+01:00,KT_BE,https://www.geoservice.apps.be.ch/geoservice2/services/a42geo/a42geo_versorgungwms_d_fk/MapServer/WMSServer?,"GET requested yielded HTTP response status code 404"
+2023-11-23T01:37:28.792624+01:00,KT_BE,https://www.geoservice.apps.be.ch/geoservice2/services/a42geo/a42geo_versorgungwms_d_fk/MapServer/WMSServer?,"GET requested yielded HTTP response status code 404"
