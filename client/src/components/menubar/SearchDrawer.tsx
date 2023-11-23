@@ -15,12 +15,15 @@ export const SearchDrawer = ({
         Suche
       </Button>
       <SwipeableDrawer
-        anchor="top"
+        anchor="bottom"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         onOpen={() => setDrawerOpen(true)}
       >
-        <Box className="SearchBox">
+        <Box
+          className="SearchBox"
+          sx={{ height: 72, backgroundColor: "#f0f0f0" }}
+        >
           <SearchField
             fromDrawer
             {...{
