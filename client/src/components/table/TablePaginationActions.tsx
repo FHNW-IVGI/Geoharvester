@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -8,6 +7,7 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 
 interface TablePaginationActionsProps {
+  mobileMode: boolean;
   count: number;
   page: number;
   currentApiPage: number;
@@ -40,6 +40,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
     currentApiPage,
     displayedRecordsStart,
     displayedRecordsEnd,
+    mobileMode,
   } = props;
 
   const handleBackButtonClick = (
@@ -61,7 +62,12 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
   };
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 3.5 }}>
+    <Box
+      sx={{
+        flexShrink: 0,
+        ml: mobileMode ? 0 : 3.5,
+      }}
+    >
       <IconButton
         onClick={handleFirstPageButtonClick}
         disabled={page === 0 && currentApiPage === 0}
@@ -91,13 +97,15 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
           <KeyboardArrowRight />
         )}
       </IconButton>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled
-        aria-label="first page"
-      >
-        {theme.direction === "ltr" ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
+      {!mobileMode && (
+        <IconButton
+          onClick={handleFirstPageButtonClick}
+          disabled
+          aria-label="first page"
+        >
+          {theme.direction === "ltr" ? <LastPageIcon /> : <FirstPageIcon />}
+        </IconButton>
+      )}
     </Box>
   );
 };

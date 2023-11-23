@@ -53,6 +53,7 @@ export const ServiceTable = ({
   const [tableRef, setTableReference] = useState<any>();
 
   const { width } = useViewport();
+  const mobileMode = width < BREAKPOINT600;
 
   const theme = useTheme();
 
@@ -201,7 +202,7 @@ export const ServiceTable = ({
                             direction={orderBy === col_header ? order : "desc"}
                             onClick={createSortHandler(col_header)}
                           >
-                            {width < BREAKPOINT600
+                            {mobileMode
                               ? commonCasedHeader.slice(0, 8)
                               : commonCasedHeader}
                             {orderBy === col_header ? (
@@ -233,7 +234,7 @@ export const ServiceTable = ({
                   index={index}
                   page={tablePage}
                   total={total}
-                  mobileMode={width < BREAKPOINT600}
+                  mobileMode={mobileMode}
                 />
               ))}
             </TableBody>
@@ -247,9 +248,8 @@ export const ServiceTable = ({
             >
               <TableRow>
                 <TablePagination
-                  sx={{ width: "100%" }}
                   rowsPerPageOptions={[20, 50, 100, 200]}
-                  colSpan={6}
+                  colSpan={mobileMode ? 5 : 6}
                   count={total}
                   rowsPerPage={rowsPerPage}
                   page={tablePage}
@@ -282,6 +282,7 @@ export const ServiceTable = ({
                       displayedRecordsStart={displayedRecordsStart}
                       displayedRecordsEnd={displayedRecordsEnd}
                       handleSetPageZero={handleSetPageZero}
+                      mobileMode={mobileMode}
                       {...props}
                     />
                   )}
