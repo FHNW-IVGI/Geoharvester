@@ -2,16 +2,14 @@ import {
   TableRow,
   TableCell,
   Collapse,
-  Box,
   Button,
   Tooltip,
   Table,
   TableBody,
   TableContainer,
 } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import { styled } from "@mui/material/styles";
-import { Geoservice } from "../../types";
-
 import {
   getArcgisproWFS,
   getArcgisproWMS,
@@ -20,7 +18,7 @@ import {
   getQgisWMS,
   getQgisWMTS,
 } from "../../requests";
-import DownloadIcon from "@mui/icons-material/Download";
+import { Geoservice } from "../../types";
 
 export const SubRow = ({
   row,
@@ -70,8 +68,6 @@ export const SubRow = ({
         };
   };
 
-  const tableMargin = mobileMode ? "0 0px 0 78px" : "0 0px 0 40px";
-
   const StyledTableRow = styled(TableRow)(() => ({
     "&": {
       backgroundColor: "#fdfdfd",
@@ -81,7 +77,7 @@ export const SubRow = ({
   const LeftAlignedTableCell = styled(TableCell)(() => ({
     "&": {
       borderBottom: "none",
-      padding: 0,
+      padding: "2px 0",
       color: "#909090",
     },
   }));
@@ -110,7 +106,12 @@ export const SubRow = ({
                 {rowsToInclude.map((prop) => (
                   <TableRow>
                     <FillerTableCell></FillerTableCell>
-                    <LeftAlignedTableCell style={{ width: "80px" }}>
+                    <LeftAlignedTableCell
+                      style={{
+                        width: mobileMode ? "80px" : "200px",
+                        marginTop: 5,
+                      }}
+                    >
                       {`${
                         prop.charAt(0).toUpperCase() +
                         prop.slice(1).toLocaleLowerCase()
@@ -130,9 +131,7 @@ export const SubRow = ({
                 ))}
                 <TableRow>
                   <FillerTableCell></FillerTableCell>
-                  <LeftAlignedTableCell style={{ width: "80px" }}>
-                    Mapgeo:
-                  </LeftAlignedTableCell>
+                  <LeftAlignedTableCell>Mapgeo:</LeftAlignedTableCell>
                   <LeftAlignedTableCell
                     colSpan={2}
                     style={{
@@ -190,8 +189,8 @@ export const SubRow = ({
                       variant="outlined"
                       style={{
                         marginRight: mobileMode ? 16 : 30,
-                        marginTop: mobileMode ? 6 : 1,
-                        marginBottom: mobileMode ? 6 : 1,
+                        marginTop: mobileMode ? 6 : 10,
+                        marginBottom: mobileMode ? 6 : 16,
                       }}
                       onClick={routeObjectBuilder().arcgis_handler}
                       startIcon={<DownloadIcon />}
