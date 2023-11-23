@@ -5,10 +5,11 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { PROVIDER, SERVICE } from "src/constants";
-import "../../styles.css";
+import { PROVIDER, SERVICE, BREAKPOINT600 } from "src/constants";
 import { getIcon } from "src/custom/getIcon";
 import { SearchParameters } from "src/types";
+import { useViewport } from "src/custom/ViewportHook";
+import "../../styles.css";
 
 export type SearchBarProps = {
   setSearchResult: (searchResult: any) => void;
@@ -19,18 +20,20 @@ type FilterProps = {
   handleChangeService: (event: SelectChangeEvent) => void;
   handleChangeProvider: (event: SelectChangeEvent) => void;
   searchParameters: SearchParameters;
-  // provider: PROVIDER;
-  // servicetype: SERVICE;
 };
 
 export const Filter = ({
   handleChangeService,
   handleChangeProvider,
   searchParameters,
-}: // provider,
-// servicetype,
-FilterProps) => {
+}: FilterProps) => {
   const theme = useTheme();
+
+  const { width } = useViewport();
+  const mobileMode = width < BREAKPOINT600;
+
+  const serviceText = mobileMode ? "Alle" : "Alle Services";
+  const providerText = mobileMode ? "Alle" : "Alle Quellen";
 
   return (
     <div
@@ -38,7 +41,6 @@ FilterProps) => {
         display: "flex",
         flexDirection: "row",
         justifyContent: "end",
-        marginRight: 10,
       }}
     >
       <FormControl variant="outlined">
@@ -63,6 +65,7 @@ FilterProps) => {
             textAlign: "center",
             height: 40,
             color: theme.palette.primary.main,
+            marginLeft: mobileMode ? 6 : 10,
           }}
         >
           {(Object.values(PROVIDER) as PROVIDER[]).map((provider) => {
@@ -81,7 +84,7 @@ FilterProps) => {
                     style={{ marginRight: 8 }}
                   />
                 )}
-                {provider}
+                {provider === PROVIDER.NONE ? providerText : provider}
               </MenuItem>
             );
           })}
@@ -100,12 +103,16 @@ FilterProps) => {
             textAlign: "center",
             height: 40,
             color: theme.palette.primary.main,
+            marginLeft: mobileMode ? 6 : 10,
+            marginRight: mobileMode ? 6 : 10,
           }}
         >
           {(Object.values(SERVICE) as SERVICE[]).map((servicetype) => {
             return (
               <MenuItem key={servicetype} value={servicetype}>
-                {servicetype === SERVICE.NONE ? "Alle Services" : servicetype}
+                {servicetype === SERVICE.NONE
+                  ? serviceText
+                  : servicetype.toUpperCase()}
               </MenuItem>
             );
           })}

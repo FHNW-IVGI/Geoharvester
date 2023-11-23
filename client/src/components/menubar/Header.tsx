@@ -5,7 +5,6 @@ import { Filter } from "./Filter";
 import {
   PROVIDER,
   SERVICE,
-  BREAKPOINT600,
   BREAKPOINT1000,
   RESPONSESTATE,
 } from "src/constants";
@@ -14,13 +13,12 @@ import { useTheme } from "@mui/material/styles";
 import { useViewport } from "src/custom/ViewportHook";
 import { SearchDrawer } from "./SearchDrawer";
 import { useState } from "react";
-import "../../styles.css";
 import { SearchParameters } from "src/types";
+import "../../styles.css";
 
 export type SearchBarProps = {
   updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
   searchParameters: SearchParameters;
-  // resetPageToZero: () => void;
   responseState: RESPONSESTATE;
 };
 
@@ -32,7 +30,6 @@ export const Header = ({
 }: SearchBarProps) => {
   const theme = useTheme();
   const { width } = useViewport();
-  // const page = 0; // a For search triggered by Menubar we always want to start from the first pagination page.
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleChangeService = (event: SelectChangeEvent) => {
@@ -69,7 +66,6 @@ export const Header = ({
             fromDrawer={false}
             {...{
               updateSearchParameters,
-              // resetPageToZero,
               setDrawerOpen,
             }}
           />
@@ -77,7 +73,6 @@ export const Header = ({
           <SearchDrawer
             {...{
               updateSearchParameters,
-              // resetPageToZero,
               setDrawerOpen,
             }}
             drawerOpen={drawerOpen}

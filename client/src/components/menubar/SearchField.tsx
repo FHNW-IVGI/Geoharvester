@@ -40,7 +40,6 @@ export const SearchField = ({
         flexDirection: "row",
         justifyContent: "center",
         flexGrow: 2,
-        padding: "0 4px",
       }}
       variant="standard"
     >
@@ -53,7 +52,7 @@ export const SearchField = ({
         value={localSearchString}
         style={{
           flexGrow: 2,
-          height: responsiveUI ? 54 : 40,
+          height: responsiveUI ? 56 : 40,
           backgroundColor: theme.palette.secondary.main,
         }}
         onChange={(e) => setLocalSearchString(e.target.value)}
@@ -86,7 +85,6 @@ export const SearchField = ({
         }}
         sx={{
           fontSize: 14,
-          marginLeft: 1,
         }}
         type="submit"
         variant="contained"

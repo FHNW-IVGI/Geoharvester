@@ -14,8 +14,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Geoservice, SearchParameters } from "../../types";
 import { visuallyHidden } from "@mui/utils";
+import { Geoservice, SearchParameters } from "../../types";
 import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
 import { DEFAULTCHUNKSIZE, RESPONSESTATE, BREAKPOINT600 } from "src/constants";
