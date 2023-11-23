@@ -5,6 +5,9 @@ import {
   Box,
   Button,
   Tooltip,
+  Table,
+  TableBody,
+  TableContainer,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Geoservice } from "../../types";
@@ -30,18 +33,18 @@ export const SubRow = ({
   index: number;
   mobileMode: boolean;
 }) => {
-  const rowsToInclude = [
-    "name",
-    "contact",
-    "abstract",
-    "tree",
-    "group",
-    "keywords",
-    "metadata",
-    "endpoint",
-  ];
-
-  console.log(row);
+  const rowsToInclude = mobileMode
+    ? ["name", "contact", "abstract", "keywords", "metadata"]
+    : [
+        "name",
+        "contact",
+        "abstract",
+        "tree",
+        "group",
+        "keywords",
+        "metadata",
+        "endpoint",
+      ];
 
   const routeObjectBuilder = () => {
     if (!row || !row.service) {
@@ -67,9 +70,26 @@ export const SubRow = ({
         };
   };
 
+  const tableMargin = mobileMode ? "0 0px 0 78px" : "0 0px 0 40px";
+
   const StyledTableRow = styled(TableRow)(() => ({
     "&": {
       backgroundColor: "#fdfdfd",
+    },
+  }));
+
+  const LeftAlignedTableCell = styled(TableCell)(() => ({
+    "&": {
+      borderBottom: "none",
+      padding: 0,
+      color: "#909090",
+    },
+  }));
+  const FillerTableCell = styled(TableCell)(() => ({
+    "&": {
+      borderBottom: "none",
+      padding: 0,
+      width: mobileMode ? 24 : 50,
     },
   }));
 
@@ -84,161 +104,112 @@ export const SubRow = ({
         colSpan={mobileMode ? 5 : 6}
       >
         <Collapse in={open} timeout="auto" unmountOnExit>
-          <Box
-            sx={{
-              margin: mobileMode ? 0 : 1,
-              // padding: mobileMode ? "15px -5px 5px 15px" : 0,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginLeft: mobileMode ? -70 : -10,
-              }}
-            >
-              {rowsToInclude.map((prop) => (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                  }}
-                >
-                  <div style={{ width: 180 }}>
-                    <p
-                      style={{
-                        width: 140,
-                        color: "#909090",
-                        margin: "0 24px 0 78px",
-                      }}
-                    >
+          <TableContainer>
+            <Table>
+              <TableBody>
+                {rowsToInclude.map((prop) => (
+                  <TableRow>
+                    <FillerTableCell></FillerTableCell>
+                    <LeftAlignedTableCell style={{ width: "80px" }}>
                       {`${
                         prop.charAt(0).toUpperCase() +
                         prop.slice(1).toLocaleLowerCase()
                       }:`}
-                    </p>
-                  </div>
-
-                  <div
+                    </LeftAlignedTableCell>
+                    <LeftAlignedTableCell
+                      colSpan={2}
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {row[prop as keyof Geoservice]}
+                    </LeftAlignedTableCell>
+                  </TableRow>
+                ))}
+                <TableRow>
+                  <FillerTableCell></FillerTableCell>
+                  <LeftAlignedTableCell style={{ width: "80px" }}>
+                    Mapgeo:
+                  </LeftAlignedTableCell>
+                  <LeftAlignedTableCell
+                    colSpan={2}
                     style={{
-                      color: "#909090",
                       display: "flex",
                       wordBreak: "break-word",
                     }}
                   >
-                    <p style={{ margin: 2 }}>{row[prop as keyof Geoservice]}</p>
-                  </div>
-                </div>
-              ))}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                <div>
-                  <p
+                    <Tooltip title={row.preview} arrow>
+                      <Button
+                        style={{ padding: 0 }}
+                        variant="text"
+                        onClick={() => window.open(row.preview)}
+                        disabled={
+                          row.preview === "n.a." ||
+                          row.preview === null ||
+                          row.preview === ""
+                        }
+                      >
+                        Service in MapGeo öffnen
+                      </Button>
+                    </Tooltip>
+                  </LeftAlignedTableCell>
+                </TableRow>
+                <TableRow>
+                  <FillerTableCell />
+                  <LeftAlignedTableCell>Legend:</LeftAlignedTableCell>
+                  <LeftAlignedTableCell
+                    colSpan={2}
                     style={{
-                      width: 140,
-                      color: "#909090",
-                      margin: "0 50px 0 78px",
+                      display: "flex",
+                      wordBreak: "break-word",
                     }}
                   >
-                    Mapgeo:
-                  </p>
-                </div>
-                <div
-                  style={{
-                    color: "#909090",
-                    display: "flex",
-                    wordBreak: "break-word",
-                    marginLeft: -90,
-                  }}
-                >
-                  <Tooltip title={row.preview} arrow>
+                    <Tooltip title={row.legend} arrow>
+                      <Button
+                        onClick={() => window.open(row.legend)}
+                        style={{ padding: 0 }}
+                        disabled={
+                          row.legend === "n.a." ||
+                          row.legend === null ||
+                          row.legend === ""
+                        }
+                      >
+                        Legende öffnen
+                      </Button>
+                    </Tooltip>
+                  </LeftAlignedTableCell>
+                </TableRow>
+                <TableRow>
+                  <FillerTableCell />
+                  <LeftAlignedTableCell></LeftAlignedTableCell>
+
+                  <LeftAlignedTableCell colSpan={2}>
                     <Button
-                      style={{ padding: 0 }}
-                      variant="text"
-                      onClick={() => window.open(row.preview)}
-                      disabled={
-                        row.preview === "n.a." ||
-                        row.preview === null ||
-                        row.preview === ""
-                      }
+                      variant="outlined"
+                      style={{
+                        marginRight: mobileMode ? 16 : 30,
+                        marginTop: mobileMode ? 6 : 1,
+                        marginBottom: mobileMode ? 6 : 1,
+                      }}
+                      onClick={routeObjectBuilder().arcgis_handler}
+                      startIcon={<DownloadIcon />}
                     >
-                      Service in MapGeo öffnen
+                      {mobileMode ? "ArcGIS" : "For ArcGIS Pro"}
                     </Button>
-                  </Tooltip>
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                <div>
-                  <p
-                    style={{
-                      width: 140,
-                      marginLeft: -24,
-                      color: "#909090",
-                      margin: "0 50px 0 78px",
-                    }}
-                  >
-                    Legend:
-                  </p>
-                </div>
-                <div
-                  style={{
-                    color: "#909090",
-                    display: "flex",
-                    wordBreak: "break-word",
-                    marginLeft: -90,
-                  }}
-                >
-                  <Tooltip title={row.legend} arrow>
                     <Button
-                      onClick={() => window.open(row.legend)}
-                      style={{ padding: 0 }}
-                      disabled={
-                        row.legend === "n.a." ||
-                        row.legend === null ||
-                        row.legend === ""
-                      }
+                      variant="outlined"
+                      onClick={routeObjectBuilder().qgis_handler}
+                      startIcon={<DownloadIcon />}
                     >
-                      Legende öffnen
+                      {mobileMode ? "QGIS" : " For QGIS"}
                     </Button>
-                  </Tooltip>
-                </div>
-              </div>
-              <div
-                style={{
-                  marginLeft: 200,
-                  marginTop: 12,
-                  marginBottom: 10,
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                <Button
-                  variant="outlined"
-                  style={{ marginRight: 30, marginLeft: -24 }}
-                  onClick={routeObjectBuilder().arcgis_handler}
-                  startIcon={<DownloadIcon />}
-                >
-                  {mobileMode ? "ArcGIS" : "For ArcGIS Pro"}
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={routeObjectBuilder().qgis_handler}
-                  startIcon={<DownloadIcon />}
-                >
-                  {mobileMode ? "QGIS" : " For QGIS"}
-                </Button>
-              </div>
-            </div>
-          </Box>
+                  </LeftAlignedTableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Collapse>
       </TableCell>
     </StyledTableRow>
