@@ -23,6 +23,7 @@ from collections import defaultdict
 from statistics import mean
 
 import configuration as config
+import utils
 import requests
 from owslib.wfs import WebFeatureService
 from owslib.wms import WebMapService
@@ -33,6 +34,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import BatchHttpRequest """
 import json
 import shutil
+import pandas as pd
 from datetime import datetime, timezone
 
 import httplib2
@@ -560,7 +562,6 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     # Add the detected dataset language (applied on title)
     language_dict = {'english':('EN', 'ENG'), 'french':('FR','FRA'), 'german':('DE','DEU'), 'italian':('IT','ITA')}
     raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'])][1], axis=1)
-    # WARNING: we can remove the lang_2 form the dataset as it is not used!
     raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'])][0], axis=1)
     # Check and add metadata quality
     raw_data = utils.check_metadata_quality(raw_data, search_word='nan',
@@ -572,7 +573,7 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     raw_data = raw_data.replace(to_replace="  ", value = " ", regex=True)
     raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
     # Save data as pickle for a faster reading/writing
-    raw_data.to_csv(output_folder+'/preprocessed_data.csv')
+    raw_data.to_pickle(output_folder+'/preprocessed_data.pkl')
 
 if __name__ == "__main__":
     """
@@ -594,7 +595,9 @@ if __name__ == "__main__":
            was aborted.
     4 Create dataset view and stats: Calls the write_dataset_info and 
       write_dataset_stats functions to generate the dataset files.
-    5 Logs and prints a message indicating that the scraper has completed.
+    5 Preprocess the data using NLP: Calls the preprocessing_NLP function
+      reading the csv, preprocessing the data and generating a pickle
+    6 Logs and prints a message indicating that the scraper has completed.
     """
     # Initialize and configure the logger
     logger = logging.getLogger("Scraping log")
@@ -670,6 +673,11 @@ if __name__ == "__main__":
 
     write_dataset_info(config.GEOSERVICES_CH_CSV,config.GEOSERVICES_CH_CSV)
 
-
     print("\nScraper run completed")
     logger.info("Scraper run completed")
+
+    preprocessing_NLP(config.GEOSERVICES_CH_CSV,
+                      os.path.split(config.GEOSERVICES_CH_CSV)[0])
+
+    print("\nNLP preprocessing completed")
+    logger.info("NLP preprocessing completed")

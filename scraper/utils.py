@@ -225,41 +225,6 @@ class TFIDF_BM25():
         return scores_idx, scores
 
 
-'''class KeywordsRake():
-    """
-    DEPRECATED!
-
-    The class contains all the functions to extract keywords from a text
-    using RAKE https://csurfer.github.io/rake-nltk/_build/html/index.html
-
-    """
-    def __init__(self) -> None:
-        self.keywords = []
-
-    def rake_keywords(self, text, score=False, keyword_length = 3):
-        """
-        Extracts the keywords from a text, returning 
-        """
-        lang = detect_language(text)
-        rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
-        rake_nltk.extract_keywords_from_text(text)
-        if score:
-            keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
-            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]# remove stop words and punctuation
-        else:
-            keywords = rake_nltk.get_ranked_phrases()# limit by number of results [:5]
-            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]# remove stop words and punctuation
-        return keywords
-        
-    def extract_keywords(self, texts, column='abstract', keyword_length=3, score=False):
-        self.index = texts.index.values
-        self.keywords = [self.rake_keywords(text, score=score, keyword_length=keyword_length)
-                        for text in texts[column].values.tolist()]
-        return self.keywords'''
-
-
 class LSI_LDA():
     """
     The class contains all the functions to summarize the text with Latent Semantic Analysis
@@ -637,11 +602,11 @@ class NLP_spacy():
 
 
 def check_metadata_quality(database, search_word='nan',
-                           search_columns=['abstract', 'keywords', 'contact', 'metadata'],
+                           search_columns=['abstract', 'keywords', 'metadata'],
                            case_sensitive=False):
     """
-    Calculate a metadata quality score
+    Calculate metadata quality score based on columns: abstract, keywords, metadata
     """
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
-    database['metaquality'] = mask.sum(axis=1)*25 # Scoring with 4 fields
+    database['metaquality'] = mask.sum(axis=1)*25 + 25 # Scoring with 4 fields
     return database

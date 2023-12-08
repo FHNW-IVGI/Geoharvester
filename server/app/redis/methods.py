@@ -85,7 +85,9 @@ def transform_wordlist_to_query(wordlist: list[str]):
     return query_string
 
 
-def redis_query_from_parameters(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, provider:str = ""):
+def redis_query_from_parameters(query_string: Union[str, None] = None, 
+                                service: EnumServiceType = EnumServiceType.none,
+                                provider:str = ""):
     """Build a query string based on the parameters provided.
     """
     queryable_parameters = []
@@ -140,8 +142,6 @@ def search_redis(redis_query, lang, offset, limit):
             .return_field('lang_3')
             .return_field('metaquality')
             )
-
-######################################################################################################################################
 
 def json_to_pandas(redis_output):
     """
@@ -241,6 +241,25 @@ def exact_match_scoring(df, cols, word, score):
     df.loc[mask, 'score'] += score
     return df
 
+def evaluate_metaquality(df, denominator):
+    """
+    Calculate the ranking score based on the metadata quality
+    # TODO: This function will be integrated into a class with different ranking methods
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Data frame in which we want to elaborate
+    denominator : int
+        number by which the metadata score mus be divisible
+
+    Returns
+    -------
+    _ : pd.DataFrame
+        dataframe with recalculated score column
+    """
+    df['score'] *= df['metaquality'] / denominator
+    return df
+
 def results_ranking(redis_output, query_words_list):
     """
     Ranks the results according to the assigned scores
@@ -266,18 +285,23 @@ def results_ranking(redis_output, query_words_list):
     query_results_df['score'] = 0
     query_results_df['inv_title_length'] = query_results_df['title'].apply(lambda x: 200 - len(x))
     query_results_df['metaquality'] = query_results_df['metaquality'].astype('int')
+    
     # Calculate the scores
-    for query_word in query_words_list:
-        print(query_word)
-        query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 7)
-        query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp', 'summary'], query_word, 2)
-        query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 10)
-        query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp', 'summary'], query_word, 5)
+    if query_words_list:
+        for query_word in query_words_list:
+            query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 4)
+            query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp'], query_word, 2)
+            query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 6)
+            query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp'], query_word, 3)
+            query_results_df = exact_match_scoring(query_results_df, ['summary'], query_word, 2)
+    else:
+        query_results_df['score'] = 1
+    query_results_df = evaluate_metaquality(query_results_df, 25)
 
     query_results_df.sort_values(by=['score', 'inv_title_length', 'title'], axis=0, inplace=True, ascending=False)
-    # replace nans with empty str
+    # replace nans with empty str for a cleaner visualisation
     query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
     t1 = time() # end time
-    # output the elapsed times for testing purposes
     ranked_results = pandas_to_dict(query_results_df)
+    print(f'ET: {t1-t0}')
     return ranked_results

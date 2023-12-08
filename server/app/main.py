@@ -4,11 +4,12 @@ import logging
 import os
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
-from pydantic import Field
+# from pydantic import Field
+# WARNING pydantic has a known incompatibility problem with fast api using the Field class!
 
 from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
@@ -52,7 +53,7 @@ else:
 
 # Pagination settings. Adjust FE table calculations accordingly when changing these!
 Page = Page.with_custom_options(
-    size=Field(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
+    size=Query(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
 )
 
 dataframe=None
@@ -122,15 +123,15 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         service: Service enum, either WMS, WMTS, WFS
     """
 
-    if (query_string == None or query_string == ""):
+    if (query_string is None or query_string == ""):
         redis_query = redis_query_from_parameters("", service, provider)
         fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
         redis_data = search_redis(redis_query, lang, 0, 40000)
-        return paginate(redis_data.docs)
+        ranked_results = results_ranking(redis_data.docs, None) # WARNING 101 seconds with no query
+        return paginate(ranked_results)
 
-
-    if (query_string != None and len(query_string) > 1):
+    elif (query_string is not None and len(query_string) > 1):
         word_list = split_search_string(query_string)
         text_query = transform_wordlist_to_query(word_list)
 
@@ -139,16 +140,14 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
 
         redis_data = search_redis(redis_query, lang, 0, 40000)
 
-        ############################################################################################################################
-        # Testing ranking function from the ranking functions in methods.py
-        # If you want the results from redis you can just set this section as comment
-
-        if (query_string != None and len(redis_data.docs) > 0):
-            # ranked_results = results_ranking(redis_data.docs, word_list)
-            return paginate(redis_data.docs)
+        if len(redis_data.docs) > 0:
+            ranked_results = results_ranking(redis_data.docs, word_list)
+            return paginate(ranked_results)
         else:
             pass
-        ############################################################################################################################ 
+    else:
+        print("Error...")
+
     return paginate([])
 
 add_pagination(app)
