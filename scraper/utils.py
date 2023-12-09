@@ -516,7 +516,7 @@ class NLP_spacy():
         self.index = texts.index.values
         # NOTE: score method not expected for the rake keywords
         if use_rake:
-            print('Wxtracting keywords with RAKE...')
+            print('Extracting keywords with RAKE...')
             keywords = [self.analyse_text_keywords(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
             # [self.topics.update(dataset[:num_keywords]) for dataset in datasets]
             # self.topics = list(self.topics)
@@ -593,12 +593,6 @@ class NLP_spacy():
         #summaries = [self.summarize(progress(i, text, len(texts)), use_GPT=use_GPT) for i, text in enumerate(texts[column].values.tolist())]
         summaries = [self.summarize(progress(text)) for text in tqdm(texts[column].values.tolist())]
         return summaries
-    
-    # INSPIRE / eCH classification with pytorch model...
-    # More trainingsdata needed! (one possibility is to use the data from Wmts.geo.admi.ch … WMTSCapabilities.xml)
-    # To find the category we will have to check the link to geocatalog (geocat) and use the id  of the link to 
-    # automate a search in geocat and retrieve the class.
-    # TODO
 
 
 def check_metadata_quality(database, search_word='nan',
@@ -610,3 +604,10 @@ def check_metadata_quality(database, search_word='nan',
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
     database['metaquality'] = mask.sum(axis=1)*25 + 25 # Scoring with 4 fields
     return database
+
+
+    # TODO
+    # INSPIRE / eCH classification with pytorch model...
+    # More trainingsdata needed! (one possibility is to use the data from Wmts.geo.admi.ch … WMTSCapabilities.xml)
+    # To find the category we will have to check the link to geocatalog (geocat) and use the id  of the link to 
+    # automate a search in geocat and retrieve the class.

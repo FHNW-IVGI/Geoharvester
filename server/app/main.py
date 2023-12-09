@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import warnings
 from typing import Union
 
 from fastapi import FastAPI, Query
@@ -9,7 +10,7 @@ from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
 # from pydantic import Field
-# WARNING pydantic has a known incompatibility problem with fast api using the Field class!
+# WARNING pydantic has a known incompatibility problem with fast api using the "Field" class!
 
 from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
@@ -21,6 +22,9 @@ from app.redis.methods import (create_index, drop_redis_db, ingest_data,
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                GeoserviceModel, geoservices_schema)
 from server.app.redis.redis_manager import r
+
+# filter package warnings
+warnings.simplefilter("ignore")
 
 origins = [
     # Adjust to your frontend localhost port if not default

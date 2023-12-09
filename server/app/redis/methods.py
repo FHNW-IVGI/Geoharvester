@@ -2,6 +2,7 @@
 import uuid
 from time import time
 from typing import Union
+from string import punctuation
 
 import pandas as pd
 from app.constants import EnumServiceType
@@ -9,6 +10,8 @@ from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query
+from nltk.stem import SnowballStemmer
+from langdetect import detect
 
 from server.app.redis.redis_manager import r
 
@@ -75,13 +78,78 @@ def ingest_data(json, KEY):
     return redis_size_after_ingest
 
 
+def detect_language(phrase):
+    """
+    Detects the language of a str using langdetect.
+
+    Parameters
+    ----------
+    phrase : str
+        String element to be elaborated
+    Returns
+    -------
+    _ : str
+        Detected language.
+    """
+    language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
+    try:
+        lang = language_dict[detect(phrase)]
+    except:
+        lang = 'english'
+    return lang
+
+
+def is_not_num(str) -> bool:
+    """
+    Tests if a str element contains a number and return True or False.
+    
+    Parameters
+    ----------
+    str : str
+          String element to be checked
+    Returns
+    -------
+    _ : False if numeric / True if text
+    """
+    try:
+        float(str)
+        return False
+    except ValueError:
+        return True
+
+
+def stemming_sentence(list_of_words):
+    """
+    Stems and cleans the words in a sentence returning a list
+    of cleaned words.
+
+    Parameters
+    ----------
+    sentence : [str, str]
+        List of str to be stemmed
+    Returns
+    -------
+    _ : list
+    """
+    if len(list_of_words) > 1:
+        lang = detect_language(' '.join(list_of_words))
+    else:
+        lang = detect_language(list_of_words)
+
+    stemmer = SnowballStemmer(lang)
+    words_cleaned_list = [stemmer.stem(word.lower()) for word in list_of_words
+                          if word.lower() not in list(punctuation) and is_not_num(word)]
+    return words_cleaned_list
+
+
 def transform_wordlist_to_query(wordlist: list[str]):
     """Whitespaces in redis queries are parsed as AND, thus this method adds pipes (|) to force OR logic.
        See: https://redis.io/docs/stack/search/reference/query_syntax/
     """
     query_string = ""
-    for index, word in enumerate(wordlist):
-        query_string += "{} | ".format(word+'*') if index < (len(wordlist)-1) else "{}".format(word+'*') # the * allows the contain opt
+    cleaned_wordlist = stemming_sentence(wordlist)
+    for index, word in enumerate(cleaned_wordlist):
+        query_string += "{} | ".format(word+'*') if index < (len(cleaned_wordlist)-1) else "{}".format(word+'*') # the * allows the contain opt
     return query_string
 
 
@@ -280,7 +348,6 @@ def results_ranking(redis_output, query_words_list):
     """
     t0 = time() # Start time
     query_results_df = json_to_pandas(redis_output)
-    print('ranking...')
     # initialize ranking score and the length counter
     query_results_df['score'] = 0
     query_results_df['inv_title_length'] = query_results_df['title'].apply(lambda x: 200 - len(x))
@@ -303,5 +370,5 @@ def results_ranking(redis_output, query_words_list):
     query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
     t1 = time() # end time
     ranked_results = pandas_to_dict(query_results_df)
-    print(f'ET: {t1-t0}')
+    print(f'ET ranking: {t1-t0}')
     return ranked_results
