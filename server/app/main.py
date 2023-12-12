@@ -9,7 +9,7 @@ from fastapi import FastAPI, Query
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
-# from pydantic import Field
+from pydantic import Field
 
 from time import time
 
@@ -58,7 +58,7 @@ else:
 
 # Pagination settings. Adjust FE table calculations accordingly when changing these!
 Page = Page.with_custom_options(
-    size=Query(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
+    size=Field(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
 )
 
 dataframe=None
@@ -133,7 +133,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
         redis_data = search_redis(redis_query, lang, 0, 40000)
-        print(f"Total ET query: {round((time()-t0),2)}")
+        # print(f"Total ET query: {round((time()-t0),2)}")
         return paginate(redis_data.docs)
 
     elif (query_string is not None and len(query_string) > 1):
@@ -147,7 +147,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
 
         if len(redis_data.docs) > 0:
             ranked_results = results_ranking(redis_data.docs, word_list)
-            print(f"Total ET query: {round((time()-t0),2)}")
+            # print(f"Total ET query: {round((time()-t0),2)}")
             return paginate(ranked_results)
         else:
             pass

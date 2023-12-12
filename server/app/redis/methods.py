@@ -346,7 +346,7 @@ def results_ranking(redis_output, query_words_list):
     _ : pd.DataFrame
         ranked data frame (descending)
     """
-    t0 = time() # Start time
+    t0 = time()
     query_results_df = json_to_pandas(redis_output)
     # initialize ranking score and the length counter
     query_results_df['score'] = 0
@@ -369,5 +369,5 @@ def results_ranking(redis_output, query_words_list):
     # Replace nans with empty str for a cleaner visualisation
     query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
     ranked_results = pandas_to_dict(query_results_df)
-    print(f'ET ranking: {round(time()-t0, 2)}')
+    # print(f'ET ranking: {round(time()-t0, 2)}')
     return ranked_results
