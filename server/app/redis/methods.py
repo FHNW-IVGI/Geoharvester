@@ -9,7 +9,7 @@ from app.constants import EnumServiceType
 from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
-from redis.commands.search.query import Query
+from redis.commands.search.query import Query, SortbyField
 from nltk.stem import SnowballStemmer
 from langdetect import detect
 
@@ -186,7 +186,8 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,
 
 def search_redis(redis_query, lang, offset, limit):
     return r.ft(SVC_INDEX_ID).search(Query(redis_query)
-            .language(lang)                                   
+            .sort_by('metaquality', asc=False)
+            .language(lang)                                 
             .paging(offset, 50000)
             .return_field('title')
             .return_field('abstract')
@@ -214,7 +215,6 @@ def search_redis(redis_query, lang, offset, limit):
 def json_to_pandas(redis_output):
     """
     Transforms the json-like output from redis into a pandas df.
-    # TODO: This function will be integrated into a class with different ranking methods
 
     Parameters
     ----------
@@ -241,7 +241,7 @@ def pandas_to_dict(ranked_results_df):
     """
     Transform the pandas dataframe into a json-like 
     output to be passed to the front-end.
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     ranked_results_df : pandas.DataFrame
@@ -261,7 +261,7 @@ def contains_match_scoring(df, cols, word, score):
     """
     Calculate the ranking score if a word is contained
     in a pandas data frame
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     df : pandas.DataFrame
@@ -287,7 +287,7 @@ def exact_match_scoring(df, cols, word, score):
     """
     Calculate the ranking score for an exact match of
     a word in a pandas data frame
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     df : pandas.DataFrame
@@ -312,7 +312,7 @@ def exact_match_scoring(df, cols, word, score):
 def evaluate_metaquality(df, denominator):
     """
     Calculate the ranking score based on the metadata quality
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     df : pandas.DataFrame
@@ -331,7 +331,7 @@ def evaluate_metaquality(df, denominator):
 def results_ranking(redis_output, query_words_list):
     """
     Ranks the results according to the assigned scores
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     redis_output : pd.DataFrame
@@ -366,9 +366,8 @@ def results_ranking(redis_output, query_words_list):
     query_results_df = evaluate_metaquality(query_results_df, 25)
 
     query_results_df.sort_values(by=['score', 'inv_title_length', 'title'], axis=0, inplace=True, ascending=False)
-    # replace nans with empty str for a cleaner visualisation
+    # Replace nans with empty str for a cleaner visualisation
     query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
-    t1 = time() # end time
     ranked_results = pandas_to_dict(query_results_df)
-    print(f'ET ranking: {t1-t0}')
+    print(f'ET ranking: {round(time()-t0, 2)}')
     return ranked_results

@@ -10,7 +10,8 @@ from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
 # from pydantic import Field
-# WARNING pydantic has a known incompatibility problem with fast api using the "Field" class!
+
+from time import time
 
 from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
@@ -126,14 +127,14 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         limit: Redis returns 10 results by default, allow more results to be returned
         service: Service enum, either WMS, WMTS, WFS
     """
-
+    t0 = time()
     if (query_string is None or query_string == ""):
         redis_query = redis_query_from_parameters("", service, provider)
         fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
         redis_data = search_redis(redis_query, lang, 0, 40000)
-        ranked_results = results_ranking(redis_data.docs, None) # WARNING 101 seconds with no query
-        return paginate(ranked_results)
+        print(f"Total ET query: {round((time()-t0),2)}")
+        return paginate(redis_data.docs)
 
     elif (query_string is not None and len(query_string) > 1):
         word_list = split_search_string(query_string)
@@ -146,6 +147,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
 
         if len(redis_data.docs) > 0:
             ranked_results = results_ranking(redis_data.docs, word_list)
+            print(f"Total ET query: {round((time()-t0),2)}")
             return paginate(ranked_results)
         else:
             pass
