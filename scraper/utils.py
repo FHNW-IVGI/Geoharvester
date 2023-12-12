@@ -141,7 +141,6 @@ def tokenize_abstract(text, output_scores=True, stem_words=True):
     sentences = sent_tokenize(text, language=detect_language(text))
     negative_sentences = {'english':'not contained', 'german':'nicht enthalten',
                         'italian':'non contenuti', 'french':'non contenu'}
-    # WARNING: The removal needs to be tested on the whole dataset, further negative forms could be possible contained!
     sentences_cleaned = [stemming_sentence(sentence, stem_words=stem_words) for sentence in sentences
                         if negative_sentences[detect_language(sentence)] not in sentence.lower()]
     if output_scores:
@@ -207,7 +206,6 @@ class TFIDF_BM25():
         _ : list, list
             Index of the dataset with positive score and the score list
         """
-        # FIXME: If the query contains more than one word, the abstract must contain all the words to be considered! (bug or feature?)
         document = super(TfidfVectorizer, self.vectorizer).transform(self.abstracts)
         doc_length = document.sum(1).A1
         query_cleaned = stemming_sentence(q)
@@ -372,7 +370,6 @@ class LSI_LDA():
         return vis
 
 
-# WARNING spacy is not good in detecting topcis for geodata but it can be useful to summarize texts or analyse the grammar
 class NLP_spacy():
     """
     The class uses Spacy and RAKE to extract and refine the keywords of a text using NLP.
@@ -514,7 +511,6 @@ class NLP_spacy():
             list of keywords
         """
         self.index = texts.index.values
-        # NOTE: score method not expected for the rake keywords
         if use_rake:
             print('Extracting keywords with RAKE...')
             keywords = [self.analyse_text_keywords(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
@@ -557,7 +553,7 @@ class NLP_spacy():
                 prompt='Riassumi questo testo'
             else:
                 prompt='Summarize this text'
-            openai.api_key = os.getenv('OPENAI_KEY') # WARNING: limits of tokens for free version!
+            openai.api_key = os.getenv('OPENAI_KEY')
             summarized_text = openai.Completion.create(model='text-davinci-003', prompt=f"{prompt}: {text}",
                                                        temperature=.2, max_tokens=1000,)["choices"][0]['text']
         else:
