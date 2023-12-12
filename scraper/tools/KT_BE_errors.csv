@@ -1,2 +1,0 @@
-Timestamp,Operator,URL,Issue
-2023-12-11T01:33:55.686959+01:00,KT_BE,https://www.geoservice.apps.be.ch/geoservice2/services/a42geo/a42geo_wirtschaftwms_d_fk/MapServer/WMSServer?,"'NoneType' object has no attribute 'identification'"
