@@ -2,13 +2,16 @@
 import json
 import logging
 import os
+import warnings
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
 from pydantic import Field
+
+from time import time
 
 from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
@@ -20,6 +23,9 @@ from app.redis.methods import (create_index, drop_redis_db, ingest_data,
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                GeoserviceModel, geoservices_schema)
 from server.app.redis.redis_manager import r
+
+# filter package warnings
+warnings.simplefilter("ignore")
 
 origins = [
     # Adjust to your frontend localhost port if not default
@@ -121,16 +127,16 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         limit: Redis returns 10 results by default, allow more results to be returned
         service: Service enum, either WMS, WMTS, WFS
     """
-
-    if (query_string == None or query_string == ""):
+    t0 = time()
+    if (query_string is None or query_string == ""):
         redis_query = redis_query_from_parameters("", service, provider)
         fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
         redis_data = search_redis(redis_query, lang, 0, 40000)
+        # print(f"Total ET query: {round((time()-t0),2)}")
         return paginate(redis_data.docs)
 
-
-    if (query_string != None and len(query_string) > 1):
+    elif (query_string is not None and len(query_string) > 1):
         word_list = split_search_string(query_string)
         text_query = transform_wordlist_to_query(word_list)
 
@@ -139,16 +145,15 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
 
         redis_data = search_redis(redis_query, lang, 0, 40000)
 
-        ############################################################################################################################
-        # Testing ranking function from the ranking functions in methods.py
-        # If you want the results from redis you can just set this section as comment
-
-        if (query_string != None and len(redis_data.docs) > 0):
-            # ranked_results = results_ranking(redis_data.docs, word_list)
-            return paginate(redis_data.docs)
+        if len(redis_data.docs) > 0:
+            ranked_results = results_ranking(redis_data.docs, word_list)
+            # print(f"Total ET query: {round((time()-t0),2)}")
+            return paginate(ranked_results)
         else:
             pass
-        ############################################################################################################################ 
+    else:
+        print("Error...")
+
     return paginate([])
 
 add_pagination(app)

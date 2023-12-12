@@ -2,13 +2,16 @@
 import uuid
 from time import time
 from typing import Union
+from string import punctuation
 
 import pandas as pd
 from app.constants import EnumServiceType
 from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
-from redis.commands.search.query import Query
+from redis.commands.search.query import Query, SortbyField
+from nltk.stem import SnowballStemmer
+from langdetect import detect
 
 from server.app.redis.redis_manager import r
 
@@ -75,17 +78,84 @@ def ingest_data(json, KEY):
     return redis_size_after_ingest
 
 
+def detect_language(phrase):
+    """
+    Detects the language of a str using langdetect.
+
+    Parameters
+    ----------
+    phrase : str
+        String element to be elaborated
+    Returns
+    -------
+    _ : str
+        Detected language.
+    """
+    language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
+    try:
+        lang = language_dict[detect(phrase)]
+    except:
+        lang = 'english'
+    return lang
+
+
+def is_not_num(str) -> bool:
+    """
+    Tests if a str element contains a number and return True or False.
+    
+    Parameters
+    ----------
+    str : str
+          String element to be checked
+    Returns
+    -------
+    _ : False if numeric / True if text
+    """
+    try:
+        float(str)
+        return False
+    except ValueError:
+        return True
+
+
+def stemming_sentence(list_of_words):
+    """
+    Stems and cleans the words in a sentence returning a list
+    of cleaned words.
+
+    Parameters
+    ----------
+    sentence : [str, str]
+        List of str to be stemmed
+    Returns
+    -------
+    _ : list
+    """
+    if len(list_of_words) > 1:
+        lang = detect_language(' '.join(list_of_words))
+    else:
+        lang = detect_language(list_of_words)
+
+    stemmer = SnowballStemmer(lang)
+    words_cleaned_list = [stemmer.stem(word.lower()) for word in list_of_words
+                          if word.lower() not in list(punctuation) and is_not_num(word)]
+    return words_cleaned_list
+
+
 def transform_wordlist_to_query(wordlist: list[str]):
     """Whitespaces in redis queries are parsed as AND, thus this method adds pipes (|) to force OR logic.
        See: https://redis.io/docs/stack/search/reference/query_syntax/
     """
     query_string = ""
-    for index, word in enumerate(wordlist):
-        query_string += "{} | ".format(word+'*') if index < (len(wordlist)-1) else "{}".format(word+'*') # the * allows the contain opt
+    cleaned_wordlist = stemming_sentence(wordlist)
+    for index, word in enumerate(cleaned_wordlist):
+        query_string += "{} | ".format(word+'*') if index < (len(cleaned_wordlist)-1) else "{}".format(word+'*') # the * allows the contain opt
     return query_string
 
 
-def redis_query_from_parameters(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, provider:str = ""):
+def redis_query_from_parameters(query_string: Union[str, None] = None, 
+                                service: EnumServiceType = EnumServiceType.none,
+                                provider:str = ""):
     """Build a query string based on the parameters provided.
     """
     queryable_parameters = []
@@ -116,7 +186,8 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,  service:
 
 def search_redis(redis_query, lang, offset, limit):
     return r.ft(SVC_INDEX_ID).search(Query(redis_query)
-            .language(lang)                                   
+            .sort_by('metaquality', asc=False)
+            .language(lang)                                 
             .paging(offset, 50000)
             .return_field('title')
             .return_field('abstract')
@@ -141,12 +212,9 @@ def search_redis(redis_query, lang, offset, limit):
             .return_field('metaquality')
             )
 
-######################################################################################################################################
-
 def json_to_pandas(redis_output):
     """
     Transforms the json-like output from redis into a pandas df.
-    # TODO: This function will be integrated into a class with different ranking methods
 
     Parameters
     ----------
@@ -173,7 +241,7 @@ def pandas_to_dict(ranked_results_df):
     """
     Transform the pandas dataframe into a json-like 
     output to be passed to the front-end.
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     ranked_results_df : pandas.DataFrame
@@ -193,7 +261,7 @@ def contains_match_scoring(df, cols, word, score):
     """
     Calculate the ranking score if a word is contained
     in a pandas data frame
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     df : pandas.DataFrame
@@ -219,7 +287,7 @@ def exact_match_scoring(df, cols, word, score):
     """
     Calculate the ranking score for an exact match of
     a word in a pandas data frame
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     df : pandas.DataFrame
@@ -241,10 +309,29 @@ def exact_match_scoring(df, cols, word, score):
     df.loc[mask, 'score'] += score
     return df
 
+def evaluate_metaquality(df, denominator):
+    """
+    Calculate the ranking score based on the metadata quality
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Data frame in which we want to elaborate
+    denominator : int
+        number by which the metadata score mus be divisible
+
+    Returns
+    -------
+    _ : pd.DataFrame
+        dataframe with recalculated score column
+    """
+    df['score'] *= df['metaquality'] / denominator
+    return df
+
 def results_ranking(redis_output, query_words_list):
     """
     Ranks the results according to the assigned scores
-    # TODO: This function will be integrated into a class with different ranking methods
+    
     Parameters
     ----------
     redis_output : pd.DataFrame
@@ -259,25 +346,28 @@ def results_ranking(redis_output, query_words_list):
     _ : pd.DataFrame
         ranked data frame (descending)
     """
-    t0 = time() # Start time
+    t0 = time()
     query_results_df = json_to_pandas(redis_output)
-    print('ranking...')
     # initialize ranking score and the length counter
     query_results_df['score'] = 0
     query_results_df['inv_title_length'] = query_results_df['title'].apply(lambda x: 200 - len(x))
     query_results_df['metaquality'] = query_results_df['metaquality'].astype('int')
+    
     # Calculate the scores
-    for query_word in query_words_list:
-        print(query_word)
-        query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 7)
-        query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp', 'summary'], query_word, 2)
-        query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 10)
-        query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp', 'summary'], query_word, 5)
+    if query_words_list:
+        for query_word in query_words_list:
+            query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 4)
+            query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp'], query_word, 2)
+            query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 6)
+            query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp'], query_word, 3)
+            query_results_df = exact_match_scoring(query_results_df, ['summary'], query_word, 2)
+    else:
+        query_results_df['score'] = 1
+    query_results_df = evaluate_metaquality(query_results_df, 25)
 
     query_results_df.sort_values(by=['score', 'inv_title_length', 'title'], axis=0, inplace=True, ascending=False)
-    # replace nans with empty str
+    # Replace nans with empty str for a cleaner visualisation
     query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
-    t1 = time() # end time
-    # output the elapsed times for testing purposes
     ranked_results = pandas_to_dict(query_results_df)
+    # print(f'ET ranking: {round(time()-t0, 2)}')
     return ranked_results

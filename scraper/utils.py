@@ -141,7 +141,6 @@ def tokenize_abstract(text, output_scores=True, stem_words=True):
     sentences = sent_tokenize(text, language=detect_language(text))
     negative_sentences = {'english':'not contained', 'german':'nicht enthalten',
                         'italian':'non contenuti', 'french':'non contenu'}
-    # WARNING: The removal needs to be tested on the whole dataset, further negative forms could be possible contained!
     sentences_cleaned = [stemming_sentence(sentence, stem_words=stem_words) for sentence in sentences
                         if negative_sentences[detect_language(sentence)] not in sentence.lower()]
     if output_scores:
@@ -207,7 +206,6 @@ class TFIDF_BM25():
         _ : list, list
             Index of the dataset with positive score and the score list
         """
-        # FIXME: If the query contains more than one word, the abstract must contain all the words to be considered! (bug or feature?)
         document = super(TfidfVectorizer, self.vectorizer).transform(self.abstracts)
         doc_length = document.sum(1).A1
         query_cleaned = stemming_sentence(q)
@@ -223,41 +221,6 @@ class TFIDF_BM25():
         scores = [round(score, 2) for score in scores if score != 0.0 and not np.isnan(score)]
         scores_idx = [self.index[i] for i in range(0, len(scores)) if scores[i] > 0]
         return scores_idx, scores
-
-
-'''class KeywordsRake():
-    """
-    DEPRECATED!
-
-    The class contains all the functions to extract keywords from a text
-    using RAKE https://csurfer.github.io/rake-nltk/_build/html/index.html
-
-    """
-    def __init__(self) -> None:
-        self.keywords = []
-
-    def rake_keywords(self, text, score=False, keyword_length = 3):
-        """
-        Extracts the keywords from a text, returning 
-        """
-        lang = detect_language(text)
-        rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
-        rake_nltk.extract_keywords_from_text(text)
-        if score:
-            keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
-            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]# remove stop words and punctuation
-        else:
-            keywords = rake_nltk.get_ranked_phrases()# limit by number of results [:5]
-            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]# remove stop words and punctuation
-        return keywords
-        
-    def extract_keywords(self, texts, column='abstract', keyword_length=3, score=False):
-        self.index = texts.index.values
-        self.keywords = [self.rake_keywords(text, score=score, keyword_length=keyword_length)
-                        for text in texts[column].values.tolist()]
-        return self.keywords'''
 
 
 class LSI_LDA():
@@ -407,7 +370,6 @@ class LSI_LDA():
         return vis
 
 
-# WARNING spacy is not good in detecting topcis for geodata but it can be useful to summarize texts or analyse the grammar
 class NLP_spacy():
     """
     The class uses Spacy and RAKE to extract and refine the keywords of a text using NLP.
@@ -549,9 +511,8 @@ class NLP_spacy():
             list of keywords
         """
         self.index = texts.index.values
-        # NOTE: score method not expected for the rake keywords
         if use_rake:
-            print('Wxtracting keywords with RAKE...')
+            print('Extracting keywords with RAKE...')
             keywords = [self.analyse_text_keywords(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
             # [self.topics.update(dataset[:num_keywords]) for dataset in datasets]
             # self.topics = list(self.topics)
@@ -592,7 +553,7 @@ class NLP_spacy():
                 prompt='Riassumi questo testo'
             else:
                 prompt='Summarize this text'
-            openai.api_key = os.getenv('OPENAI_KEY') # WARNING: limits of tokens for free version!
+            openai.api_key = os.getenv('OPENAI_KEY')
             summarized_text = openai.Completion.create(model='text-davinci-003', prompt=f"{prompt}: {text}",
                                                        temperature=.2, max_tokens=1000,)["choices"][0]['text']
         else:
@@ -628,20 +589,21 @@ class NLP_spacy():
         #summaries = [self.summarize(progress(i, text, len(texts)), use_GPT=use_GPT) for i, text in enumerate(texts[column].values.tolist())]
         summaries = [self.summarize(progress(text)) for text in tqdm(texts[column].values.tolist())]
         return summaries
-    
+
+
+def check_metadata_quality(database, search_word='nan',
+                           search_columns=['abstract', 'keywords', 'metadata'],
+                           case_sensitive=False):
+    """
+    Calculate metadata quality score based on columns: abstract, keywords, metadata
+    """
+    mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
+    database['metaquality'] = mask.sum(axis=1)*25 + 25 # Scoring with 4 fields
+    return database
+
+
+    # TODO
     # INSPIRE / eCH classification with pytorch model...
     # More trainingsdata needed! (one possibility is to use the data from Wmts.geo.admi.ch … WMTSCapabilities.xml)
     # To find the category we will have to check the link to geocatalog (geocat) and use the id  of the link to 
     # automate a search in geocat and retrieve the class.
-    # TODO
-
-
-def check_metadata_quality(database, search_word='nan',
-                           search_columns=['abstract', 'keywords', 'contact', 'metadata'],
-                           case_sensitive=False):
-    """
-    Calculate a metadata quality score
-    """
-    mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
-    database['metaquality'] = mask.sum(axis=1)*25 # Scoring with 4 fields
-    return database
