@@ -40,6 +40,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Download spacy models
+        run: |
+          python -m spacy download en_core_web_sm
+          python -m spacy download fr_core_news_sm
+          python -m spacy download de_core_news_sm
+          python -m spacy download it_core_news_sm
+
       - name: Run Python script
         run: |
           python scraper.py
