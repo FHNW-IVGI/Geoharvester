@@ -29,3 +29,17 @@ six==1.16.0
 typing_extensions==4.5.0
 uritemplate==4.1.1
 urllib3==1.26.12
+
+openai==0.27.0
+pandas==1.5.2
+pyLDAvis.gensim_models==3.4.0
+spacy==3.3.1 #and spacy-legacy 3.0.12 + pretrained models
+translators==5.5.6
+gensim==4.3.0
+
+langdetect==1.0.9
+nltk==3.7
+rake==1.0.6
+scipy==1.9.3
+scikit-learn==1.2.0
+bert-extractive-summarizer==0.10.1
