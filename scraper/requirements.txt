@@ -39,7 +39,7 @@ gensim==4.3.0
 
 langdetect==1.0.9
 nltk==3.7
-rake==1.0.6
+rake_nltk==1.0.6
 scipy==1.9.3
 scikit-learn==1.2.0
 bert-extractive-summarizer==0.10.1
