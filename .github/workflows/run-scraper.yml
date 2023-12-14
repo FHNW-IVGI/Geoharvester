@@ -47,6 +47,10 @@ jobs:
           python -m spacy download de_core_news_sm
           python -m spacy download it_core_news_sm
 
+      - name: Download nltk stopwords
+        run: |
+          python -m nltk.downloader all
+
       - name: Run Python script
         run: |
           python scraper.py
