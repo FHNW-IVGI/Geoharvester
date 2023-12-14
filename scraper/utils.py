@@ -583,7 +583,7 @@ class NLP_spacy():
         else:
             print('Summarizing text with Bert')
         self.index = texts.index.values
-        summaries = [self.summarize(progress(text)) for text in tqdm(texts[column].values.tolist())]
+        summaries = [self.summarize(progress(text)) for text in texts[column].values.tolist()]
         return summaries
 
 
