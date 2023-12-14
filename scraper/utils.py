@@ -440,10 +440,10 @@ class NLP_spacy():
         if score:
             keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
             keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]# remove stop words and punctuation
+                and w not in list(punctuation)]
         else:
             new_kws = []
-            keywords = rake_nltk.get_ranked_phrases()# limit by number of results [:5]
+            keywords = rake_nltk.get_ranked_phrases()
             for keyword in keywords:
                 # remove stop words and punctuation
                 new_kw = [w for w in word_tokenize(keyword) if w not in list(stopwords.words(lang)) and w not in list(punctuation)]
@@ -486,7 +486,6 @@ class NLP_spacy():
         positionals = [token.pos_ for token in dataset if not 
                       (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
         # refine the keywords using just the relevant ones
-        print('Finalizing the keywords with SpaCy...')
         pos_dict = dict(zip(words, positionals))
         cleaned_keywords = {' '.join(kw) for kw in keywords if any(pos_dict.get(w) in ['NOUN', 'PROPN', 'NUM'] for w in kw)}
         return list(cleaned_keywords)
@@ -514,15 +513,13 @@ class NLP_spacy():
         if use_rake:
             print('Extracting keywords with RAKE...')
             keywords = [self.analyse_text_keywords(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
-            # [self.topics.update(dataset[:num_keywords]) for dataset in datasets]
-            # self.topics = list(self.topics)
             self.topics = keywords
         else:
             print('Extracting keywords with SpaCy...')
             datasets = [self.fit_nlp(text) for text in texts[column].values.tolist()]
             for dataset in datasets:
                 self.topics.update(dataset[:num_keywords])
-            translator = str.maketrans('','', punctuation) # remove puntuation with a translator
+            translator = str.maketrans('','', punctuation)
             self.topics = [str(i).translate(translator) for i in list(self.topics) if len(i) > 2]
         return self.topics
 
@@ -586,7 +583,6 @@ class NLP_spacy():
         else:
             print('Summarizing text with Bert')
         self.index = texts.index.values
-        #summaries = [self.summarize(progress(i, text, len(texts)), use_GPT=use_GPT) for i, text in enumerate(texts[column].values.tolist())]
         summaries = [self.summarize(progress(text)) for text in tqdm(texts[column].values.tolist())]
         return summaries
 
