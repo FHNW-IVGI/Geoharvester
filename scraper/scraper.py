@@ -19,6 +19,7 @@ import os
 import re
 import sys
 import xml.etree.ElementTree as ET
+import warnings
 from collections import defaultdict
 from statistics import mean
 
@@ -36,11 +37,13 @@ import json
 import shutil
 import pandas as pd
 from datetime import datetime, timezone
+from time import time
 
 import httplib2
 import pytz
 
 # globals
+warnings.filterwarnings('ignore')
 sys.path.insert(0, config.SOURCE_SCRAPER_DIR)
 
 service_keys = (("WMSGetCap", "n.a."),
@@ -546,6 +549,7 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     column : str
         column of the dataframe to be used for the NLP preprocessing
     """
+    t0 = time()
     # Read the data
     raw_data = pd.read_csv(raw_data_path, usecols=["provider","title", "keywords", "abstract", "service", "endpoint", "preview"])
     raw_data = raw_data.fillna("nan") # needed for the preprocessing
@@ -556,24 +560,33 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
         keywords = ', '.join(kw for kw in keywords_list)
         return keywords
     raw_data['keywords_nlp'] = list(map(join_keywords, keywords_dataset))
+    t1 = time()
+    print(f"Keywords extracted succesfully in {t1-t0} seconds")
     # Summarize the abstracts and add them to the data
     summaries = NLP.summarize_texts(raw_data, column=column)
     raw_data['summary'] = summaries
+    t2 = time()
+    print(f"Abstracts summarized succesfully in {t2-t1} seconds")
     # Add the detected dataset language (applied on title)
     language_dict = {'english':('EN', 'ENG'), 'french':('FR','FRA'), 'german':('DE','DEU'), 'italian':('IT','ITA')}
     raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'])][1], axis=1)
     raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'])][0], axis=1)
+    t3 = time()
+    print(f"Languages detected succesfully in {t3-t2} seconds")
     # Check and add metadata quality
+    print(f"Adding metadata scores...")
     raw_data = utils.check_metadata_quality(raw_data, search_word='nan',
                                             search_columns=['abstract', 'keywords', 'metadata'],
                                             case_sensitive=False)
     # Characters cleaning for compatibility with redis
+    print(f"Cleaning up...")
     raw_data = raw_data.replace(to_replace="'", value="-", regex=True)
     raw_data = raw_data.replace(to_replace='\"', value="-", regex=True)
     raw_data = raw_data.replace(to_replace="  ", value = " ", regex=True)
     raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
     # Save data as pickle for a faster reading/writing
     raw_data.to_pickle(output_folder+'/preprocessed_data.pkl')
+    print(f"Preprocessed data saved in {output_folder+'/preprocessed_data.pkl'}")
 
 if __name__ == "__main__":
     """
