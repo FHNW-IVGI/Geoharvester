@@ -56,6 +56,7 @@ jobs:
           python scraper.py
         env: # Set the secrets as env var
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        timeout-minutes: 600
 
       # If main is protected (in repo settings) pushing will fail
       - name: Push log files to repo
