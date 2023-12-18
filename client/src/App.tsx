@@ -55,7 +55,7 @@ function App() {
   const [size, setSize] = useState(DEFAULTROWSPERPAGE);
 
   const defaultSearchParameter = {
-    searchString: "",
+    searchString: undefined, // Using an empty string would cause useEffect diffing to fail when searching without text
     service: SERVICE.NONE,
     provider: PROVIDER.NONE,
     page: 0,
@@ -87,7 +87,7 @@ function App() {
     setResponseState(RESPONSESTATE.WAITING);
 
     await getData(
-      searchString,
+      searchString as string,
       service,
       provider,
       DEFAULTLANGUAGE,

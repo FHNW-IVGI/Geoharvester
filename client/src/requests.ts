@@ -21,9 +21,7 @@ export const getData = async (query_string: string, servicetype: SERVICE = SERVI
     const offset = 0
     const service = servicetype === SERVICE.NONE ? "" : servicetype
     const provider = providertype === PROVIDER.NONE ? "" : providertype
-    console.log("request", { query_string, service, provider, lang, offset, page, size })
     const response = await axios(routes.getData, { params: { query_string, service, provider, lang, offset, page, size } });
-    console.log("response", response.data)
     const result = { ...response, data: { ...response.data, page: response.data.page - 1 } } // Translate back to zero indexed MUI value
     return result
 }

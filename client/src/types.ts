@@ -42,7 +42,7 @@ export interface Geodata {
 }
 
 export type SearchParameters = {
-    searchString: string;
+    searchString: string | undefined;
     service: SERVICE;
     provider: PROVIDER;
     page: number;

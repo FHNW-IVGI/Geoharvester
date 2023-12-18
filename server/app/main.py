@@ -3,15 +3,8 @@ import json
 import logging
 import os
 import warnings
-from typing import Union
-
-from fastapi import FastAPI, Query
-from fastapi.logger import logger as fastapi_logger
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_pagination import Page, add_pagination, paginate
-from pydantic import Field
-
 from time import time
+from typing import Union
 
 from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
@@ -22,6 +15,12 @@ from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                search_redis, transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                GeoserviceModel, geoservices_schema)
+from fastapi import FastAPI, Query
+from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import Page, add_pagination, paginate
+from pydantic import Field
+
 from server.app.redis.redis_manager import r
 
 # filter package warnings
@@ -127,6 +126,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         limit: Redis returns 10 results by default, allow more results to be returned
         service: Service enum, either WMS, WMTS, WFS
     """
+
     t0 = time()
     if (query_string is None or query_string == ""):
         redis_query = redis_query_from_parameters("", service, provider)
