@@ -155,57 +155,60 @@ export const SubRow = ({
                     </Tooltip>
                   </LeftAlignedTableCell>
                 </TableRow>
-                <TableRow>
-                  <FillerTableCell />
-                  <LeftAlignedTableCell>Legend:</LeftAlignedTableCell>
-                  <LeftAlignedTableCell
-                    colSpan={2}
-                    style={{
-                      display: "flex",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    <Tooltip title={row.legend} arrow>
-                      <Button
-                        onClick={() => window.open(row.legend)}
-                        style={{ padding: 0 }}
-                        disabled={
-                          row.legend === "n.a." ||
-                          row.legend === null ||
-                          row.legend === ""
-                        }
-                      >
-                        Legende öffnen
-                      </Button>
-                    </Tooltip>
-                  </LeftAlignedTableCell>
-                </TableRow>
-                <TableRow>
-                  <FillerTableCell />
-                  <LeftAlignedTableCell></LeftAlignedTableCell>
-
-                  <LeftAlignedTableCell colSpan={2}>
-                    <Button
-                      variant="outlined"
+                {!mobileMode && (
+                  <TableRow>
+                    <FillerTableCell />
+                    <LeftAlignedTableCell>Legend:</LeftAlignedTableCell>
+                    <LeftAlignedTableCell
+                      colSpan={2}
                       style={{
-                        marginRight: mobileMode ? 16 : 30,
-                        marginTop: mobileMode ? 6 : 10,
-                        marginBottom: mobileMode ? 6 : 16,
+                        display: "flex",
+                        wordBreak: "break-word",
                       }}
-                      onClick={routeObjectBuilder().arcgis_handler}
-                      startIcon={<DownloadIcon />}
                     >
-                      {mobileMode ? "ArcGIS" : "For ArcGIS Pro"}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={routeObjectBuilder().qgis_handler}
-                      startIcon={<DownloadIcon />}
-                    >
-                      {mobileMode ? "QGIS" : " For QGIS"}
-                    </Button>
-                  </LeftAlignedTableCell>
-                </TableRow>
+                      <Tooltip title={row.legend} arrow>
+                        <Button
+                          onClick={() => window.open(row.legend)}
+                          style={{ padding: 0 }}
+                          disabled={
+                            row.legend === "n.a." ||
+                            row.legend === null ||
+                            row.legend === ""
+                          }
+                        >
+                          Legende öffnen
+                        </Button>
+                      </Tooltip>
+                    </LeftAlignedTableCell>
+                  </TableRow>
+                )}
+                {!mobileMode && (
+                  <TableRow>
+                    <FillerTableCell />
+                    <LeftAlignedTableCell></LeftAlignedTableCell>
+                    <LeftAlignedTableCell colSpan={2}>
+                      <Button
+                        variant="outlined"
+                        style={{
+                          marginRight: 30,
+                          marginTop: 10,
+                          marginBottom: 16,
+                        }}
+                        onClick={routeObjectBuilder().arcgis_handler}
+                        startIcon={<DownloadIcon />}
+                      >
+                        For ArcGIS Pro
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={routeObjectBuilder().qgis_handler}
+                        startIcon={<DownloadIcon />}
+                      >
+                        For QGIS
+                      </Button>
+                    </LeftAlignedTableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
