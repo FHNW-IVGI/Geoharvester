@@ -10,7 +10,9 @@ import {
 import { Geoservice } from "../../types";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+
 import { SubRow } from "./SubRow";
+import { getIcon } from "src/custom/getIcon";
 import "../../styles.css";
 
 export const ServiceRow = ({
@@ -18,43 +20,39 @@ export const ServiceRow = ({
   index,
   page,
   total,
+  mobileMode,
 }: {
   row: Geoservice;
   index: number;
   page: number;
   total: number;
+  mobileMode: boolean;
 }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => setOpen(false), [page, total]);
 
-  const getIcon = () => {
-    const target =
-      row.provider === "Bund"
-        ? "ch"
-        : row.provider.slice(3, 5).toLocaleLowerCase();
-    return `/cantonIcons/${target}.svg`;
-  };
-
   const CenteredTableCell = styled(TableCell)(() => ({
     "&": {
-      width: 120,
-      padding: 8,
+      width: mobileMode ? 0 : 120,
+      padding: mobileMode ? 0 : 8,
       textAlign: "center",
     },
   }));
 
   const LeftAlignedTableCell = styled(TableCell)(() => ({
     "&": {
-      padding: 8,
+      padding: mobileMode ? 0 : 8,
       textAlign: "left",
     },
   }));
   const LeftAlignedTableCellMaxWidth = styled(TableCell)(() => ({
     "&": {
-      padding: 8,
+      // padding: 8,
+      padding: mobileMode ? 0 : 8,
+
       textAlign: "left",
-      minWidth: 180,
+      minWidth: mobileMode ? 60 : 180,
       wordBreak: "break-word",
     },
   }));
@@ -69,22 +67,27 @@ export const ServiceRow = ({
   return (
     <>
       <TableRow key={index} onClick={() => setOpen(!open)}>
-        <TableCell>
+        <CenteredTableCell>
           <IconButton
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
-            style={{ color: "#007CC3" }}
+            style={{ color: "#007CC3", padding: 0 }}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
-        </TableCell>
+        </CenteredTableCell>
         <LeftAlignedTableCellMaxWidth>{row.title}</LeftAlignedTableCellMaxWidth>
-        <LeftAlignedTableCell>{abstract}</LeftAlignedTableCell>
+        {!mobileMode && <LeftAlignedTableCell>{abstract}</LeftAlignedTableCell>}
         <CenteredTableCell>
           <Tooltip title={row.provider}>
             <Icon>
-              <img alt="sourceIcon" src={getIcon()} height={25} width={25} />
+              <img
+                alt="sourceIcon"
+                src={getIcon(row.provider)}
+                height={25}
+                width={25}
+              />
             </Icon>
           </Tooltip>
         </CenteredTableCell>
@@ -95,7 +98,7 @@ export const ServiceRow = ({
           </div>
         </CenteredTableCell>
       </TableRow>
-      <SubRow row={row} open={open} index={index} />
+      <SubRow row={row} open={open} index={index} mobileMode={mobileMode} />
     </>
   );
 };

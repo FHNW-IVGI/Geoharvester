@@ -1,30 +1,37 @@
-import { useState } from "react";
-import { ServiceTable } from "./components/results/ServiceTable";
+import { useEffect, useState } from "react";
+import { ServiceTable } from "./components/table/ServiceTable";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { MenuBar } from "./components/menubar/MenuBar";
-import { Box } from "@mui/material";
-import { Geoservice } from "./types";
+import { Header } from "./components/menubar/Header";
+import { Geoservice, SearchParameters } from "./types";
 import {
   DEFAULTLANGUAGE,
-  DEFAULTOFFSET,
-  DEFAULTPAGE,
-  PROVIDERTYPE,
+  PROVIDER,
   RESPONSESTATE,
   SERVICE,
   DEFAULTROWSPERPAGE,
   DEFAULTCHUNKSIZE,
 } from "./constants";
 import { getData } from "./requests";
+import { Footer } from "./components/Footer";
+import { Stack } from "@mui/material";
+import { FirstSearchUI } from "./components/table/FirstSearchUI";
 
 const theme = createTheme({
   palette: {
     primary: {
       main: "#007CC3",
-      contrastText: "#000000",
+      light: "#7FBDE1",
+      contrastText: "#ffffff",
     },
     secondary: {
-      main: "#7FBDE1",
-      contrastText: "#000000",
+      main: "#ffffff",
+
+      contrastText: "#007CC3",
+    },
+    info: {
+      main: "#E8E8E8",
+      light: "#C0C0C0",
+      contrastText: "#ffffff",
     },
   },
 });
@@ -42,44 +49,48 @@ function App() {
   const [responseState, setResponseState] = useState(
     RESPONSESTATE.UNINITIALIZED
   );
+
+  const [tablePage, setTablePage] = useState<number>(0); // Needed for the table UI and to dertermine when to make an API call
+  const [currentApiPage, setCurrentApiPage] = useState(0); // Page of the paginated API, different than the UI table page.
+  const [size, setSize] = useState(DEFAULTROWSPERPAGE);
+
+  const defaultSearchParameter = {
+    searchString: undefined, // Using an empty string would cause useEffect diffing to fail when searching without text
+    service: SERVICE.NONE,
+    provider: PROVIDER.NONE,
+    page: 0,
+  };
+
+  const [searchParameters, setSearchParameters] = useState<SearchParameters>(
+    defaultSearchParameter
+  );
   const { items, total } = searchResult;
 
-  const [currentApiPage, setCurrentApiPage] = useState(DEFAULTPAGE);
-  const [size, setSize] = useState(DEFAULTROWSPERPAGE);
-  const [offset, setOffset] = useState(DEFAULTOFFSET);
-  const [language, setLanguage] = useState(DEFAULTLANGUAGE);
-  const [searchStringState, setSearchString] = useState("");
-  const [servicetypeState, setServiceState] = useState<SERVICE>(SERVICE.NONE);
-  const [providerState, setProviderState] = useState<PROVIDERTYPE>(
-    PROVIDERTYPE.NONE
-  );
+  const updateSearchParameters = (parameter: Partial<SearchParameters>) => {
+    responseState === RESPONSESTATE.UNINITIALIZED &&
+      setResponseState(RESPONSESTATE.WAITING);
+    setSearchParameters({ ...searchParameters, ...parameter });
+  };
 
-  const [page, setPage] = useState<number>(0);
-  const resetPageToZero = () => setPage(0);
+  useEffect(() => {
+    responseState !== RESPONSESTATE.UNINITIALIZED && triggerSearch();
+  }, [
+    searchParameters.searchString,
+    searchParameters.provider,
+    searchParameters.service,
+    searchParameters.page,
+  ]);
 
-  const triggerSearch = async (
-    searchString: string | undefined,
-    servicetype: SERVICE | undefined,
-    provider: PROVIDERTYPE | undefined,
-    page: number,
-    offset?: number
-  ) => {
-    // Fall back to state if an argument is not provided
-    const queryParameter =
-      searchString === undefined ? searchStringState : searchString;
-
-    const svcParameter =
-      servicetype === undefined ? servicetypeState : servicetype;
-
-    const provParameter = provider === undefined ? providerState : provider;
+  const triggerSearch = async () => {
+    const { searchString, service, provider, page } = searchParameters;
 
     setResponseState(RESPONSESTATE.WAITING);
 
     await getData(
-      queryParameter,
-      svcParameter,
-      provParameter,
-      language,
+      searchString as string,
+      service,
+      provider,
+      DEFAULTLANGUAGE,
       page,
       DEFAULTCHUNKSIZE
     )
@@ -101,59 +112,43 @@ function App() {
       });
   };
 
-  const Footer = () => {
-    return (
-      <Box
-        sx={{
-          minHeight: "25px",
-          backgroundColor: "#7FBDE1",
-
-          color: "white",
-          textAlign: "center",
-        }}
-      >
-        © 2023 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut
-        Geomatik, FHNW und swisstopo
-      </Box>
-    );
-  };
-
   return (
     <ThemeProvider theme={theme}>
-      <section>
-        <header className="appheader">
-          <MenuBar
+      <Stack sx={{ height: "100vh" }}>
+        <Header
+          {...{
+            updateSearchParameters,
+            searchParameters,
+            responseState,
+          }}
+        />
+        {responseState === RESPONSESTATE.UNINITIALIZED ? (
+          <FirstSearchUI
+            setDrawerOpen={() => false}
+            fromDrawer={false}
             {...{
+              updateSearchParameters,
               triggerSearch,
-              setServiceState,
-              servicetypeState,
-              setProviderState,
-              providerState,
-              setSearchString,
-              searchStringState,
-              resetPageToZero,
             }}
           />
-        </header>
-        <ServiceTable
-          docs={items || []}
-          fields={[]}
-          total={total}
-          offset={offset}
-          currentApiPage={currentApiPage}
-          setOffset={setOffset}
-          setRowsPerPage={setSize}
-          rowsPerPage={size}
-          responseState={responseState}
-          triggerSearch={triggerSearch}
-          searchStringState={searchStringState}
-          providerState={providerState}
-          servicetypeState={servicetypeState}
-          page={page}
-          setPage={setPage}
-        />
+        ) : (
+          <ServiceTable
+            docs={items || []}
+            rowsPerPage={size}
+            setRowsPerPage={setSize}
+            {...{
+              updateSearchParameters,
+              searchParameters,
+              responseState,
+              total,
+              currentApiPage,
+            }}
+            tablePage={tablePage}
+            setTablePage={setTablePage}
+          />
+        )}
         <Footer />
-      </section>
+      </Stack>
     </ThemeProvider>
   );
 }

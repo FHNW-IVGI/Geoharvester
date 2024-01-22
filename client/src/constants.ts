@@ -1,8 +1,8 @@
 
-export const DEFAULTOFFSET = 0;
-export const DEFAULTPAGE = 0;
 export const DEFAULTCHUNKSIZE = 1000; // Chunk size retrieved with a single call from redis. Needs to match BE variable of same name!
 export const DEFAULTROWSPERPAGE = 100; // Items per page
+export const BREAKPOINT600 = 600; // Viewport breakpoint for small UI
+export const BREAKPOINT1000 = 1000; // Viewport breakpoint for small UI
 
 export enum LANG {
     GER = "german",
@@ -12,7 +12,7 @@ export enum LANG {
 }
 export const DEFAULTLANGUAGE = LANG.GER;
 
-export enum PROVIDERTYPE {
+export enum PROVIDER {
     NONE = "Alle Quellen",
     BUND = "Bund",
     GEODIENSTE = "Geodienste",

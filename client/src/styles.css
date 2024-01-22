@@ -1,4 +1,49 @@
-.appheader {
+@media all and (max-width: 1100px) {
+
+  /* Move Pagination UI for table */
+  .MuiTablePagination-spacer {
+    flex: none !important;
+  }
+}
+
+@media all and (max-width: 600px) {
+  #GeoharvesterLogo {
+    display: none;
+  }
+
+  .Dropdown {
+    min-width: 80px;
+  }
+}
+
+.PageWrapper {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #f0f0f0;
+  min-width: 50vw;
+}
+
+.SearchBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80 px;
+}
+
+#select-provider {
+  display: flex;
+  align-items: center;
+}
+
+tr th span {
+  color: white !important;
+}
+
+
+/* .appheader {
   display: flex;
   flex-direction: column;
   align-items: left;
@@ -155,4 +200,4 @@
 
 .x-100 {
   --value: 100%;
-}
+} */

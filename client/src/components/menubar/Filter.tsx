@@ -1,7 +1,14 @@
-import { FormControl } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { PROVIDERTYPE, SERVICE } from "src/constants";
+import {
+  FormControl,
+  useTheme,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
+import { PROVIDER, SERVICE, BREAKPOINT600 } from "src/constants";
+import { getIcon } from "src/custom/getIcon";
+import { SearchParameters } from "src/types";
+import { useViewport } from "src/custom/ViewportHook";
 import "../../styles.css";
 
 export type SearchBarProps = {
@@ -12,84 +19,105 @@ export type SearchBarProps = {
 type FilterProps = {
   handleChangeService: (event: SelectChangeEvent) => void;
   handleChangeProvider: (event: SelectChangeEvent) => void;
-  provider: PROVIDERTYPE;
-  servicetype: SERVICE;
+  searchParameters: SearchParameters;
 };
 
 export const Filter = ({
   handleChangeService,
   handleChangeProvider,
-  provider,
-  servicetype,
+  searchParameters,
 }: FilterProps) => {
+  const theme = useTheme();
+
+  const { width } = useViewport();
+  const mobileMode = width < BREAKPOINT600;
+
+  const serviceText = mobileMode ? "Alle" : "Alle Services";
+  const providerText = mobileMode ? "Alle" : "Alle Quellen";
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "row",
         justifyContent: "end",
-        width: 500,
       }}
     >
-      <FormControl
-        variant="outlined"
-        sx={{
-          minWidth: 140,
-          marginRight: 3,
-        }}
-      >
+      <FormControl variant="outlined">
         <Select
+          className="Dropdown"
           autoComplete="off"
           labelId="select-provider-label"
           id="select-provider"
-          value={provider}
+          value={searchParameters.provider}
           onChange={handleChangeProvider}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                display: "flex",
+                alignItem: "center",
+                height: "80vh",
+              },
+            },
+          }}
           style={{
-            backgroundColor: "white",
+            backgroundColor: theme.palette.secondary.main,
             textAlign: "center",
-            height: 32,
-            color: "#007CC3",
+            height: 40,
+            color: theme.palette.primary.main,
+            marginLeft: mobileMode ? 6 : 10,
           }}
         >
-          {(Object.values(PROVIDERTYPE) as PROVIDERTYPE[]).map((provider) => {
+          {(Object.values(PROVIDER) as PROVIDER[]).map((provider) => {
             return (
-              <MenuItem key={provider} value={provider}>
-                {provider}
+              <MenuItem
+                key={provider}
+                value={provider}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                {provider !== PROVIDER.NONE && (
+                  <img
+                    alt="sourceIcon"
+                    src={getIcon(provider)}
+                    height={25}
+                    width={25}
+                    style={{ marginRight: 8 }}
+                  />
+                )}
+                {provider === PROVIDER.NONE ? providerText : provider}
               </MenuItem>
             );
           })}
         </Select>
       </FormControl>
-      <FormControl
-        variant="outlined"
-        sx={{
-          minWidth: 140,
-        }}
-      >
+      <FormControl variant="outlined">
         <Select
+          className="Dropdown"
           autoComplete="off"
-          defaultValue={""}
           labelId="select-service-label"
           id="select-service"
-          value={servicetype}
+          value={searchParameters.service}
           onChange={handleChangeService}
           style={{
-            backgroundColor: "white",
+            backgroundColor: theme.palette.secondary.main,
             textAlign: "center",
-            height: 32,
-            color: "#007CC3",
+            height: 40,
+            color: theme.palette.primary.main,
+            marginLeft: mobileMode ? 6 : 10,
+            marginRight: mobileMode ? 6 : 10,
           }}
         >
           {(Object.values(SERVICE) as SERVICE[]).map((servicetype) => {
             return (
               <MenuItem key={servicetype} value={servicetype}>
-                {servicetype === SERVICE.NONE ? "Alle Services" : servicetype}
+                {servicetype === SERVICE.NONE
+                  ? serviceText
+                  : servicetype.toUpperCase()}
               </MenuItem>
             );
           })}
         </Select>
       </FormControl>
-      <div style={{ width: 20 }} />
     </div>
   );
 };

@@ -11,74 +11,56 @@ import {
   TableSortLabel,
   Paper,
   Box,
-  Typography,
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Geoservice } from "../../types";
 import { visuallyHidden } from "@mui/utils";
+import { Geoservice, SearchParameters } from "../../types";
 import { ServiceRow } from "./ServiceRow";
 import { TablePaginationActions } from "./TablePaginationActions";
-import {
-  DEFAULTCHUNKSIZE,
-  DEFAULTPAGE,
-  PROVIDERTYPE,
-  RESPONSESTATE,
-  SERVICE,
-} from "src/constants";
-import LinearProgress from "@mui/material/LinearProgress";
+import { DEFAULTCHUNKSIZE, RESPONSESTATE, BREAKPOINT600 } from "src/constants";
+import { useViewport } from "src/custom/ViewportHook";
+import { PlaceholderWidget } from "./PlaceholderUI";
+import "../../styles.css";
 
 type TableProps = {
+  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
   docs: Geoservice[];
   responseState: RESPONSESTATE;
-  fields: string[];
-  offset: number;
   total: number;
-  page: number;
   currentApiPage: number;
-  setOffset: (offset: number) => void;
   setRowsPerPage: (size: number) => void;
-  setPage: (page: number) => void;
+  tablePage: number;
+  setTablePage: (page: number) => void;
   rowsPerPage: number;
-  triggerSearch: (
-    searchString: string | undefined,
-    servicetype: SERVICE | undefined,
-    provider: PROVIDERTYPE | undefined,
-    pageIndex: number
-  ) => void;
-  servicetypeState: SERVICE;
-  providerState: PROVIDERTYPE;
-  searchStringState: string;
 };
 
 type Order = "asc" | "desc";
 
 export const ServiceTable = ({
+  updateSearchParameters,
   docs,
   responseState,
-  fields,
-  offset,
   total,
   currentApiPage,
-  page,
-  setPage,
+  tablePage,
+  setTablePage,
   setRowsPerPage,
   rowsPerPage,
-  triggerSearch,
-  servicetypeState,
-  providerState,
-  searchStringState,
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
   const [tableRef, setTableReference] = useState<any>();
+
+  const { width } = useViewport();
+  const mobileMode = width < BREAKPOINT600;
 
   const theme = useTheme();
 
   const scrollToTop = () => tableRef && tableRef.scrollIntoView();
 
   const displayedRecordsStart =
-    currentApiPage * DEFAULTCHUNKSIZE + page * rowsPerPage;
+    currentApiPage * DEFAULTCHUNKSIZE + tablePage * rowsPerPage;
   const displayedRecordsEnd = displayedRecordsStart + rowsPerPage;
 
   const handleChangePageForward = (
@@ -87,15 +69,10 @@ export const ServiceTable = ({
   ) => {
     const processedResults = rowsPerPage * newPage;
     if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
-      setPage(0);
-      triggerSearch(
-        searchStringState,
-        servicetypeState,
-        providerState,
-        currentApiPage + 1 //
-      );
+      updateSearchParameters({ page: currentApiPage + 1 });
+      setTablePage(0);
     } else {
-      setPage(newPage);
+      setTablePage(newPage);
     }
     scrollToTop();
   };
@@ -110,24 +87,21 @@ export const ServiceTable = ({
       processedResults <= DEFAULTCHUNKSIZE * currentApiPage &&
       processedResults > 0
     ) {
-      triggerSearch(
-        searchStringState,
-        servicetypeState,
-        providerState,
-        currentApiPage - 1
-      );
-      setPage(Math.abs(pagesBeforeReload) - 1);
+      updateSearchParameters({ page: currentApiPage - 1 });
+      setTablePage(Math.abs(pagesBeforeReload) - 1);
     } else {
-      setPage(newPage);
+      setTablePage(newPage);
     }
     scrollToTop();
   };
 
   const handleSetPageZero = () => {
     if (currentApiPage > 0) {
-      triggerSearch(searchStringState, servicetypeState, providerState, 0);
+      // Reset results
+      updateSearchParameters({ page: 0 });
     }
-    setPage(0);
+    // Reset UI is sufficent
+    setTablePage(0);
     scrollToTop();
   };
 
@@ -135,7 +109,7 @@ export const ServiceTable = ({
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(DEFAULTPAGE);
+    setTablePage(0);
   };
 
   const handleRequestSort = (
@@ -149,7 +123,7 @@ export const ServiceTable = ({
 
   const createSortHandler =
     (property: string) => (event: React.MouseEvent<unknown>) => {
-      handleRequestSort(event, property);
+      handleRequestSort(event, property.toLocaleLowerCase());
     };
 
   const sortedData = docs.sort((a: Geoservice, b: Geoservice) =>
@@ -164,65 +138,21 @@ export const ServiceTable = ({
 
   const CenteredTableCell = styled(TableCell)(() => ({
     "&": {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.primary.main,
       padding: "0 1px",
       textAlign: "center",
-      color: "white",
     },
   }));
   const LeftAlignedTableCell = styled(TableCell)(() => ({
     "&": {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.primary.main,
       padding: 8,
       textAlign: "left",
-      color: "white",
+      color: theme.palette.secondary.main,
     },
   }));
-
-  const StyledTableFooter = styled(TableFooter)(() => ({
-    "&": {
-      left: 0,
-      bottom: 0,
-      zIndex: 2,
-      position: "sticky",
-      backgroundColor: "white",
-    },
-  }));
-
-  const PlaceholderWidget = ({
-    placeholderText,
-  }: {
-    placeholderText?: string;
-  }) => (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-        flex: 1,
-      }}
-    >
-      {placeholderText ? (
-        <Typography variant="h3" component="h3" color="#C0C0C0">
-          {placeholderText}
-        </Typography>
-      ) : (
-        <div>
-          <Typography variant="h5" component="h3" color="#C0C0C0">
-            Suche...
-          </Typography>
-          <LinearProgress style={{ width: 300 }} />
-        </div>
-      )}
-    </div>
-  );
-
-  const columns = ["title", "abstract", "provider", "service", "metaquality"];
 
   switch (responseState) {
-    case RESPONSESTATE.UNINITIALIZED:
-      return <PlaceholderWidget placeholderText="Webservice suchen..." />;
     case RESPONSESTATE.EMPTY:
       return <PlaceholderWidget placeholderText="Keine Treffer..." />;
     case RESPONSESTATE.ERROR:
@@ -233,77 +163,108 @@ export const ServiceTable = ({
       return (
         <TableContainer
           component={Paper}
-          sx={{ cursor: "pointer", overflowX: "auto" }}
+          sx={{
+            cursor: "pointer",
+            overflowX: "auto",
+            marginTop: "50px",
+          }}
         >
           <Table stickyHeader aria-label="sticky table" ref={setTableReference}>
             <TableHead>
               <TableRow>
                 <CenteredTableCell></CenteredTableCell>
-                {columns.map((col_header, index) => {
-                  const commonCasedHeader =
-                    col_header.charAt(0).toUpperCase() +
-                    col_header.slice(1).toLocaleLowerCase();
-                  return index < 2 ? (
-                    <LeftAlignedTableCell key={index}>
-                      {commonCasedHeader}
-                    </LeftAlignedTableCell>
-                  ) : (
-                    <>
-                      <CenteredTableCell
-                        key={index}
-                        sortDirection={orderBy === col_header ? order : false}
-                      >
-                        <TableSortLabel
-                          style={{ color: "white" }}
-                          active={true}
-                          direction={orderBy === col_header ? order : "desc"}
-                          onClick={createSortHandler(col_header)}
+                <LeftAlignedTableCell>Title</LeftAlignedTableCell>
+                {width > BREAKPOINT600 && (
+                  <LeftAlignedTableCell>Abstract</LeftAlignedTableCell>
+                )}
+                {["Provider", "Service", "Metaquality"].map(
+                  (col_header, index) => {
+                    const commonCasedHeader =
+                      col_header.charAt(0).toUpperCase() +
+                      col_header.slice(1).toLocaleLowerCase();
+                    return (
+                      <>
+                        <CenteredTableCell
+                          key={index}
+                          sortDirection={orderBy === col_header ? order : false}
+                          sx={{ padding: "0 !important" }}
                         >
-                          {commonCasedHeader}
-                          {orderBy === col_header ? (
-                            <Box component="span" sx={visuallyHidden}>
-                              {order === "desc"
-                                ? "sorted descending"
-                                : "sorted ascending"}
-                              + ro
-                            </Box>
-                          ) : null}
-                        </TableSortLabel>
-                      </CenteredTableCell>
-                    </>
-                  );
-                })}
+                          <TableSortLabel
+                            sx={{
+                              "& .MuiTableSortLabel-icon": {
+                                color: "white !important",
+                              },
+                              "& .MuiTableSortLabel-root": {
+                                color: "white !important",
+                              },
+                            }}
+                            active={true}
+                            direction={orderBy === col_header ? order : "desc"}
+                            onClick={createSortHandler(col_header)}
+                          >
+                            {mobileMode
+                              ? commonCasedHeader.slice(0, 8)
+                              : commonCasedHeader}
+                            {orderBy === col_header ? (
+                              <Box component="span" sx={visuallyHidden}>
+                                {order === "desc"
+                                  ? "sorted descending"
+                                  : "sorted ascending"}
+                                + ro
+                              </Box>
+                            ) : null}
+                          </TableSortLabel>
+                        </CenteredTableCell>
+                      </>
+                    );
+                  }
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
               {(rowsPerPage > 0
                 ? sortedData.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
+                    tablePage * rowsPerPage,
+                    tablePage * rowsPerPage + rowsPerPage
                   )
                 : sortedData
               ).map((row, index) => (
-                <ServiceRow row={row} index={index} page={page} total={total} />
+                <ServiceRow
+                  row={row}
+                  index={index}
+                  page={tablePage}
+                  total={total}
+                  mobileMode={mobileMode}
+                />
               ))}
             </TableBody>
-            <StyledTableFooter>
+            <TableFooter
+              sx={{
+                position: "sticky",
+                bottom: 0,
+                zIndex: 20,
+                backgroundColor: theme.palette.secondary.main,
+              }}
+            >
               <TableRow>
                 <TablePagination
                   rowsPerPageOptions={[20, 50, 100, 200]}
-                  colSpan={6}
+                  colSpan={mobileMode ? 5 : 6}
                   count={total}
                   rowsPerPage={rowsPerPage}
-                  page={page}
+                  page={tablePage}
                   labelDisplayedRows={({
                     from,
                     to,
                     count,
                     page,
                   }): React.ReactNode => {
-                    return `${displayedRecordsStart}–${Math.min(
-                      total,
-                      displayedRecordsEnd
-                    )} of ${count !== -1 ? count : `more than ${to}`}`;
+                    return width > BREAKPOINT600
+                      ? `${displayedRecordsStart}–${Math.min(
+                          total,
+                          displayedRecordsEnd
+                        )} of ${count !== -1 ? count : `more than ${to}`}`
+                      : "";
                   }}
                   SelectProps={{
                     inputProps: {
@@ -321,12 +282,13 @@ export const ServiceTable = ({
                       displayedRecordsStart={displayedRecordsStart}
                       displayedRecordsEnd={displayedRecordsEnd}
                       handleSetPageZero={handleSetPageZero}
+                      mobileMode={mobileMode}
                       {...props}
                     />
                   )}
                 />
               </TableRow>
-            </StyledTableFooter>
+            </TableFooter>
           </Table>
         </TableContainer>
       );
