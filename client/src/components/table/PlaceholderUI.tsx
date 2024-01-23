@@ -33,7 +33,10 @@ export const PlaceholderWidget = ({
             component="h3"
             color={theme.palette.info.light}
           >
-            <FormattedMessage id="placeholder.text" defaultMessage="Suche..." />
+            <FormattedMessage
+              id="placeholder.search"
+              defaultMessage="Suche..."
+            />
           </Typography>
           <LinearProgress sx={{ width: 300 }} />
         </div>

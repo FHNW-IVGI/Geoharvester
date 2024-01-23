@@ -41,10 +41,10 @@ export enum PROVIDER {
 }
 
 export enum SERVICE {
+    NONE = "Alle Services",
     WFS = "wfs",
     WMS = "wms",
-    WMTS = "wmts",
-    NONE = "Alle Services"
+    WMTS = "wmts"
 }
 
 export enum RESPONSESTATE {

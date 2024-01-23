@@ -3,6 +3,17 @@
     "menu.api": "API",
     "menu.impressum": "Impressum",
     "search.searchButton": "Suchen",
-    "placeholder.text": "Suche...",
-    "footer.impressum": "© 2023 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut Geomatik, FHNW und swisstopo"
+    "search.inputPlaceholder": "Webservices suchen...",
+    "placeholder.search": "Suchen...",
+    "placeholder.noResults": "Keine Treffer...",
+    "placeholder.error": "Error...",
+    "footer.impressum": "© 2023 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut Geomatik, FHNW und swisstopo",
+    "table.header.title": "Titel",
+    "table.header.abstract": "Auszug",
+    "table.header.provider": "Anbieter",
+    "table.header.service": "Dienst",
+    "table.header.metaquality": "Metaqualität",
+    "dropdown.service": "Alle Services",
+    "dropdown.provider": "Alle Quellen",
+    "dropdown.mobile": "Alle"
 }
