@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { ImpressumDialog } from "../ImpressumDialog";
-import { IconButton, Menu, Divider, useTheme, Box } from "@mui/material";
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Divider,
+  useTheme,
+  Box,
+} from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import MenuIcon from "@mui/icons-material/Menu";
 import DescriptionIcon from "@mui/icons-material/Description";
-import MenuItem from "@mui/material/MenuItem";
 import TerminalIcon from "@mui/icons-material/Terminal";
-import "../../styles.css";
+import { FormattedMessage } from "react-intl";
 import geoharvesterLogo from "./logo.png";
+import "../../styles.css";
 
 export const MenuComponent = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -62,7 +69,10 @@ export const MenuComponent = () => {
           }}
         >
           <DescriptionIcon style={{ marginRight: 14 }} />
-          Documentation
+          <FormattedMessage
+            id="menu.documentation"
+            defaultMessage="Dokumentation"
+          />
         </MenuItem>
         <Divider />
         <MenuItem
@@ -72,12 +82,12 @@ export const MenuComponent = () => {
           }}
         >
           <TerminalIcon style={{ marginRight: 14 }} />
-          API
+          <FormattedMessage id="menu.api" defaultMessage="API" />
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClickOpenImpressum}>
           <InfoIcon style={{ marginRight: 14 }} />
-          Impressum
+          <FormattedMessage id="menu.impressum" defaultMessage="Impressum" />
         </MenuItem>
       </Menu>
 

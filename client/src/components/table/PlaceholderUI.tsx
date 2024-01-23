@@ -1,5 +1,6 @@
 import { Typography, useTheme } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
+import { FormattedMessage } from "react-intl";
 
 export const PlaceholderWidget = ({
   placeholderText,
@@ -32,7 +33,7 @@ export const PlaceholderWidget = ({
             component="h3"
             color={theme.palette.info.light}
           >
-            Suche...
+            <FormattedMessage id="placeholder.text" defaultMessage="Suche..." />
           </Typography>
           <LinearProgress sx={{ width: 300 }} />
         </div>

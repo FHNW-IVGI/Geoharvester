@@ -1,0 +1,9 @@
+{
+    "menu.documentation": "Documentation",
+    "menu.api": "API",
+    "menu.impressum": "Impressum",
+    "search.searchButton": "Search",
+    "search.inputPlaceholder": "Search for webservices...",
+    "placeholder.text": "Search...",
+    "footer.impressum": "© 2023 GeoHarvester | A project collaboration of the Institute for Geomatics, FHNW with swisstopo"
+}
