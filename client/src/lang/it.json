@@ -1,5 +1,19 @@
 {
-    "app.header": "Edit the files and save to reload",
-    "app.content": "Learn React",
-    "app.channel.plug": "Tutorial brought to you by Lokalise"
+    "menu.documentation": "Documentazione",
+    "menu.api": "API",
+    "menu.impressum": "Impressum",
+    "search.searchButton": "Cerca",
+    "search.inputPlaceholder": "Cercare Webservices...",
+    "placeholder.search": "Sto cercando...",
+    "placeholder.noResults": "Nessuna corrispondenza...",
+    "placeholder.error": "Errore...",
+    "footer.impressum": "© 2023 GeoHarvester | Un progetto in collaborazione con l'Istituto di Geomatica, FHNW e swisstopo",
+    "table.header.title": "Titolo",
+    "table.header.abstract": "Descrizione",
+    "table.header.provider": "Fornitore",
+    "table.header.service": "Servizio",
+    "table.header.metaquality": "Qualità dei metadati",
+    "dropdown.service": "Tutti i servizi",
+    "dropdown.provider": "Tutti i fornitori",
+    "dropdown.mobile": "Tutti"
 }
