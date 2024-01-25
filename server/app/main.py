@@ -6,8 +6,7 @@ import warnings
 from time import time
 from typing import Union
 
-from app.constants import (DEFAULTSIZE, EnumLangType, EnumProviderType,
-                           EnumServiceType)
+from app.constants import DEFAULTSIZE, EnumProviderType, EnumServiceType
 from app.processing.methods import (import_csv_into_dataframe,
                                     import_pkl_into_dataframe,
                                     split_search_string)
@@ -106,8 +105,19 @@ async def root():
 
     return {"message": "running"}
 
+@app.get("/api/getDataById/{id}")
+async def get_data_by_id(id: str):
+    """Get a single dataset by its id
+    """
+    if(id == None):
+        return
+    dataset_id = id.strip().removeprefix('"').removesuffix('"')
+    redis_data = r.json().get(dataset_id)
+    return redis_data
+
+
 @app.get("/api/getData", response_model=Page[GeoserviceModel])
-async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, provider:EnumProviderType = EnumProviderType.none, lang: EnumLangType = EnumLangType.de, page: int = 0, limit: int = 1000):
+async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, provider:EnumProviderType = EnumProviderType.none, lang: str = "german", page: int = 0, limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
         service: Service filter - wms, wmts, wfs

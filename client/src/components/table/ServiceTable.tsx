@@ -21,8 +21,6 @@ import { TablePaginationActions } from "./TablePaginationActions";
 import { DEFAULTCHUNKSIZE, RESPONSESTATE, BREAKPOINT600 } from "src/constants";
 import { useViewport } from "src/custom/ViewportHook";
 import { PlaceholderWidget } from "./PlaceholderUI";
-import { FormattedMessage, useIntl } from "react-intl";
-
 import "../../styles.css";
 
 type TableProps = {
@@ -58,7 +56,6 @@ export const ServiceTable = ({
   const mobileMode = width < BREAKPOINT600;
 
   const theme = useTheme();
-  const intl = useIntl();
 
   const scrollToTop = () => tableRef && tableRef.scrollIntoView();
 
@@ -157,23 +154,9 @@ export const ServiceTable = ({
 
   switch (responseState) {
     case RESPONSESTATE.EMPTY:
-      return (
-        <PlaceholderWidget
-          placeholderText={intl.formatMessage({
-            id: "placeholder.noResults",
-            defaultMessage: "Keine Treffer...",
-          })}
-        />
-      );
+      return <PlaceholderWidget placeholderText="Keine Treffer..." />;
     case RESPONSESTATE.ERROR:
-      return (
-        <PlaceholderWidget
-          placeholderText={intl.formatMessage({
-            id: "placeholder.error",
-            defaultMessage: "Error",
-          })}
-        />
-      );
+      return <PlaceholderWidget placeholderText="Error..." />;
     case RESPONSESTATE.WAITING:
       return <PlaceholderWidget />;
     case RESPONSESTATE.SUCCESS:
@@ -190,75 +173,52 @@ export const ServiceTable = ({
             <TableHead>
               <TableRow>
                 <CenteredTableCell></CenteredTableCell>
-                <LeftAlignedTableCell>
-                  <FormattedMessage
-                    id="table.header.title"
-                    defaultMessage="Title"
-                  />
-                </LeftAlignedTableCell>
+                <LeftAlignedTableCell>Title</LeftAlignedTableCell>
                 {width > BREAKPOINT600 && (
-                  <LeftAlignedTableCell>
-                    <FormattedMessage
-                      id="table.header.abstract"
-                      defaultMessage="Abstract"
-                    />
-                  </LeftAlignedTableCell>
+                  <LeftAlignedTableCell>Abstract</LeftAlignedTableCell>
                 )}
-                {[
-                  {
-                    col_header: intl.formatMessage({
-                      id: "table.header.provider",
-                      defaultMessage: "Anbieter",
-                    }),
-                  },
-                  {
-                    col_header: intl.formatMessage({
-                      id: "table.header.service",
-                      defaultMessage: "Dienst",
-                    }),
-                  },
-                  {
-                    col_header: intl.formatMessage({
-                      id: "table.header.metaquality",
-                      defaultMessage: "Metaqualität",
-                    }),
-                  },
-                ].map((column, index) => {
-                  const { col_header } = column;
-                  return (
-                    <>
-                      <CenteredTableCell
-                        key={index}
-                        sortDirection={orderBy === col_header ? order : false}
-                        sx={{ padding: "0 !important" }}
-                      >
-                        <TableSortLabel
-                          sx={{
-                            "& .MuiTableSortLabel-icon": {
-                              color: "white !important",
-                            },
-                            "& .MuiTableSortLabel-root": {
-                              color: "white !important",
-                            },
-                          }}
-                          active={true}
-                          direction={orderBy === col_header ? order : "desc"}
-                          onClick={createSortHandler(col_header)}
+                {["Provider", "Service", "Metaquality"].map(
+                  (col_header, index) => {
+                    const commonCasedHeader =
+                      col_header.charAt(0).toUpperCase() +
+                      col_header.slice(1).toLocaleLowerCase();
+                    return (
+                      <>
+                        <CenteredTableCell
+                          key={index}
+                          sortDirection={orderBy === col_header ? order : false}
+                          sx={{ padding: "0 !important" }}
                         >
-                          {mobileMode ? col_header.slice(0, 8) : col_header}
-                          {orderBy === col_header ? (
-                            <Box component="span" sx={visuallyHidden}>
-                              {order === "desc"
-                                ? "sorted descending"
-                                : "sorted ascending"}
-                              + ro
-                            </Box>
-                          ) : null}
-                        </TableSortLabel>
-                      </CenteredTableCell>
-                    </>
-                  );
-                })}
+                          <TableSortLabel
+                            sx={{
+                              "& .MuiTableSortLabel-icon": {
+                                color: "white !important",
+                              },
+                              "& .MuiTableSortLabel-root": {
+                                color: "white !important",
+                              },
+                            }}
+                            active={true}
+                            direction={orderBy === col_header ? order : "desc"}
+                            onClick={createSortHandler(col_header)}
+                          >
+                            {mobileMode
+                              ? commonCasedHeader.slice(0, 8)
+                              : commonCasedHeader}
+                            {orderBy === col_header ? (
+                              <Box component="span" sx={visuallyHidden}>
+                                {order === "desc"
+                                  ? "sorted descending"
+                                  : "sorted ascending"}
+                                + ro
+                              </Box>
+                            ) : null}
+                          </TableSortLabel>
+                        </CenteredTableCell>
+                      </>
+                    );
+                  }
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -334,13 +294,6 @@ export const ServiceTable = ({
       );
 
     default:
-      return (
-        <PlaceholderWidget
-          placeholderText={intl.formatMessage({
-            id: "search.inputPlaceholder",
-            defaultMessage: "Webservice suchen...",
-          })}
-        />
-      );
+      return <PlaceholderWidget placeholderText="Webservice suchen..." />;
   }
 };
