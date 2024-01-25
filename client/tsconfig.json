@@ -19,14 +19,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "react": ["./node_modules/@types/react" ]
-    }
+    "jsx": "react-jsx"
   },
   "exclude": [
     "node_modules",
-  ],
-  
+  ]
 }
 

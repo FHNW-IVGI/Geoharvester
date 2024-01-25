@@ -9,7 +9,6 @@ import { PROVIDER, SERVICE, BREAKPOINT600 } from "src/constants";
 import { getIcon } from "src/custom/getIcon";
 import { SearchParameters } from "src/types";
 import { useViewport } from "src/custom/ViewportHook";
-import { useIntl } from "react-intl";
 import "../../styles.css";
 
 export type SearchBarProps = {
@@ -29,28 +28,12 @@ export const Filter = ({
   searchParameters,
 }: FilterProps) => {
   const theme = useTheme();
-  const intl = useIntl();
+
   const { width } = useViewport();
   const mobileMode = width < BREAKPOINT600;
 
-  const serviceText = mobileMode
-    ? intl.formatMessage({
-        id: "dropdown.mobile",
-        defaultMessage: "Alle",
-      })
-    : intl.formatMessage({
-        id: "dropdown.service",
-        defaultMessage: "Alle Services",
-      });
-  const providerText = mobileMode
-    ? intl.formatMessage({
-        id: "dropdown.mobile",
-        defaultMessage: "Alle",
-      })
-    : intl.formatMessage({
-        id: "dropdown.provider",
-        defaultMessage: "Alle Quellen",
-      });
+  const serviceText = mobileMode ? "Alle" : "Alle Services";
+  const providerText = mobileMode ? "Alle" : "Alle Quellen";
 
   return (
     <div
