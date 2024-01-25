@@ -15,5 +15,10 @@
     "table.header.metaquality": "Metaqualität",
     "dropdown.service": "Alle Services",
     "dropdown.provider": "Alle Quellen",
-    "dropdown.mobile": "Alle"
+    "dropdown.mobile": "Alle",
+    "translate.language": "Sprache",
+    "translate.german": "Deutsch",
+    "translate.french": "Französisch",
+    "translate.italian": "Italienisch",
+    "translate.english": "Englisch"
 }

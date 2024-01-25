@@ -15,5 +15,10 @@
     "table.header.metaquality": "Metaquality",
     "dropdown.service": "Any service",
     "dropdown.provider": "Any provider",
-    "dropdown.mobile": "Any"
+    "dropdown.mobile": "Any",
+    "translate.language": "Language",
+    "translate.german": "German",
+    "translate.french": "French",
+    "translate.italian": "Italian",
+    "translate.english": "English"
 }

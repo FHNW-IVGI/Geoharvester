@@ -7,6 +7,7 @@ import French from "./lang/fr.json";
 import Italian from "./lang/it.json";
 import English from "./lang/en.json";
 import German from "./lang/ger.json";
+import { LanguageProvider } from "./lang/LanguageContext";
 
 const locale = navigator.language;
 // const locale = navigator.language;
@@ -29,8 +30,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <IntlProvider locale={"en-US"} messages={German} defaultLocale="de">
+    <LanguageProvider>
       <App />
-    </IntlProvider>
+    </LanguageProvider>
   </React.StrictMode>
 );

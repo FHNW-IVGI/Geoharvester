@@ -15,5 +15,10 @@
     "table.header.metaquality": "Qualité des métadonnées",
     "dropdown.service": "Tous les services",
     "dropdown.provider": "Toutes les sources",
-    "dropdown.mobile": "Tout"
+    "dropdown.mobile": "Tout",
+    "translate.language": "Langue",
+    "translate.german": "L'allemand ",
+    "translate.french": "Français",
+    "translate.italian": "L'italien",
+    "translate.english": "Anglais"
 }

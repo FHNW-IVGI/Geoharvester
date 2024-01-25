@@ -9,7 +9,7 @@ import { PROVIDER, SERVICE, BREAKPOINT600 } from "src/constants";
 import { getIcon } from "src/custom/getIcon";
 import { SearchParameters } from "src/types";
 import { useViewport } from "src/custom/ViewportHook";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 import "../../styles.css";
 
 export type SearchBarProps = {
