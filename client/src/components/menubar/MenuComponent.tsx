@@ -25,6 +25,7 @@ import geoharvesterLogo from "./logo.png";
 import "../../styles.css";
 
 export const MenuComponent = () => {
+  const { setLanguage, language } = useContext(LanguageContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openImpressum, setOpenImpressum] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,8 +33,6 @@ export const MenuComponent = () => {
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const intl = useIntl();
-
-  const { setLanguage, language } = useContext(LanguageContext);
 
   const handleClickOpenImpressum = () => setOpenImpressum(true);
 
@@ -45,6 +44,11 @@ export const MenuComponent = () => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const closeAll = () => {
+    setMenuOpen(false);
     setAnchorEl(null);
   };
 
@@ -121,7 +125,10 @@ export const MenuComponent = () => {
             <ListItemButton
               sx={{ pl: 4 }}
               id={LANGUAGE.DE}
-              onClick={(e) => setLanguage(e.currentTarget.id as LANGUAGE)}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
             >
               <ListItemText
                 primary={intl.formatMessage({
@@ -133,7 +140,10 @@ export const MenuComponent = () => {
             <ListItemButton
               sx={{ pl: 4 }}
               id={LANGUAGE.FR}
-              onClick={(e) => setLanguage(e.currentTarget.id as LANGUAGE)}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
             >
               <ListItemText
                 primary={intl.formatMessage({
@@ -145,7 +155,10 @@ export const MenuComponent = () => {
             <ListItemButton
               sx={{ pl: 4 }}
               id={LANGUAGE.IT}
-              onClick={(e) => setLanguage(e.currentTarget.id as LANGUAGE)}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
             >
               <ListItemText
                 primary={intl.formatMessage({
@@ -157,7 +170,10 @@ export const MenuComponent = () => {
             <ListItemButton
               sx={{ pl: 4 }}
               id={LANGUAGE.EN}
-              onClick={(e) => setLanguage(e.currentTarget.id as LANGUAGE)}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
             >
               <ListItemText
                 primary={intl.formatMessage({
