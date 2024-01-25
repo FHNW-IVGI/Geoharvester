@@ -6,6 +6,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import DescriptionIcon from "@mui/icons-material/Description";
 import MenuItem from "@mui/material/MenuItem";
 import TerminalIcon from "@mui/icons-material/Terminal";
+<<<<<<< HEAD
+=======
+import GradingIcon from "@mui/icons-material/Grading";
+import { LanguageContext } from "src/lang/LanguageContext";
+import { LANGUAGE } from "src/constants";
+import geoharvesterLogo from "./logo.png";
+
+>>>>>>> 9566590 (Fix parsing for redis)
 import "../../styles.css";
 import geoharvesterLogo from "./logo.png";
 
@@ -23,6 +31,11 @@ export const MenuComponent = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const closeAll = () => {
+    setMenuOpen(false);
+    handleClose();
   };
 
   return (
@@ -76,9 +89,90 @@ export const MenuComponent = () => {
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClickOpenImpressum}>
+<<<<<<< HEAD
           <InfoIcon style={{ marginRight: 14 }} />
           Impressum
         </MenuItem>
+=======
+          <GradingIcon style={{ marginRight: 14 }} />
+          <FormattedMessage id="menu.impressum" defaultMessage="Impressum" />
+        </MenuItem>
+        <Divider />
+        <ListItemButton onClick={handleClickOpen}>
+          <Translate style={{ marginRight: 14 }} />
+          <ListItemText
+            primary={intl.formatMessage({
+              id: "translate.language",
+              defaultMessage: "Sprache",
+            })}
+          />
+          {menuOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={menuOpen} timeout="auto">
+          <List component="div" disablePadding dense>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              id={LANGUAGE.DE}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
+            >
+              <ListItemText
+                primary={intl.formatMessage({
+                  id: "translate.german",
+                  defaultMessage: "Deutsch",
+                })}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              id={LANGUAGE.FR}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
+            >
+              <ListItemText
+                primary={intl.formatMessage({
+                  id: "translate.french",
+                  defaultMessage: "Französisch",
+                })}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              id={LANGUAGE.IT}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
+            >
+              <ListItemText
+                primary={intl.formatMessage({
+                  id: "translate.italian",
+                  defaultMessage: "Italienisch",
+                })}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              id={LANGUAGE.EN}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
+            >
+              <ListItemText
+                primary={intl.formatMessage({
+                  id: "translate.english",
+                  defaultMessage: "Englisch",
+                })}
+              />
+            </ListItemButton>
+          </List>
+        </Collapse>
+>>>>>>> 9566590 (Fix parsing for redis)
       </Menu>
 
       <ImpressumDialog open={openImpressum} setOpen={setOpenImpressum} />

@@ -1,17 +1,17 @@
 
 import uuid
+from string import punctuation
 from time import time
 from typing import Union
-from string import punctuation
 
 import pandas as pd
-from app.constants import EnumServiceType
+from app.constants import EnumLangType, EnumProviderType, EnumServiceType
 from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
+from langdetect import detect
+from nltk.stem import SnowballStemmer
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query, SortbyField
-from nltk.stem import SnowballStemmer
-from langdetect import detect
 
 from server.app.redis.redis_manager import r
 
@@ -155,7 +155,7 @@ def transform_wordlist_to_query(wordlist: list[str]):
 
 def redis_query_from_parameters(query_string: Union[str, None] = None, 
                                 service: EnumServiceType = EnumServiceType.none,
-                                provider:str = ""):
+                                provider:EnumProviderType = EnumProviderType.none):
     """Build a query string based on the parameters provided.
     """
     queryable_parameters = []
@@ -184,10 +184,12 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,
         return "&".join(queryable_parameters)
     
 
-def search_redis(redis_query, lang, offset, limit):
+def search_redis(redis_query, lang:EnumLangType, offset, limit):
+    # We have to parse language identifiers to redis format:
+    parsed_language = "english" if EnumLangType.en else "french" if EnumLangType.fr else "italian" if EnumLangType.it else "german"
     return r.ft(SVC_INDEX_ID).search(Query(redis_query)
             .sort_by('metaquality', asc=False)
-            .language(lang)                                 
+            .language(parsed_language)                                 
             .paging(offset, 50000)
             .return_field('title')
             .return_field('abstract')
