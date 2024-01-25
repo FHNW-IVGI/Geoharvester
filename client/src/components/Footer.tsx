@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { FormattedMessage } from "react-intl";
 
 export const Footer = () => {
   const theme = useTheme();
@@ -12,8 +13,10 @@ export const Footer = () => {
         textAlign: "center",
       }}
     >
-      © 2023 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut
-      Geomatik, FHNW und swisstopo
+      <FormattedMessage
+        id="footer.impressum"
+        defaultMessage="© 2023 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut Geomatik, FHNW und swisstopo"
+      />
     </Box>
   );
 };
