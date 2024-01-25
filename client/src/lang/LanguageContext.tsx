@@ -4,13 +4,7 @@ import French from "../lang/fr.json";
 import Italian from "../lang/it.json";
 import English from "../lang/en.json";
 import German from "../lang/ger.json";
-
-export enum LANGUAGE {
-  EN = "en",
-  DE = "de",
-  FR = "fr",
-  IT = "it",
-}
+import { LANGUAGE } from "src/constants";
 
 type LanguageContextType = {
   setLanguage: (language: LANGUAGE) => void;

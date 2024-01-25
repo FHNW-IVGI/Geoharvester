@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { ImpressumDialog } from "../ImpressumDialog";
+import { useIntl, FormattedMessage } from "react-intl";
 import {
   IconButton,
   Menu,
@@ -9,25 +10,19 @@ import {
   Box,
   Collapse,
   List,
-  ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
+import { ExpandLess, ExpandMore, Translate } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import DescriptionIcon from "@mui/icons-material/Description";
 import TerminalIcon from "@mui/icons-material/Terminal";
-import { FormattedMessage } from "react-intl";
+import InfoIcon from "@mui/icons-material/Terminal";
+import { LanguageContext } from "src/lang/LanguageContext";
+import { LANGUAGE } from "src/constants";
 import geoharvesterLogo from "./logo.png";
-import { useIntl } from "react-intl";
-import { ExpandLess, ExpandMore, Translate } from "@mui/icons-material";
-
-import StarBorder from "@mui/icons-material/StarBorder";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 
 import "../../styles.css";
-import { LANGUAGE, LanguageContext } from "src/lang/LanguageContext";
 
 export const MenuComponent = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

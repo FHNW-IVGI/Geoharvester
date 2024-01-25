@@ -4,13 +4,13 @@ export const DEFAULTROWSPERPAGE = 100; // Items per page
 export const BREAKPOINT600 = 600; // Viewport breakpoint for small UI
 export const BREAKPOINT1000 = 1000; // Viewport breakpoint for small UI
 
-export enum LANG {
-    GER = "german",
-    ENG = "english",
-    FR = "french",
-    IT = "italian"
+export enum LANGUAGE {
+    EN = "en",
+    DE = "de",
+    FR = "fr",
+    IT = "it",
 }
-export const DEFAULTLANGUAGE = LANG.GER;
+export const DEFAULTLANGUAGE = LANGUAGE.DE;
 
 export enum PROVIDER {
     NONE = "Alle Quellen",
