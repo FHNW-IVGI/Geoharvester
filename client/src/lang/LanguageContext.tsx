@@ -5,7 +5,7 @@ import Italian from "../lang/it.json";
 import English from "../lang/en.json";
 import German from "../lang/ger.json";
 
-enum LANGUAGE {
+export enum LANGUAGE {
   EN = "en",
   DE = "de",
   FR = "fr",
@@ -13,45 +13,39 @@ enum LANGUAGE {
 }
 
 type LanguageContextType = {
-  setLanguage: (language: string) => void;
-  language: string;
+  setLanguage: (language: LANGUAGE) => void;
+  language: LANGUAGE;
 };
 
 type GenericOpbject = { [key: string]: string };
 
 export const LanguageContext = createContext<LanguageContextType>({
   setLanguage: () => {},
-  language: "LANGUAGE.DE",
+  language: LANGUAGE.DE,
 });
 
 type Props = { children: React.ReactElement | React.ReactElement[] };
 
 export const LanguageProvider = ({ children }: Props) => {
-  const [language, setLanguageState] = useState<string>("de");
-  const [messages, setMessages] = useState<GenericOpbject>(French);
+  const [language, setLanguageState] = useState<LANGUAGE>(LANGUAGE.DE);
+  const [messages, setMessages] = useState<GenericOpbject>(German);
 
-  const setLanguage = (lang: string) => {
-    console.log(lang);
-    // console.log(messages);
-    if (lang === "fr") {
-      setLanguageState("fr");
+  const setLanguage = (lang: LANGUAGE) => {
+    if (lang === LANGUAGE.FR) {
+      setLanguageState(LANGUAGE.FR);
       setMessages(French);
-      console.log("-fr");
     }
-    if (lang === "it") {
-      setLanguageState("it");
+    if (lang === LANGUAGE.IT) {
+      setLanguageState(LANGUAGE.IT);
       setMessages(Italian);
-      console.log("-it");
     }
-    if (lang === "en") {
-      setLanguageState("en");
+    if (lang === LANGUAGE.EN) {
+      setLanguageState(LANGUAGE.EN);
       setMessages(English);
-      console.log("-en");
     }
-    if (lang === "de") {
-      setLanguageState("de");
+    if (lang === LANGUAGE.DE) {
+      setLanguageState(LANGUAGE.DE);
       setMessages(German);
-      console.log("-de");
     }
   };
 

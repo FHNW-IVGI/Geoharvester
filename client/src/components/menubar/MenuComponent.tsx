@@ -27,7 +27,7 @@ import StarBorder from "@mui/icons-material/StarBorder";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 
 import "../../styles.css";
-import { LanguageContext } from "src/lang/LanguageContext";
+import { LANGUAGE, LanguageContext } from "src/lang/LanguageContext";
 
 export const MenuComponent = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -125,8 +125,8 @@ export const MenuComponent = () => {
           <List component="div" disablePadding dense>
             <ListItemButton
               sx={{ pl: 4 }}
-              id="de"
-              onClick={(e) => setLanguage(e.currentTarget.id)}
+              id={LANGUAGE.DE}
+              onClick={(e) => setLanguage(e.currentTarget.id as LANGUAGE)}
             >
               <ListItemText
                 primary={intl.formatMessage({
@@ -137,8 +137,8 @@ export const MenuComponent = () => {
             </ListItemButton>
             <ListItemButton
               sx={{ pl: 4 }}
-              id="fr"
-              onClick={(e) => setLanguage(e.currentTarget.id)}
+              id={LANGUAGE.FR}
+              onClick={(e) => setLanguage(e.currentTarget.id as LANGUAGE)}
             >
               <ListItemText
                 primary={intl.formatMessage({
@@ -149,8 +149,8 @@ export const MenuComponent = () => {
             </ListItemButton>
             <ListItemButton
               sx={{ pl: 4 }}
-              id="it"
-              onClick={(e) => setLanguage(e.currentTarget.id)}
+              id={LANGUAGE.IT}
+              onClick={(e) => setLanguage(e.currentTarget.id as LANGUAGE)}
             >
               <ListItemText
                 primary={intl.formatMessage({
@@ -161,8 +161,8 @@ export const MenuComponent = () => {
             </ListItemButton>
             <ListItemButton
               sx={{ pl: 4 }}
-              id="en"
-              onClick={(e) => setLanguage(e.currentTarget.id)}
+              id={LANGUAGE.EN}
+              onClick={(e) => setLanguage(e.currentTarget.id as LANGUAGE)}
             >
               <ListItemText
                 primary={intl.formatMessage({
