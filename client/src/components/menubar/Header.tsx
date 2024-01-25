@@ -33,7 +33,10 @@ export const Header = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleChangeService = (event: SelectChangeEvent) => {
-    updateSearchParameters({ service: event.target.value as SERVICE, page: 0 });
+    updateSearchParameters({
+      service: event.target.value as SERVICE,
+      page: 0,
+    });
   };
 
   const handleChangeProvider = (event: SelectChangeEvent) => {
