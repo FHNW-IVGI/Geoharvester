@@ -32,8 +32,21 @@ export const Header = ({
   const { width } = useViewport();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // const handleChangeService = (event: SelectChangeEvent) => {
+  //   console.log(event.target.value);
+  //   console.log(Object.values<string>(SERVICE).includes(event.target.value));
+  //   Object.values<string>(SERVICE).includes(event.target.value)
+  //     ? updateSearchParameters({
+  //         service: event.target.value as SERVICE,
+  //         page: 0,
+  //       })
+  //     : updateSearchParameters({ service: SERVICE.NONE as SERVICE, page: 0 });
+  // };
   const handleChangeService = (event: SelectChangeEvent) => {
-    updateSearchParameters({ service: event.target.value as SERVICE, page: 0 });
+    updateSearchParameters({
+      service: event.target.value as SERVICE,
+      page: 0,
+    });
   };
 
   const handleChangeProvider = (event: SelectChangeEvent) => {
