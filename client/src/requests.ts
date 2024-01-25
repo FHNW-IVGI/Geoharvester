@@ -16,7 +16,7 @@ const routes = {
     getQgisWMTS: "/templates/qgis_wmts_template.qlr",
 }
 
-export const getData = async (query_string: string, servicetype: SERVICE = SERVICE.NONE, providertype: PROVIDER = PROVIDER.NONE, lang: string = LANGUAGE.DE, pageParam: number = 0, size: number = DEFAULTCHUNKSIZE) => {
+export const getData = async (query_string: string, servicetype: SERVICE = SERVICE.NONE, providertype: PROVIDER = PROVIDER.NONE, lang: LANGUAGE = LANGUAGE.DE, pageParam: number = 0, size: number = DEFAULTCHUNKSIZE) => {
     const page = pageParam + 1 // FastAPI Pagination uses 1 as first index
     const offset = 0
     const service = servicetype === SERVICE.NONE ? "" : servicetype
