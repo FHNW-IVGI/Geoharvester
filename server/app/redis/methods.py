@@ -78,7 +78,7 @@ def ingest_data(json, KEY):
     return redis_size_after_ingest
 
 
-def detect_language(phrase):
+def detect_language(phrase, not_found=False):
     """
     Detects the language of a str using langdetect.
 
@@ -91,11 +91,15 @@ def detect_language(phrase):
     _ : str
         Detected language.
     """
+    if not_found:
+        exception = 'not_found'
+    else:
+        exception = 'english'
     language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
     try:
         lang = language_dict[detect(phrase)]
     except:
-        lang = 'english'
+        lang = exception
     return lang
 
 

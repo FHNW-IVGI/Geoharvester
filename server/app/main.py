@@ -144,10 +144,12 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
         redis_data = search_redis(redis_query, lang, 0, 40000)
+        t1 = time()
+        fastapi_logger.info(f"Redis queried in {round(t1-t0,2)} seconds")
 
         if len(redis_data.docs) > 0:
             ranked_results = results_ranking(redis_data.docs, word_list)
-            # print(f"Total ET query: {round((time()-t0),2)}")
+            fastapi_logger.info(f"Ranking ET: {round((time()-t1),2)}")
             return paginate(ranked_results)
         else:
             pass

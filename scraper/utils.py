@@ -3,7 +3,7 @@ Utilities for the elaboration of texts with NLP and TF-IDF
 """
 
 import itertools
-import os
+import sys, os
 from string import punctuation
 
 import matplotlib.pyplot as plt
@@ -12,7 +12,8 @@ import openai  # 0.27.0
 import pandas as pd  # 1.5.2
 import pyLDAvis.gensim_models as genvis  # 3.4.0
 import spacy  # 3.3.1 and spacy-legacy 3.0.12 + pretrained models
-import translators as ts  # 5.5.6
+# import translators as ts  # 5.5.6
+from deep_translator import GoogleTranslator, DeeplTranslator, ChatGptTranslator
 from gensim import corpora  # gensim 4.3.0
 from gensim.models import LsiModel
 from gensim.models.coherencemodel import CoherenceModel
@@ -29,6 +30,9 @@ from summarizer.sbert import \
     SBertSummarizer  # bert-extractive-summarizer 0.10.1
 from tqdm import tqdm
 
+from dotenv import load_dotenv
+load_dotenv(dotenv_path=sys.path[0]+"/translator.env")
+chatgpt_api_key = os.getenv("OPENAI_API_KEY")
 
 def progress(token):
     """
@@ -36,7 +40,7 @@ def progress(token):
     """
     return token
 
-def detect_language(phrase):
+def detect_language(phrase, not_found=False):
     """
     Detects the language of a str using langdetect.
 
@@ -49,16 +53,21 @@ def detect_language(phrase):
     _ : str
         Detected language.
     """
+    if not_found:
+        exception = 'not_found'
+    else:
+        exception = 'english'
     language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
     try:
         lang = language_dict[detect(phrase)]
     except:
-        lang = 'english'
+        lang = exception
     return lang
 
-def translate(text, lang='de', translator='deepl'):
+def translate(text, to_lang='de', translator='google'):
     """
     Translates a text str from the detected language to another.
+    It uses Google translator API
 
     Parameters
     ----------
@@ -67,14 +76,24 @@ def translate(text, lang='de', translator='deepl'):
     lang : str
         2 chars output language
     translator : str
-        Translator to be used ('google', 'deepl', etc)
+        Translator to be used for the translation,
+        google; deepl; chatgpt
     Returns
     -------
     _ : str
-        Translated textt.
+        Translated text.
     """
-    return ts.translate_text(text, translator=translator, to_language=lang)
-
+    if translator == 'google':
+        return GoogleTranslator(source='auto', target=to_lang).translate(text)
+    elif translator == 'deepl':
+        return DeeplTranslator(api_key='None', source='auto', target=to_lang,
+                               use_free_api=False).translate(text)
+    elif translator == 'chatgpt':
+        return DeeplTranslator(api_key='None', source='auto', target=to_lang,
+                               use_free_api=False).translate(text)
+    else:
+        print(f"Translator {translator} not implemented, please use: google, deepl or chatgpt")
+    
 def is_not_num(str) -> bool:
     """
     Tests if a str element contains a number and return True or False.
@@ -402,7 +421,7 @@ class NLP_spacy():
         _ : list
             list of keywords
         """
-        lang = detect_language(text)
+        lang = detect_language(text, not_found=True)
         if lang == 'english':
             keywords = self.nlp_en(text).ents
         elif lang == 'german':
@@ -434,27 +453,30 @@ class NLP_spacy():
         _ : list
             list of keywords
         """
-        lang = detect_language(text)
-        rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
-        rake_nltk.extract_keywords_from_text(text)
-        if score:
-            keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
-            keywords = [w for w in keywords if w not in list(stopwords.words(lang))
-                and w not in list(punctuation)]
+        lang = detect_language(text, not_found=True)
+        if lang != 'not_found':
+            rake_nltk = Rake(language=lang, include_repeated_phrases=False, max_length=keyword_length)
+            rake_nltk.extract_keywords_from_text(text)
+            if score:
+                keywords = rake_nltk.get_ranked_phrases_with_scores()# limit by score (not normalized) using TFIDF
+                keywords = [w for w in keywords if w not in list(stopwords.words(lang))
+                    and w not in list(punctuation)]
+            else:
+                new_kws = []
+                keywords = rake_nltk.get_ranked_phrases()
+                for keyword in keywords:
+                    # remove stop words and punctuation
+                    new_kw = [w for w in word_tokenize(keyword) if w not in list(stopwords.words(lang)) and w not in list(punctuation)]
+                    if len(new_kw) != 0:
+                        new_kws.append(new_kw)
+                    else:
+                        continue
+                keywords = new_kws
+            return keywords
         else:
-            new_kws = []
-            keywords = rake_nltk.get_ranked_phrases()
-            for keyword in keywords:
-                # remove stop words and punctuation
-                new_kw = [w for w in word_tokenize(keyword) if w not in list(stopwords.words(lang)) and w not in list(punctuation)]
-                if len(new_kw) != 0:
-                    new_kws.append(new_kw)
-                else:
-                    continue
-            keywords = new_kws
-        return keywords
+            return []
     
-    def analyse_text_keywords(self, text, keyword_length=3):
+    def analyse_text_keywords(self, text, refine_keywords, keyword_length=3):
         """
         applies the keyword extraction with RAKE and clean the resulting keywords analysing the grammar
         with the DL model from spacy.
@@ -470,27 +492,32 @@ class NLP_spacy():
         _ : list
             list of cleaned keywords
         """
-        lang = detect_language(text)
+        lang = detect_language(text, not_found=True)
         if lang == 'italian':
             dataset = self.nlp_it(text)
         elif lang == 'german':
             dataset = self.nlp_de(text)
         elif lang == 'french':
             dataset = self.nlp_fr(text)
-        else:
+        elif lang == 'english':
             dataset = self.nlp_en(text)
+        else:
+            dataset = None
 
         keywords = self.extract_keywords_rake (text, keyword_length=keyword_length)
-        words = [token.text.lower() for token in dataset if not
-                 (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
-        positionals = [token.pos_ for token in dataset if not 
-                      (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
-        # refine the keywords using just the relevant ones
-        pos_dict = dict(zip(words, positionals))
-        cleaned_keywords = {' '.join(kw) for kw in keywords if any(pos_dict.get(w) in ['NOUN', 'PROPN', 'NUM'] for w in kw)}
+        if refine_keywords and dataset:
+            words = [token.text.lower() for token in dataset if not
+                    (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
+            positionals = [token.pos_ for token in dataset if not 
+                        (token.pos_ == 'DET' or token.pos_ == 'PUNCT' or token.pos_ == 'SPACE' or 'CONJ' in token.pos_)]
+            # refine the keywords using just the relevant ones
+            pos_dict = dict(zip(words, positionals))
+            cleaned_keywords = {' '.join(kw) for kw in keywords if any(pos_dict.get(w) in ['NOUN', 'PROPN', 'NUM'] for w in kw)}
+        else:
+            cleaned_keywords= {' '.join(kw) for kw in keywords}
         return list(cleaned_keywords)
     
-    def extract_refined_keywords(self, texts, use_rake=True, column='abstract', keyword_length=3, num_keywords=10):
+    def extract_refined_keywords(self, texts, use_rake=True, refine_keywords=True, column='abstract', keyword_length=3, num_keywords=10):
         """
         Applies the keyword extraction and cleansing to a whole dataset of texts
         
@@ -512,11 +539,11 @@ class NLP_spacy():
         self.index = texts.index.values
         if use_rake:
             print('Extracting keywords with RAKE...')
-            keywords = [self.analyse_text_keywords(text, keyword_length=keyword_length) for text in texts[column].values.tolist()]
+            keywords = [self.analyse_text_keywords(text, refine_keywords, keyword_length=keyword_length) for text in tqdm(texts[column].values.tolist())]
             self.topics = keywords
         else:
             print('Extracting keywords with SpaCy...')
-            datasets = [self.fit_nlp(text) for text in texts[column].values.tolist()]
+            datasets = [self.fit_nlp(text) for text in tqdm(texts[column].values.tolist())]
             for dataset in datasets:
                 self.topics.update(dataset[:num_keywords])
             translator = str.maketrans('','', punctuation)
@@ -540,7 +567,7 @@ class NLP_spacy():
         _ : str
             summarized text
         """
-        lang = detect_language(text)
+        lang = detect_language(text, not_found=True)
         if use_GPT:
             if lang == 'german':
                 prompt='Diesen Text zusammenfassen'
@@ -593,6 +620,7 @@ def check_metadata_quality(database, search_word='nan',
     """
     Calculate metadata quality score based on columns: abstract, keywords, metadata
     """
+    database[search_columns] = database[search_columns].replace({' ': 'nan', '??':'nan','n.a.':'nan'})
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
     database['metaquality'] = mask.sum(axis=1)*25 + 25 # Scoring with 4 fields
     return database
