@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ServiceTable } from "./components/table/ServiceTable";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Header } from "./components/menubar/Header";
@@ -15,6 +15,7 @@ import { getData } from "./requests";
 import { Footer } from "./components/Footer";
 import { Stack } from "@mui/material";
 import { FirstSearchUI } from "./components/table/FirstSearchUI";
+import { LanguageContext } from "./lang/LanguageContext";
 
 const theme = createTheme({
   palette: {
@@ -54,6 +55,8 @@ function App() {
   const [currentApiPage, setCurrentApiPage] = useState(0); // Page of the paginated API, different than the UI table page.
   const [size, setSize] = useState(DEFAULTROWSPERPAGE);
 
+  const { language } = useContext(LanguageContext);
+
   const defaultSearchParameter = {
     searchString: undefined, // Using an empty string would cause useEffect diffing to fail when searching without text
     service: SERVICE.NONE,
@@ -90,7 +93,7 @@ function App() {
       searchString as string,
       service,
       provider,
-      DEFAULTLANGUAGE,
+      language,
       page,
       DEFAULTCHUNKSIZE
     )

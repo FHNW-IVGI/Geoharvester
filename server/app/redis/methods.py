@@ -1,17 +1,17 @@
 
 import uuid
+from string import punctuation
 from time import time
 from typing import Union
-from string import punctuation
 
 import pandas as pd
-from app.constants import EnumServiceType
+from app.constants import EnumLangType, EnumProviderType, EnumServiceType
 from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
+from langdetect import detect
+from nltk.stem import SnowballStemmer
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query, SortbyField
-from nltk.stem import SnowballStemmer
-from langdetect import detect
 
 from server.app.redis.redis_manager import r
 
@@ -188,10 +188,13 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,
         return "&".join(queryable_parameters)
     
 
-def search_redis(redis_query, lang, offset, limit):
+def search_redis(redis_query, lang: EnumLangType, offset, limit):
+
+    parsed_language = "french" if lang == EnumLangType.fr else "italian" if lang == EnumLangType.it else "english" if lang == EnumLangType.en else "german"
+
     return r.ft(SVC_INDEX_ID).search(Query(redis_query)
             .sort_by('metaquality', asc=False)
-            .language(lang)                                 
+            .language(parsed_language)                                 
             .paging(offset, 50000)
             .return_field('title')
             .return_field('abstract')

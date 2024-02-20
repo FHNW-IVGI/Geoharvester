@@ -12,6 +12,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { BREAKPOINT1000 } from "src/constants";
 import { useViewport } from "src/custom/ViewportHook";
 import { SearchParameters } from "src/types";
+import { FormattedMessage, useIntl } from "react-intl";
 
 export type SearchProps = {
   updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
@@ -29,6 +30,7 @@ export const SearchField = ({
 }: SearchFieldProps) => {
   const theme = useTheme();
   const responsiveUI = useViewport().width < BREAKPOINT1000;
+  const intl = useIntl();
 
   const [localSearchString, setLocalSearchString] = useState("");
   const drawerEnabled = fromDrawer ? fromDrawer : false;
@@ -48,7 +50,10 @@ export const SearchField = ({
         autoComplete="off"
         id="webservicesearch"
         type="outlined"
-        placeholder="Webservice suchen..."
+        placeholder={intl.formatMessage({
+          id: "search.inputPlaceholder",
+          defaultMessage: "Webservice suchen...",
+        })}
         value={localSearchString}
         style={{
           flexGrow: 2,
@@ -90,7 +95,7 @@ export const SearchField = ({
         variant="contained"
         aria-label="search"
       >
-        {"Suchen"}
+        <FormattedMessage id="search.searchButton" defaultMessage="Suchen" />
       </Button>
     </FormControl>
   );

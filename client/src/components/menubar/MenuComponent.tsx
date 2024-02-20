@@ -1,27 +1,54 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ImpressumDialog } from "../ImpressumDialog";
-import { IconButton, Menu, Divider, useTheme, Box } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
+import { useIntl, FormattedMessage } from "react-intl";
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Divider,
+  useTheme,
+  Box,
+  Collapse,
+  List,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+import { ExpandLess, ExpandMore, Translate } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import DescriptionIcon from "@mui/icons-material/Description";
-import MenuItem from "@mui/material/MenuItem";
 import TerminalIcon from "@mui/icons-material/Terminal";
-import "../../styles.css";
+import InfoIcon from "@mui/icons-material/Terminal";
+import { LanguageContext } from "src/lang/LanguageContext";
+import { LANGUAGE } from "src/constants";
 import geoharvesterLogo from "./logo.png";
 
+import "../../styles.css";
+
 export const MenuComponent = () => {
+  const { setLanguage, language } = useContext(LanguageContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openImpressum, setOpenImpressum] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const open = Boolean(anchorEl);
   const theme = useTheme();
+  const intl = useIntl();
 
   const handleClickOpenImpressum = () => setOpenImpressum(true);
+
+  const handleClickOpen = () => {
+    setMenuOpen(!menuOpen);
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const closeAll = () => {
+    setMenuOpen(false);
     setAnchorEl(null);
   };
 
@@ -62,7 +89,10 @@ export const MenuComponent = () => {
           }}
         >
           <DescriptionIcon style={{ marginRight: 14 }} />
-          Documentation
+          <FormattedMessage
+            id="menu.documentation"
+            defaultMessage="Dokumentation"
+          />
         </MenuItem>
         <Divider />
         <MenuItem
@@ -72,13 +102,88 @@ export const MenuComponent = () => {
           }}
         >
           <TerminalIcon style={{ marginRight: 14 }} />
-          API
+          <FormattedMessage id="menu.api" defaultMessage="API" />
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClickOpenImpressum}>
           <InfoIcon style={{ marginRight: 14 }} />
-          Impressum
+          <FormattedMessage id="menu.impressum" defaultMessage="Impressum" />
         </MenuItem>
+        <Divider />
+        <ListItemButton onClick={handleClickOpen}>
+          <Translate style={{ marginRight: 14 }} />
+          <ListItemText
+            primary={intl.formatMessage({
+              id: "translate.language",
+              defaultMessage: "Sprache",
+            })}
+          />
+          {menuOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={menuOpen} timeout="auto">
+          <List component="div" disablePadding dense>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              id={LANGUAGE.DE}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
+            >
+              <ListItemText
+                primary={intl.formatMessage({
+                  id: "translate.german",
+                  defaultMessage: "Deutsch",
+                })}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              id={LANGUAGE.FR}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
+            >
+              <ListItemText
+                primary={intl.formatMessage({
+                  id: "translate.french",
+                  defaultMessage: "Französisch",
+                })}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              id={LANGUAGE.IT}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
+            >
+              <ListItemText
+                primary={intl.formatMessage({
+                  id: "translate.italian",
+                  defaultMessage: "Italienisch",
+                })}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              id={LANGUAGE.EN}
+              onClick={(e) => {
+                setLanguage(e.currentTarget.id as LANGUAGE);
+                closeAll();
+              }}
+            >
+              <ListItemText
+                primary={intl.formatMessage({
+                  id: "translate.english",
+                  defaultMessage: "Englisch",
+                })}
+              />
+            </ListItemButton>
+          </List>
+        </Collapse>
       </Menu>
 
       <ImpressumDialog open={openImpressum} setOpen={setOpenImpressum} />
