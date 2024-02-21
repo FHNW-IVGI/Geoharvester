@@ -568,9 +568,9 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     t2 = time()
     print(f"Abstracts summarized succesfully in {t2-t1} seconds")
     # Add the detected dataset language (applied on title)
-    language_dict = {'english':('EN', 'ENG'), 'french':('FR','FRA'), 'german':('DE','DEU'), 'italian':('IT','ITA')}
-    raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'])][1], axis=1)
-    raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'])][0], axis=1)
+    language_dict = {'english':('EN', 'ENG'), 'french':('FR','FRA'), 'german':('DE','DEU'), 'italian':('IT','ITA'), 'not_found':('NA','NAN')}
+    raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][1], axis=1)
+    raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][0], axis=1)
     t3 = time()
     print(f"Languages detected succesfully in {t3-t2} seconds")
     # Check and add metadata quality
