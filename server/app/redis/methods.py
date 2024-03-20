@@ -92,14 +92,14 @@ def detect_language(phrase, not_found=False):
         Detected language.
     """
     if not_found:
-        exception = 'not_found'
+        excep = 'not_found'
     else:
-        exception = 'english'
+        excep = 'english'
     language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
     try:
         lang = language_dict[detect(phrase)]
     except:
-        lang = exception
+        lang = excep
     return lang
 
 
@@ -166,7 +166,7 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,
 
     if (bool(query_string)):
         queryable_parameters.append(
-            '@title|abstract|keywords|keywords_nlp|summary:({})'.format(query_string)
+            '@title|title_en|title_de|title_it|title_fr|abstract|abstract_en|abstract_de|abstract_it|abstract_fr|keywords|keywords_en|keywords_de|keywords_it|keywords_fr|keywords_nlp|keywords_nlp_en|keywords_nlp_de|keywords_nlp_it|keywords_nlp_fr:({})'.format(query_string)
         )
 
     if (bool(service)):
@@ -367,7 +367,7 @@ def results_ranking(redis_output, query_words_list):
             query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp'], query_word, 2)
             query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 6)
             query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp'], query_word, 3)
-            query_results_df = exact_match_scoring(query_results_df, ['summary'], query_word, 2)
+            #query_results_df = exact_match_scoring(query_results_df, ['summary'], query_word, 2)
     else:
         query_results_df['score'] = 1
     query_results_df = evaluate_metaquality(query_results_df, 25)

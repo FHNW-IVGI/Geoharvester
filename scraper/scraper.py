@@ -535,7 +535,42 @@ def write_dataset_info(csv_filename, output_file):
             geo_data_done.append(checklayer)
     return
 
-def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
+def check_new_data(actual_db_path, new_data_path, match_columns, output_path):
+    """
+    It compares the old and new databases to extract and preprocess
+    only the new datasets.
+    
+    Parameters
+    ----------
+    actual_db_path : str
+        path to actual pkl dataframe
+    new_data_path : str
+        path to new scraped csv file
+    match_columns : List
+        Columns to be used for the comparision between databases
+    Returns:
+    to_preprocessing : pandas.DataFrame
+        Data to be preprocessed with NLP
+    to_keep : pandas.DataFrame
+        Data already preprocessed from the old database with no
+        modifications.
+    """
+    old_db = pd.read_pickle(actual_db_path)
+    new_db = pd.read_csv(new_data_path, low_memory=False)
+    new_db = new_db.fillna("nan")
+    new_db = new_db.replace(to_replace="'", value="-", regex=True)
+    new_db = new_db.replace(to_replace='\"', value="-", regex=True)
+    new_db = new_db.replace(to_replace="  ", value = " ", regex=True)
+    new_db = new_db.replace(to_replace="    ", value = " ", regex=True)
+    
+    comparison = old_db.merge(new_db, on=match_columns, how='outer', indicator='_merge')
+    to_preprocessing = comparison[comparison['_merge'] == 'right_only']
+    to_keep = old_db.drop(comparison[comparison['_merge']=='left_only'].index, inplace=False)
+    to_preprocessing.to_pickle(os.path.join(output_path, 'to_preprocess.pkl'))
+    # to_keep.to_pickle(os.path.join(output_path, 'to_keep.pkl'))
+    return to_keep
+
+def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
     """
     Preprocesses the data collected by the scraper using different NLP
     functions, which are stored in preprocessing/utils.py
@@ -543,7 +578,7 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     Parameters
     ----------
     raw_data_path : str
-        path of csv file containing the raw data output of the scraper
+        path of pickle file containing the new raw data output of the scraper
     output_folder : str
         path-to-folder where the elaborated data will be saved as pkl
     column : str
@@ -551,7 +586,7 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     """
     t0 = time()
     # Read the data
-    raw_data = pd.read_csv(raw_data_path, usecols=["provider","title", "keywords", "abstract", "service", "endpoint", "preview"])
+    raw_data = pd.read_pickle(raw_data_path)
     raw_data = raw_data.fillna("nan") # needed for the preprocessing
     # Extract the keywords and add them to the data
     NLP = utils.NLP_spacy()
@@ -563,30 +598,59 @@ def preprocessing_NLP(raw_data_path, output_folder, column='abstract'):
     t1 = time()
     print(f"Keywords extracted succesfully in {t1-t0} seconds")
     # Summarize the abstracts and add them to the data
-    summaries = NLP.summarize_texts(raw_data, column=column)
-    raw_data['summary'] = summaries
+    # summaries = NLP.summarize_texts(raw_data, column=column)
+    raw_data['summary'] = ['summury']*len(raw_data)#summaries
     t2 = time()
-    print(f"Abstracts summarized succesfully in {t2-t1} seconds")
+    # print(f"Abstracts summarized succesfully in {t2-t1} seconds")
     # Add the detected dataset language (applied on title)
     language_dict = {'english':('EN', 'ENG'), 'french':('FR','FRA'), 'german':('DE','DEU'), 'italian':('IT','ITA'), 'not_found':('NA','NAN')}
     raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][1], axis=1)
     raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][0], axis=1)
     t3 = time()
     print(f"Languages detected succesfully in {t3-t2} seconds")
+    # Translate the main columns
+
     # Check and add metadata quality
     print(f"Adding metadata scores...")
     raw_data = utils.check_metadata_quality(raw_data, search_word='nan',
                                             search_columns=['abstract', 'keywords', 'metadata'],
                                             case_sensitive=False)
-    # Characters cleaning for compatibility with redis
-    print(f"Cleaning up...")
-    raw_data = raw_data.replace(to_replace="'", value="-", regex=True)
-    raw_data = raw_data.replace(to_replace='\"', value="-", regex=True)
-    raw_data = raw_data.replace(to_replace="  ", value = " ", regex=True)
-    raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
+    
+    # Characters cleaning for compatibility with redis -> Already done by checking the new data
+    # print(f"Cleaning up...")
+    # raw_data = raw_data.replace(to_replace="'", value="-", regex=True)
+    # raw_data = raw_data.replace(to_replace='\"', value="-", regex=True)
+    # raw_data = raw_data.replace(to_replace="  ", value = " ", regex=True)
+    # raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
+    
     # Save data as pickle for a faster reading/writing
-    raw_data.to_pickle(output_folder+'/preprocessed_data.pkl')
-    print(f"Preprocessed data saved in {output_folder+'/preprocessed_data.pkl'}")
+    if output_folder:
+        raw_data.to_pickle(output_folder+'/preprocessed_data.pkl')
+        print(f"Preprocessed data saved in {output_folder+'/preprocessed_data.pkl'}")
+    return raw_data
+
+def translate_new_data(db, translate_column, languages):
+    """
+    Translates the preprocessed data
+    """
+    db = db.fillna("nan")
+    for lang in languages:
+        new_col = translate_column+'_'+lang
+        if translate_column == 'title':
+            db[new_col] = db.progress_apply(lambda row: utils.translate_text(
+                row[translate_column],to_lang=lang, from_lang=row['lang_3']), axis=1)
+        elif translate_column == 'abstract':
+            db[new_col] = db.progress_apply(lambda row: utils.translate_abstract(
+                row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
+        elif translate_column == 'keywords':
+            db[new_col] = db.progress_apply(lambda row: utils.translate_keywords(
+                row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
+        elif translate_column == 'keywords_nlp':
+            db[new_col] = db.progress_apply(lambda row: utils.translate_keywords(
+                row[translate_column].split(','), to_lang=lang, from_lang=row['lang_3']), axis=1)
+        else:
+            print(f"Column {translate_column} could not be translated")
+    return db
 
 if __name__ == "__main__":
     """
@@ -689,8 +753,22 @@ if __name__ == "__main__":
     print("\nScraper run completed")
     logger.info("Scraper run completed")
 
-    preprocessing_NLP(config.GEOSERVICES_CH_CSV,
-                      os.path.split(config.GEOSERVICES_CH_CSV)[0])
+    data_to_keep = check_new_data(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'),
+                   config.GEOSERVICES_CH_CSV,
+                   match_columns=['name','title','provider','keywords','abstract'],
+                   output_path=os.path.split(config.GEOSERVICES_CH_CSV)[0])
+
+    preprd_data = preprocessing_NLP(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],
+                                                 'to_preprocess.pkl'))
 
     print("\nNLP preprocessing completed")
     logger.info("NLP preprocessing completed")
+
+    for trns_col in ["title","abstract","keywords","keywords_nlp"]:
+        preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
+
+    merged_database = pd.concat([data_to_keep, preprd_data], axis=1)
+    merged_database.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'))
+
+    print("\nNLP translation completed")
+    logger.info("NLP translation completed")
