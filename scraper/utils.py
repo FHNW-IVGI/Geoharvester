@@ -74,6 +74,7 @@ def translate_text(text, to_lang, from_lang):
     else:
         try:
             trnd = GoogleTranslator(source='auto', target=to_lang).translate(text.replace('_',' '))
+            trnd = trnd.replace("'", " ")
         except exceptions.TranslationNotFound:
             trnd = 'nan'
         return trnd
@@ -87,6 +88,7 @@ def translate_abstract(text, to_lang, from_lang):
         if not text.startswith('http') or text.startswith('Link zu Metadaten:'):
             try:
                 trnd = GoogleTranslator(source='auto', target=to_lang).translate(text.replace('_',' '))
+                trnd = trnd.replace("'", " ")
             except exceptions.TranslationNotFound:
                 trnd = 'nan'
             return trnd
@@ -108,6 +110,7 @@ def translate_keywords(text, to_lang, from_lang):
             if not kwd.startswith('http') or kwd.startswith('Link zu Metadaten:'):
                 try:
                     kwd_trnsd = GoogleTranslator(source='auto', target=to_lang).translate(kwd.replace('_',' '))
+                    kwd_trnsd = kwd_trnsd.replace("'", " ")
                     if not kwd_trnsd:
                         kwd_trnsd = 'nan'
                 except exceptions.TranslationNotFound:

@@ -15,6 +15,7 @@ from redis.commands.search.query import Query, SortbyField
 
 from server.app.redis.redis_manager import r
 
+lang_dict = {'english':'en', 'french':'fr', 'german':'de', 'italian':'it'}
 
 def check_if_index_exists(INDEX_ID):
     """Helper method as Redis does not allow for checking if an index exists, except for .info(). This however throws an exception instead of a boolean."""
@@ -217,7 +218,11 @@ def search_redis(redis_query, lang: EnumLangType, offset, limit):
             .return_field('summary')
             .return_field('lang_3')
             .return_field('metaquality')
-            )
+            .return_field(f'title_{lang_dict[parsed_language]}')
+            .return_field(f'abstract_{lang_dict[parsed_language]}')
+            .return_field(f'keywords_{lang_dict[parsed_language]}')
+            .return_field(f'keywords_nlp_{lang_dict[parsed_language]}')
+            ), parsed_language
 
 def json_to_pandas(redis_output):
     """
@@ -232,16 +237,28 @@ def json_to_pandas(redis_output):
     _ : pandas.DataFrame
     """
     query_results = pd.DataFrame()
+    skipped = 0
     for output in redis_output:
         # Cleaning the string
         doc = str(output).replace("'", '"')
+        doc = doc.replace('0"0','0')
         doc = doc.replace("None", '"None"')
-        doc = doc.replace('xa0', "")
+        doc = doc.replace("NaN", "'NaN'")
+        doc = doc.replace("’","")
+        doc = doc.replace('’’', "")
         doc = doc.replace("\\", "")
+        doc = doc.replace("ß", "ss")
         # Append results to a pandas df
-        df = pd.read_json(doc.replace("Document ", ""), orient='index', encoding='utf-16').T
-        query_results = pd.concat([query_results, df], axis=0)
+        try:
+            df = pd.read_json(doc.replace("Document ", ""), orient='index',
+                            encoding='utf-16', encoding_errors='replace').T
+            query_results = pd.concat([query_results, df], axis=0)
+        except ValueError:
+            skipped += 1
+            # print(doc.replace("Document ", ""))
         # print(len(redis_output)-i)
+    # BUG: check the transformation json-pandas maybe with a binary format instead of json
+    print(f"skipped {skipped} datasets!")
     return query_results
 
 def pandas_to_dict(ranked_results_df):
@@ -335,7 +352,7 @@ def evaluate_metaquality(df, denominator):
     df['score'] *= df['metaquality'] / denominator
     return df
 
-def results_ranking(redis_output, query_words_list):
+def results_ranking(redis_output, query_words_list, parsed_lang):
     """
     Ranks the results according to the assigned scores
     
@@ -359,14 +376,20 @@ def results_ranking(redis_output, query_words_list):
     query_results_df['score'] = 0
     query_results_df['inv_title_length'] = query_results_df['title'].apply(lambda x: 200 - len(x))
     query_results_df['metaquality'] = query_results_df['metaquality'].astype('int')
+    lang = lang_dict[parsed_lang]
     
     # Calculate the scores
     if query_words_list:
         for query_word in query_words_list:
-            query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 4)
-            query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp'], query_word, 2)
-            query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 6)
-            query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp'], query_word, 3)
+            # query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 4)
+            # query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp'], query_word, 2)
+            # query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 6)
+            # query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp'], query_word, 3)
+            query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords_nlp'], query_word, 1)
+            query_results_df = contains_match_scoring(query_results_df, ['title_'+lang, 'keywords_'+lang], query_word, 4)
+            query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp_'+lang], query_word, 2)
+            query_results_df = exact_match_scoring(query_results_df, ['title_'+lang, 'keywords_'+lang], query_word, 6)
+            query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp_'+lang], query_word, 3)
             #query_results_df = exact_match_scoring(query_results_df, ['summary'], query_word, 2)
     else:
         query_results_df['score'] = 1
