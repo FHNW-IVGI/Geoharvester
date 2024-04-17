@@ -6,6 +6,13 @@ import warnings
 from time import time
 from typing import Union
 
+from fastapi import FastAPI, Query
+from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import Page, paginate
+from fastapi_pagination.customization import CustomizedPage, UseParamsFields
+from pydantic import Field
+
 from app.constants import (DEFAULTSIZE, EnumLangType, EnumProviderType,
                            EnumServiceType)
 from app.processing.methods import (import_csv_into_dataframe,
@@ -16,12 +23,6 @@ from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                search_redis, transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                GeoserviceModel, geoservices_schema)
-from fastapi import FastAPI, Query
-from fastapi.logger import logger as fastapi_logger
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_pagination import Page, add_pagination, paginate
-from pydantic import Field
-
 from server.app.redis.redis_manager import r
 
 # filter package warnings
@@ -57,9 +58,11 @@ else:
 
 
 # Pagination settings. Adjust FE table calculations accordingly when changing these!
-Page = Page.with_custom_options(
-    size=Field(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
-)
+GeoharvesterPage = CustomizedPage[
+    Page,
+    UseParamsFields(size=DEFAULTSIZE)
+]
+
 
 dataframe=None
 datajson=None
@@ -107,7 +110,7 @@ async def root():
 
     return {"message": "running"}
 
-@app.get("/api/getData", response_model=Page[GeoserviceModel])
+@app.get("/api/getData", response_model=GeoharvesterPage[GeoserviceModel])
 async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, provider:EnumProviderType = EnumProviderType.none, lang: EnumLangType = EnumLangType.de, page: int = 0, limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
