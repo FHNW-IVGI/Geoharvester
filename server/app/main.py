@@ -20,7 +20,7 @@ from fastapi import FastAPI, Query
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
-from pydantic import Field # WARNING: Replace Query from fastapi with Field before merging to main
+from pydantic import Field
 
 from server.app.redis.redis_manager import r
 
@@ -58,7 +58,7 @@ else:
 
 # Pagination settings. Adjust FE table calculations accordingly when changing these!
 Page = Page.with_custom_options(
-    size=Query(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
+    size=Field(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
 )
 
 dataframe=None
