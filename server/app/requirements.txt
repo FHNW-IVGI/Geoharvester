@@ -10,3 +10,4 @@ numpy
 nltk
 langdetect
 python-dotenv
+deep-translator
