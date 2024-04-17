@@ -1,4 +1,4 @@
-fastapi==0.96.0
+fastapi
 fastapi-pagination
 geopandas
 pandas

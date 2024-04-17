@@ -99,4 +99,4 @@ class GeoserviceModel(BaseModel):
     keywords_nlp_fr: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
