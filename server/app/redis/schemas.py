@@ -57,6 +57,7 @@ geoservices_schema = (
 
 class GeoserviceModel(BaseModel):
     # Any fields not in the csv (and added by preprocessing) need to be optional!
+    # Any fields added (optional or not) need to be returned by the search_redis method in redis/methods.py
     _primary_key_field: str = "id"
     provider: str
     title: str
