@@ -45,3 +45,5 @@ scikit-learn==1.2.0
 bert-extractive-summarizer==0.10.1
 torch
 sentence-transformers
+
+deep-translator
