@@ -9,7 +9,7 @@ from typing import Union
 from fastapi import FastAPI, Query
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_pagination import Page, paginate
+from fastapi_pagination import Page, add_pagination, paginate
 from fastapi_pagination.customization import CustomizedPage, UseParamsFields
 from pydantic import Field
 
