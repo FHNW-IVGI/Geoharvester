@@ -1,7 +1,7 @@
 # Author: David Oesch, https://github.com/davidoesch/geoservice_harvester_poc
 # This is copy of the workflow file run by github actions
 
-name: Run scraper
+name: Test Run scraper
 
 on:
   schedule:
