@@ -599,7 +599,7 @@ def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
     print(f"Keywords extracted succesfully in {t1-t0} seconds")
     # Summarize the abstracts and add them to the data
     # summaries = NLP.summarize_texts(raw_data, column=column)
-    raw_data['summary'] = ['summury']*len(raw_data)#summaries
+    raw_data['summary'] = ['summary']*len(raw_data)#summaries
     t2 = time()
     # print(f"Abstracts summarized succesfully in {t2-t1} seconds")
     # Add the detected dataset language (applied on title)
@@ -761,8 +761,8 @@ if __name__ == "__main__":
     preprd_data = preprocessing_NLP(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],
                                                  'to_preprocess.pkl'))
 
-    print("\nNLP preprocessing completed")
-    logger.info("NLP preprocessing completed")
+    print("\nNLP preprocessing completed on "+str(len(data_to_keep))+" datasets")
+    logger.info(f"NLP preprocessing completed on {len(data_to_keep)} datasets")
 
     for trns_col in ["title","abstract","keywords","keywords_nlp"]:
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])

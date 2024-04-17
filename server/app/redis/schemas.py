@@ -77,7 +77,7 @@ class GeoserviceModel(BaseModel):
     center_lat: float
     center_lon: float
     bbox: str
-    summary: Optional[str]
+    # summary: Optional[str] # WARNING: field not used
     lang_3:  Optional[str]
     # lang_2:  Optional[str] # WARNING: field not used
     metaquality: Optional[int]
