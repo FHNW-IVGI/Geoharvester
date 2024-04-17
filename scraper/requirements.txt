@@ -47,3 +47,4 @@ torch
 sentence-transformers
 
 deep-translator
+python-dotenv
