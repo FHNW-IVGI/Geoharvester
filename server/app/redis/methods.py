@@ -5,14 +5,14 @@ from time import time
 from typing import Union
 
 import pandas as pd
-from app.constants import EnumLangType, EnumProviderType, EnumServiceType
-from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
 from langdetect import detect
 from nltk.stem import SnowballStemmer
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query, SortbyField
 
+from app.constants import EnumLangType, EnumProviderType, EnumServiceType
+from app.redis.schemas import SVC_INDEX_ID
 from server.app.redis.redis_manager import r
 
 lang_dict = {'english':'en', 'french':'fr', 'german':'de', 'italian':'it'}
@@ -218,10 +218,23 @@ def search_redis(redis_query, lang: EnumLangType, offset, limit):
             .return_field('summary')
             .return_field('lang_3')
             .return_field('metaquality')
-            .return_field(f'title_{lang_dict[parsed_language]}')
-            .return_field(f'abstract_{lang_dict[parsed_language]}')
-            .return_field(f'keywords_{lang_dict[parsed_language]}')
-            .return_field(f'keywords_nlp_{lang_dict[parsed_language]}')
+            .return_field('title_en')
+            .return_field('title_de')
+            .return_field('title_fr')
+            .return_field('title_it')
+            .return_field('abstract_en')
+            .return_field('abstract_de')
+            .return_field('abstract_fr')
+            .return_field('abstract_it')
+            .return_field('keywords_en')
+            .return_field('keywords_de')
+            .return_field('keywords_fr')
+            .return_field('keywords_it')
+            .return_field('keywords_nlp_en')
+            .return_field('keywords_nlp_de')
+            .return_field('keywords_nlp_fr')
+            .return_field('keywords_nlp_it')
+
             ), parsed_language
 
 def json_to_pandas(redis_output):
