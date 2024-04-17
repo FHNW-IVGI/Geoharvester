@@ -54,7 +54,7 @@ jobs:
 
       - name: Run Python script
         run: |
-          python scraper.py
+          python -u scraper.py
         timeout-minutes: 600  # Default: 6hrs, not sufficient for NLP preprocessing
         env: # Set the secrets as env var
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
