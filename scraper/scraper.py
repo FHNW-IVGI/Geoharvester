@@ -563,11 +563,15 @@ def check_new_data(actual_db_path, new_data_path, match_columns, output_path):
     new_db = new_db.replace(to_replace="  ", value = " ", regex=True)
     new_db = new_db.replace(to_replace="    ", value = " ", regex=True)
     
-    comparison = old_db.merge(new_db, on=match_columns, how='outer', indicator='_merge')
-    to_preprocessing = comparison[comparison['_merge'] == 'right_only']
-    to_keep = old_db.drop(comparison[comparison['_merge']=='left_only'].index, inplace=False)
+    to_preprocessing = new_db.merge(old_db, on=match_columns, how='left',
+                                    indicator='_lmerge', suffixes=(None, "_drop"))
+    to_preprocessing = to_preprocessing.loc[to_preprocessing['_lmerge']=='left_only']
+    to_keep = old_db.merge(new_db, on=match_columns, how='inner', indicator='_innermerge',
+                           suffixes=(None,"_drop"))
+    to_keep = to_keep[old_db.columns.to_list()]
+    to_preprocessing = to_preprocessing[new_db.columns.to_list()]
+
     to_preprocessing.to_pickle(os.path.join(output_path, 'to_preprocess.pkl'))
-    # to_keep.to_pickle(os.path.join(output_path, 'to_keep.pkl'))
     return to_keep
 
 def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
@@ -755,14 +759,17 @@ if __name__ == "__main__":
 
     data_to_keep = check_new_data(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'),
                    config.GEOSERVICES_CH_CSV,
-                   match_columns=['name','title','provider','keywords','abstract'],
+                   match_columns=['name','title','provider','keywords','abstract','endpoint'],
                    output_path=os.path.split(config.GEOSERVICES_CH_CSV)[0])
+    
+    print("\nKeeping "+str(len(data_to_keep))+" datasets from old database")
+    logger.info(f"Keeping {len(data_to_keep)} datasets from old database")
 
     preprd_data = preprocessing_NLP(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],
                                                  'to_preprocess.pkl'))
 
-    print("\nNLP preprocessing completed on "+str(len(data_to_keep))+" datasets")
-    logger.info(f"NLP preprocessing completed on {len(data_to_keep)} datasets")
+    print("\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets")
+    logger.info(f"NLP preprocessing completed on {len(preprd_data)} datasets")
 
     for trns_col in ["title","abstract","keywords","keywords_nlp"]:
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
