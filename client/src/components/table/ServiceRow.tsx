@@ -12,7 +12,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 import { SubRow } from "./SubRow";
-import { getIcon } from "src/custom/getIcon";
+import { getIcon } from "src/custom/";
 import "../../styles.css";
 
 export const ServiceRow = ({
