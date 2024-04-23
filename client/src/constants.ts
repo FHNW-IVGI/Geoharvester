@@ -37,7 +37,7 @@ export enum PROVIDER {
     KT_UR = "KT_UR",
     KT_ZG = "KT_ZG",
     KT_ZH = "KT_ZH",
-    ST_ZU = "ST_ZU",
+    ST_ZH = "ST_ZH",
     ST_BE = "ST_BE",
     ASIT = "ASIT",
     SOSM = "SOSM",
