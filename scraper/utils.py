@@ -652,10 +652,3 @@ def check_metadata_quality(database, search_word='nan',
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
     database['metaquality'] = mask.sum(axis=1)*25 + 25 # Scoring with 4 fields
     return database
-
-
-    # TODO
-    # INSPIRE / eCH classification with pytorch model...
-    # More trainingsdata needed! (one possibility is to use the data from Wmts.geo.admi.ch … WMTSCapabilities.xml)
-    # To find the category we will have to check the link to geocatalog (geocat) and use the id  of the link to 
-    # automate a search in geocat and retrieve the class.
