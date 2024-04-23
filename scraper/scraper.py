@@ -641,16 +641,16 @@ def translate_new_data(db, translate_column, languages):
     for lang in languages:
         new_col = translate_column+'_'+lang
         if translate_column == 'title':
-            db[new_col] = db.progress_apply(lambda row: utils.translate_text(
+            db[new_col] = db.apply(lambda row: utils.translate_text(
                 row[translate_column],to_lang=lang, from_lang=row['lang_3']), axis=1)
         elif translate_column == 'abstract':
-            db[new_col] = db.progress_apply(lambda row: utils.translate_abstract(
+            db[new_col] = db.apply(lambda row: utils.translate_abstract(
                 row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
         elif translate_column == 'keywords':
-            db[new_col] = db.progress_apply(lambda row: utils.translate_keywords(
+            db[new_col] = db.apply(lambda row: utils.translate_keywords(
                 row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
         elif translate_column == 'keywords_nlp':
-            db[new_col] = db.progress_apply(lambda row: utils.translate_keywords(
+            db[new_col] = db.apply(lambda row: utils.translate_keywords(
                 row[translate_column].split(','), to_lang=lang, from_lang=row['lang_3']), axis=1)
         else:
             print(f"Column {translate_column} could not be translated")
