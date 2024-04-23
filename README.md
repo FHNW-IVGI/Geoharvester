@@ -4,10 +4,12 @@ A scraper, search engine and data portal for Swiss Geoservices (WMS, WFS, WFTS).
 
 ## Add YOUR data to the project.
 
-We scrape data based on the URLs in this [source.csv file](https://github.com/FHNW-IVGI/Geoharvester/blob/main/scraper/sources.csv). If you have additional services that should be included or know of servers/urls that are no longer valid, please let us know. Either:
+[!TIP]
 
-- Open an [issue for this project](https://github.com/FHNW-IVGI/Geoharvester/issues) OR
-- Open a pull request with changes to the [source.csv](https://github.com/FHNW-IVGI/Geoharvester/blob/main/scraper/sources.csv).
+> We scrape data based on the URLs in this [source.csv file](https://github.com/FHNW-IVGI/Geoharvester/blob/main/scraper/sources.csv). If you have additional services that should be included or know of servers/urls that are no longer valid, please let us know. Either:
+>
+> - Open an [issue for this project](https://github.com/FHNW-IVGI/Geoharvester/issues) OR
+> - Open a pull request with changes to the [source.csv](https://github.com/FHNW-IVGI/Geoharvester/blob/main/scraper/sources.csv).
 
 ## Stack
 
