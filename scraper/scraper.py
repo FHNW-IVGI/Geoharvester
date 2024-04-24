@@ -637,8 +637,12 @@ def translate_new_data(db, translate_column, languages):
     """
     Translates the preprocessed data
     """
+    tlang1 = time()
     db = db.fillna("nan")
     for lang in languages:
+        tlang2 = time()
+        logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
+        print(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
         new_col = translate_column+'_'+lang
         if translate_column == 'title':
             db[new_col] = db.apply(lambda row: utils.translate_text(
@@ -775,6 +779,7 @@ if __name__ == "__main__":
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
 
     merged_database = pd.concat([data_to_keep, preprd_data], axis=1)
+    print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
     merged_database.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'))
 
     print("\nNLP translation completed")
