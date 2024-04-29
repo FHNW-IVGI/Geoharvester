@@ -84,12 +84,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: preprd_data
-          path: data/preprd_data.pkl
+          path: ./scraper/data/preprd_data.pkl
 
       - uses: actions/upload-artifact@v4
         with:
           name: data_to_keep
-          path: data/data_to_keep.pkl
+          path: ./data/data_to_keep.pkl
 
   translate:
     needs: build # Wait on the build job to complete
