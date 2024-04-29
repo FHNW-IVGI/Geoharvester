@@ -771,6 +771,7 @@ if __name__ == "__main__":
 
     preprd_data = preprocessing_NLP(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],
                                                  'to_preprocess.pkl'))
+<<<<<<< HEAD
     pathpart = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
 
     print(f"\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets, pathpart {pathpart}")
@@ -781,3 +782,25 @@ if __name__ == "__main__":
     # Save to data for last pipeline stage
     data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))
 
+=======
+    pathpart = os.path.split(config.GEOSERVICES_CH_CSV)[0]
+
+    print("\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets, pathpart1 {pathpart}")
+    logger.info(f"NLP preprocessing completed on {len(preprd_data)} datasets, pathpart2 {pathpart}")
+
+    preprd_data.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'preprd_data.pkl'))
+    data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))
+
+# ----
+
+
+    # for trns_col in ["title","abstract","keywords","keywords_nlp"]:
+    #     preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
+
+    # merged_database = pd.concat([data_to_keep, preprd_data], axis=1)
+    # print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
+    # merged_database.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'))
+
+    # print("\nNLP translation completed")
+    # logger.info("NLP translation completed")
+>>>>>>> 1efe05f (Shorten sources for testrun, add worflow folder, split code)
