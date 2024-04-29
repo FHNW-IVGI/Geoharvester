@@ -92,6 +92,7 @@ jobs:
           path: data/data_to_keep.pkl
 
   translate:
+    needs: build # Wait on the build job to complete
     runs-on: ubuntu-latest
     timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
     defaults:
