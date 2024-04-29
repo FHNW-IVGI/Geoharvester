@@ -29,7 +29,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
-          git pull origin multilang_integration ### <----- Changes branch back to main
+          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
@@ -90,3 +90,44 @@ jobs:
         with:
           name: data_to_keep
           path: data/data_to_keep.pkl
+
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
+    defaults:
+      run:
+        working-directory: ./scraper
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@main
+
+      - name: Increase git buffer size
+        run: |
+          git config --global http.postBuffer 1048576000
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase true 
+          git pull origin multilang_integration ### <----- Changes branch back to main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download spacy models
+        run: |
+          python -m spacy download en_core_web_sm
+          python -m spacy download fr_core_news_sm
+          python -m spacy download de_core_news_sm
+          python -m spacy download it_core_news_sm
+
+      - name: Download nltk stopwords
+        run: |
+          python -m nltk.downloader all
