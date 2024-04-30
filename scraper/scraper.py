@@ -549,10 +549,10 @@ def check_new_data(actual_db_path, new_data_path, match_columns, output_path):
     match_columns : List
         Columns to be used for the comparision between databases
     Returns:
-    to_preprocessing : pandas.DataFrame
-        Data to be preprocessed with NLP
-    to_keep : pandas.DataFrame
-        Data already preprocessed from the old database with no
+    data_to_preprocessing_path : str
+        Path to data to be preprocessed with NLP
+    data_to_keep_path : str
+        Path to data already preprocessed from the old database with no
         modifications.
     """
     old_db = pd.read_pickle(actual_db_path)
@@ -572,7 +572,8 @@ def check_new_data(actual_db_path, new_data_path, match_columns, output_path):
     to_preprocessing = to_preprocessing[new_db.columns.to_list()]
 
     to_preprocessing.to_pickle(os.path.join(output_path, 'to_preprocess.pkl'))
-    return to_keep
+    to_keep.to_pickle(os.path.join(output_path, 'to_keep.pkl'))
+    return os.path.join(output_path, 'to_keep.pkl'), os.path.join(output_path, 'to_preprocess.pkl'), len(to_keep)
 
 def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
     """
@@ -587,7 +588,12 @@ def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
         path-to-folder where the elaborated data will be saved as pkl
     column : str
         column of the dataframe to be used for the NLP preprocessing
+    Returns
+    -------
+    _: int
+        number of dataset processed with NLP
     """
+    
     t0 = time()
     # Read the data
     raw_data = pd.read_pickle(raw_data_path)
@@ -631,34 +637,9 @@ def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
     if output_folder:
         raw_data.to_pickle(output_folder+'/preprocessed_data.pkl')
         print(f"Preprocessed data saved in {output_folder+'/preprocessed_data.pkl'}")
-    return raw_data
+    return output_folder+'/preprocessed_data.pkl', len(raw_data)
 
-def translate_new_data(db, translate_column, languages):
-    """
-    Translates the preprocessed data
-    """
-    tlang1 = time()
-    db = db.fillna("nan")
-    for lang in languages:
-        tlang2 = time()
-        logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
-        print(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
-        new_col = translate_column+'_'+lang
-        if translate_column == 'title':
-            db[new_col] = db.apply(lambda row: utils.translate_text(
-                row[translate_column],to_lang=lang, from_lang=row['lang_3']), axis=1)
-        elif translate_column == 'abstract':
-            db[new_col] = db.apply(lambda row: utils.translate_abstract(
-                row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
-        elif translate_column == 'keywords':
-            db[new_col] = db.apply(lambda row: utils.translate_keywords(
-                row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
-        elif translate_column == 'keywords_nlp':
-            db[new_col] = db.apply(lambda row: utils.translate_keywords(
-                row[translate_column].split(','), to_lang=lang, from_lang=row['lang_3']), axis=1)
-        else:
-            print(f"Column {translate_column} could not be translated")
-    return db
+
 
 if __name__ == "__main__":
     """
@@ -761,26 +742,17 @@ if __name__ == "__main__":
     print("\nScraper run completed")
     logger.info("Scraper run completed")
 
-    data_to_keep = check_new_data(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'),
+    path_data_to_keep, path_data_to_process, num_data_keep = check_new_data(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'),
                    config.GEOSERVICES_CH_CSV,
                    match_columns=['name','title','provider','keywords','abstract','endpoint'],
                    output_path=os.path.split(config.GEOSERVICES_CH_CSV)[0])
     
-    print("\nKeeping "+str(len(data_to_keep))+" datasets from old database")
-    logger.info(f"Keeping {len(data_to_keep)} datasets from old database")
+    print("\nKeeping "+str(num_data_keep)+" datasets from old database")
+    logger.info(f"Keeping {num_data_keep} datasets from old database")
 
-    preprd_data = preprocessing_NLP(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],
-                                                 'to_preprocess.pkl'))
+    preprd_data_path, num_data = preprocessing_NLP(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],
+                                                 'to_preprocess.pkl'),
+                                                 os.path.split(config.GEOSERVICES_CH_CSV)[0])
 
-    print("\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets")
-    logger.info(f"NLP preprocessing completed on {len(preprd_data)} datasets")
-
-    for trns_col in ["title","abstract","keywords","keywords_nlp"]:
-        preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
-
-    merged_database = pd.concat([data_to_keep, preprd_data], axis=1)
-    print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
-    merged_database.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'))
-
-    print("\nNLP translation completed")
-    logger.info("NLP translation completed")
+    print("\nNLP preprocessing completed on "+str(num_data)+" datasets, saved in "+preprd_data_path)
+    logger.info(f"NLP preprocessing completed on {num_data} datasets, saved in {preprd_data_path}")
