@@ -261,6 +261,8 @@ def json_to_pandas(redis_output):
         doc = doc.replace('’’', "")
         doc = doc.replace("\\", "")
         doc = doc.replace("ß", "ss")
+        doc = doc.replace('""', '"')
+        doc = doc.replace("xa0","")
         # Append results to a pandas df
         try:
             df = pd.read_json(doc.replace("Document ", ""), orient='index',
