@@ -5,6 +5,7 @@ SOURCE_COLLECTION_VERSION = {"KT_AI": "1.3.0",
                              "KT_AR": "1.3.0", "Geodienste": "1.3.0"}
 SOURCE_SCRAPER_DIR = "scraper"
 GEOSERVICES_CH_CSV = os.path.join("data", "geoservices_CH.csv")
+WORKFLOW_ARTIFACT_FOLDER = "artifacts"
 #GEOSERVICES_STATS_CH_CSV = os.path.join("data", "geoservices_stats_CH.csv")
 #GEOSERVICES_STATS_CH_PATTERN = os.path.join(
 #    "data", "* geoservices_stats_CH.csv")

@@ -1,8 +1,17 @@
 import logging
+import os
+import sys
+import warnings
 from time import time
 
 import configuration as config
+import pandas as pd
 import utils
+
+# globals
+warnings.filterwarnings('ignore')
+sys.path.insert(0, config.SOURCE_SCRAPER_DIR)
+
 
 
 def translate_new_data(db, translate_column, languages):
@@ -46,7 +55,14 @@ if __name__ == "__main__":
     logger.addHandler(fh)
 
 
+
+    preprd_data = pd.read_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'preprd_data.pkl'))
+
     # Load preprd data from artifact
 
     for trns_col in ["title","abstract","keywords","keywords_nlp"]:
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
+
+
+    print("\nNLP translation completed1")
+    logger.info("NLP translation completed")

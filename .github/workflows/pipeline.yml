@@ -84,12 +84,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: preprd_data
-          path: ./scraper/data/preprd_data.pkl
+          path: ./scraper/artifacts/preprd_data.pkl
 
       - uses: actions/upload-artifact@v4
         with:
           name: data_to_keep
-          path: ./data/data_to_keep.pkl
+          path: ./scraper/artifacts/data_to_keep.pkl
 
   translate:
     needs: build # Wait on the build job to complete
@@ -110,7 +110,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
-          git pull origin multilang_integration ### <----- Changes branch back to main
+          git pull origin multilang_integration_pipeline ### <----- Changes branch back to main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
@@ -122,16 +122,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Download spacy models
-        run: |
-          python -m spacy download en_core_web_sm
-          python -m spacy download fr_core_news_sm
-          python -m spacy download de_core_news_sm
-          python -m spacy download it_core_news_sm
+      #   - name: Download spacy models
+      #     run: |
+      #       python -m spacy download en_core_web_sm
+      #       python -m spacy download fr_core_news_sm
+      #       python -m spacy download de_core_news_sm
+      #       python -m spacy download it_core_news_sm
 
-      - name: Download nltk stopwords
-        run: |
-          python -m nltk.downloader all
+      #   - name: Download nltk stopwords
+      #     run: |
+      #       python -m nltk.downloader all
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/data/
+          merge-multiple: true
+      - name: Display structure of downloaded files
+        run: ls -R ./scraper/data/
 
       - name: Run Python script
         run: |
