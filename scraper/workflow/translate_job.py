@@ -4,13 +4,14 @@ import sys
 import warnings
 from time import time
 
-import configuration as config
 import pandas as pd
 import utils
 
+# import scraper.configuration as config
+
 # globals
-warnings.filterwarnings('ignore')
-sys.path.insert(0, config.SOURCE_SCRAPER_DIR)
+# warnings.filterwarnings('ignore')
+# sys.path.insert(0, config.SOURCE_SCRAPER_DIR)
 
 
 
@@ -44,19 +45,19 @@ def translate_new_data(db, translate_column, languages):
 if __name__ == "__main__":
 
         # Initialize and configure the logger
-    logger = logging.getLogger("Scraping log")
-    logger.setLevel(logging.INFO)
-    fh = logging.FileHandler(config.LOG_FILE, "w", "utf-8")
-    fh.setLevel(logging.INFO)
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(filename)s >"
-                                  "%(funcName)17s(): Line %(lineno)s - "
-                                  "%(levelname)s - %(message)s")
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
+    # logger = logging.getLogger("Scraping log")
+    # logger.setLevel(logging.INFO)
+    # fh = logging.FileHandler(config.LOG_FILE, "w", "utf-8")
+    # fh.setLevel(logging.INFO)
+    # formatter = logging.Formatter("%(asctime)s - %(name)s - %(filename)s >"
+    #                               "%(funcName)17s(): Line %(lineno)s - "
+    #                               "%(levelname)s - %(message)s")
+    # fh.setFormatter(formatter)
+    # logger.addHandler(fh)
 
 
 
-    preprd_data = pd.read_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'preprd_data.pkl'))
+    preprd_data = pd.read_pickle(os.path.join("data",'preprd_data.pkl'))
 
     # Load preprd data from artifact
 
@@ -65,4 +66,4 @@ if __name__ == "__main__":
 
 
     print("\nNLP translation completed1")
-    logger.info("NLP translation completed")
+    # logger.info("NLP translation completed")
