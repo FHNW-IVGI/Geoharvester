@@ -5,14 +5,14 @@ from time import time
 from typing import Union
 
 import pandas as pd
+from app.constants import EnumLangType, EnumProviderType, EnumServiceType
+from app.redis.schemas import SVC_INDEX_ID
 from fastapi.logger import logger as fastapi_logger
 from langdetect import detect
 from nltk.stem import SnowballStemmer
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.query import Query, SortbyField
 
-from app.constants import EnumLangType, EnumProviderType, EnumServiceType
-from app.redis.schemas import SVC_INDEX_ID
 from server.app.redis.redis_manager import r
 
 lang_dict = {'english':'en', 'french':'fr', 'german':'de', 'italian':'it'}
@@ -250,6 +250,8 @@ def json_to_pandas(redis_output):
     _ : pandas.DataFrame
     """
     query_results = pd.DataFrame()
+    print("----before replacement")
+    print(query_results.to_string())
     skipped = 0
     for output in redis_output:
         # Cleaning the string
