@@ -6,13 +6,11 @@ from time import time
 
 import pandas as pd
 
-# sys.path.insert(1, '../utils')
 sys.path.append('../')
 
 
+import scraper.configuration as config
 import scraper.utils as utils
-
-# import scraper.configuration as config
 
 # globals
 # warnings.filterwarnings('ignore')
@@ -49,16 +47,16 @@ def translate_new_data(db, translate_column, languages):
 
 if __name__ == "__main__":
 
-        # Initialize and configure the logger
-    # logger = logging.getLogger("Scraping log")
-    # logger.setLevel(logging.INFO)
-    # fh = logging.FileHandler(config.LOG_FILE, "w", "utf-8")
-    # fh.setLevel(logging.INFO)
-    # formatter = logging.Formatter("%(asctime)s - %(name)s - %(filename)s >"
-    #                               "%(funcName)17s(): Line %(lineno)s - "
-    #                               "%(levelname)s - %(message)s")
-    # fh.setFormatter(formatter)
-    # logger.addHandler(fh)
+    # Initialize and configure the logger
+    logger = logging.getLogger("Scraping log")
+    logger.setLevel(logging.INFO)
+    fh = logging.FileHandler(config.LOG_FILE, "w", "utf-8")
+    fh.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(filename)s >"
+                                  "%(funcName)17s(): Line %(lineno)s - "
+                                  "%(levelname)s - %(message)s")
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
     current_working_directory = os.getcwd()
 
     print(f"dir{current_working_directory}")
@@ -72,4 +70,4 @@ if __name__ == "__main__":
 
 
     print("\nNLP translation completed1")
-    # logger.info("NLP translation completed")
+    logger.info("NLP translation completed")
