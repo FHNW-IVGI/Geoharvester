@@ -23,7 +23,7 @@ def translate_new_data(db, translate_column, languages):
     db = db.fillna("nan")
     for lang in languages:
         tlang2 = time()
-        logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
+        # logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
         print(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
         new_col = translate_column+'_'+lang
         if translate_column == 'title':
@@ -54,8 +54,9 @@ if __name__ == "__main__":
     #                               "%(levelname)s - %(message)s")
     # fh.setFormatter(formatter)
     # logger.addHandler(fh)
+    current_working_directory = os.getcwd()
 
-
+    print(f"dir{current_working_directory}")
 
     preprd_data = pd.read_pickle(os.path.join("data",'preprd_data.pkl'))
 
