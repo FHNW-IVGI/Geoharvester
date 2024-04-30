@@ -110,7 +110,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
-          git pull origin multilang_integration_pipeline ### <----- Changes branch back to main
+          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
