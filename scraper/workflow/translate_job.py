@@ -6,7 +6,11 @@ from time import time
 
 import pandas as pd
 
-import scraper.utils as utils
+# sys.path.insert(1, '../utils')
+sys.path.append('../')
+
+
+import utils
 
 # import scraper.configuration as config
 
