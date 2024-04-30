@@ -5,7 +5,8 @@ import warnings
 from time import time
 
 import pandas as pd
-import utils
+
+import scraper.utils as utils
 
 # import scraper.configuration as config
 
