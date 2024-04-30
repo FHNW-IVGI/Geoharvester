@@ -250,8 +250,7 @@ def json_to_pandas(redis_output):
     _ : pandas.DataFrame
     """
     query_results = pd.DataFrame()
-    print("----before replacement")
-    print(query_results.to_string())
+
     skipped = 0
     for output in redis_output:
         # Cleaning the string

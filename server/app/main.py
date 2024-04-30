@@ -6,13 +6,6 @@ import warnings
 from time import time
 from typing import Union
 
-from fastapi import FastAPI, Query
-from fastapi.logger import logger as fastapi_logger
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi_pagination import Page, add_pagination, paginate
-from fastapi_pagination.customization import CustomizedPage, UseParamsFields
-from pydantic import Field
-
 from app.constants import (DEFAULTSIZE, EnumLangType, EnumProviderType,
                            EnumServiceType)
 from app.processing.methods import (import_csv_into_dataframe,
@@ -23,6 +16,13 @@ from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                search_redis, transform_wordlist_to_query)
 from app.redis.schemas import (SVC_INDEX_ID, SVC_KEY, SVC_PREFIX,
                                GeoserviceModel, geoservices_schema)
+from fastapi import FastAPI, Query
+from fastapi.logger import logger as fastapi_logger
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import Page, add_pagination, paginate
+from fastapi_pagination.customization import CustomizedPage, UseParamsFields
+from pydantic import Field
+
 from server.app.redis.redis_manager import r
 
 # filter package warnings
@@ -140,6 +140,8 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_data, parsed_language = search_redis(redis_query, lang, 0, 40000)
         t1 = time()
         fastapi_logger.info(f"Redis queried in {round(t1-t0,2)} seconds")
+
+        print(redis_data.docs)
 
         if len(redis_data.docs) > 0:
             ranked_results = results_ranking(redis_data.docs, word_list, parsed_language)
