@@ -138,11 +138,11 @@ jobs:
           path: ./scraper/data/
           merge-multiple: true
       - name: Display structure of downloaded files
-        run: ls -R ./scraper/data/
+        run: pwd
 
       - name: Run Python script
         run: |
-          python workflow/translate_job.py
+          python ./workflow/translate_job.py
         # timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
         # env: # Set the secrets as env var
         #   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
