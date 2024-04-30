@@ -10,7 +10,7 @@ import pandas as pd
 sys.path.append('../')
 
 
-import scraper.utils
+import scraper.utils as utils
 
 # import scraper.configuration as config
 
