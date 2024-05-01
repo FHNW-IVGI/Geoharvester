@@ -1,3 +1,9 @@
+"""
+title: The ultimate translator for GeoHarvester
+Author: Elia Ferrari
+Date: 2024-04-29
+"""
+
 import logging
 import os
 import sys
@@ -12,11 +18,6 @@ sys.path.append('../')
 import scraper.configuration as config
 import scraper.utils as utils
 
-# globals
-# warnings.filterwarnings('ignore')
-# sys.path.insert(0, config.SOURCE_SCRAPER_DIR)
-
-
 
 def translate_new_data(db, translate_column, languages):
     """
@@ -26,7 +27,7 @@ def translate_new_data(db, translate_column, languages):
     db = db.fillna("nan")
     for lang in languages:
         tlang2 = time()
-        # logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
+        logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
         print(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
         new_col = translate_column+'_'+lang
         if translate_column == 'title':
@@ -59,15 +60,21 @@ if __name__ == "__main__":
     logger.addHandler(fh)
     current_working_directory = os.getcwd()
 
-    print(f"dir{current_working_directory}")
+    logger.info("dir{current_working_directory}")
 
-    preprd_data = pd.read_pickle(os.path.join("data",'preprd_data.pkl'))
+    # Load artifact
+    preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
+    data_to_keep = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'data_to_keep.pkl'))
 
-    # Load preprd data from artifact
 
     for trns_col in ["title","abstract","keywords","keywords_nlp"]:
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
 
+    merged_database = pd.concat([data_to_keep, preprd_data], axis=1)
+    print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
+    logger.info(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
 
-    print("\nNLP translation completed1")
+    merged_database.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'merged_data.pkl'))
+
+    print("\nNLP translation completed")
     logger.info("NLP translation completed")

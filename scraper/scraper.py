@@ -549,10 +549,10 @@ def check_new_data(actual_db_path, new_data_path, match_columns, output_path):
     match_columns : List
         Columns to be used for the comparision between databases
     Returns:
-    to_preprocessing : pandas.DataFrame
-        Data to be preprocessed with NLP
-    to_keep : pandas.DataFrame
-        Data already preprocessed from the old database with no
+    data_to_preprocessing_path : str
+        Path to data to be preprocessed with NLP
+    data_to_keep_path : str
+        Path to data already preprocessed from the old database with no
         modifications.
     """
     old_db = pd.read_pickle(actual_db_path)
@@ -779,15 +779,3 @@ if __name__ == "__main__":
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
     data_to_keep.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'data_to_keep.pkl'))
 
-# ----
-
-
-    # for trns_col in ["title","abstract","keywords","keywords_nlp"]:
-    #     preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
-
-    # merged_database = pd.concat([data_to_keep, preprd_data], axis=1)
-    # print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
-    # merged_database.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'))
-
-    # print("\nNLP translation completed")
-    # logger.info("NLP translation completed")

@@ -135,14 +135,11 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/data/
+          path: ./scraper/artifacts/
           merge-multiple: true
-      - name: Display structure of downloaded files
-        run: pwd
+      - name: Display downloaded files
+        run: ls
 
       - name: Run Python script
         run: |
           python ./workflow/translate_job.py
-        # timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
-        # env: # Set the secrets as env var
-        #   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
