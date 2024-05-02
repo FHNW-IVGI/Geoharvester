@@ -15,6 +15,7 @@ import pandas as pd
 sys.path.append('../')
 
 
+
 import scraper.configuration as config
 import scraper.utils as utils
 
@@ -64,17 +65,15 @@ if __name__ == "__main__":
 
     # Load artifact
     preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
-    data_to_keep = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'data_to_keep.pkl'))
 
+    # Read language from pipeline variable
+        # preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
+    language = os.environ['LANG_FROM_PIPELINE']
 
     for trns_col in ["title","abstract","keywords","keywords_nlp"]:
-        preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
+        preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=[language])
+    preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, language, '_translated.pkl'))
 
-    merged_database = pd.concat([data_to_keep, preprd_data], axis=1)
-    print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
-    logger.info(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
+    print("\nNLP translation completed for {language}")
+    logger.info("NLP translation completed for {language}")
 
-    merged_database.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'merged_data.pkl'))
-
-    print("\nNLP translation completed")
-    logger.info("NLP translation completed")

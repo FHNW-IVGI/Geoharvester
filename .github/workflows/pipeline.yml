@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  scrape:
     # cf. https://docs.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-github-actions
     runs-on: ubuntu-latest
     timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
@@ -91,10 +91,9 @@ jobs:
           name: data_to_keep
           path: ./scraper/artifacts/data_to_keep.pkl
 
-  translate:
-    needs: build # Wait on the build job to complete
+  translate_de:
+    needs: scrape # Wait on the build job to complete
     runs-on: ubuntu-latest
-    timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
     defaults:
       run:
         working-directory: ./scraper
@@ -122,24 +121,108 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      #   - name: Download spacy models
-      #     run: |
-      #       python -m spacy download en_core_web_sm
-      #       python -m spacy download fr_core_news_sm
-      #       python -m spacy download de_core_news_sm
-      #       python -m spacy download it_core_news_sm
-
-      #   - name: Download nltk stopwords
-      #     run: |
-      #       python -m nltk.downloader all
-
-      - uses: actions/download-artifact@v4
-        with:
-          path: ./scraper/artifacts/
-          merge-multiple: true
-      - name: Display downloaded files
-        run: ls
-
-      - name: Run Python script
+      - name: Translate DE
         run: |
-          python ./workflow/translate_job.py
+          LANG_FROM_PIPELINE=${{'de'}} python ./workflow/translate_job.py
+
+  translate_en:
+    needs: scrape # Wait on the build job to complete
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./scraper
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@main
+
+      - name: Increase git buffer size
+        run: |
+          git config --global http.postBuffer 1048576000
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase true 
+          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Translate EN
+        run: |
+          LANG_FROM_PIPELINE=${{'en'}} python ./workflow/translate_job.py
+
+  translate_fr:
+    needs: scrape # Wait on the build job to complete
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./scraper
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@main
+
+      - name: Increase git buffer size
+        run: |
+          git config --global http.postBuffer 1048576000
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase true 
+          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Translate FR
+        run: |
+          LANG_FROM_PIPELINE=${{'fr'}} python ./workflow/translate_job.py
+
+  translate_it:
+    needs: scrape # Wait on the build job to complete
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./scraper
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@main
+
+      - name: Increase git buffer size
+        run: |
+          git config --global http.postBuffer 1048576000
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase true 
+          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Translate IT
+        run: |
+          LANG_FROM_PIPELINE=${{'it'}} python ./workflow/translate_job.py
