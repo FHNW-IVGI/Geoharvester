@@ -287,3 +287,8 @@ jobs:
       - name: Merge Databases
         run: |
           python ./workflow/merge_job.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: merged database
+          path: ./scraper/data/merged_data.pkl

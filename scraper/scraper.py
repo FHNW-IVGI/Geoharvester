@@ -777,5 +777,5 @@ if __name__ == "__main__":
     logger.info(f"NLP preprocessing completed on {len(preprd_data)} datasets, pathpart2 {pathpart}")
 
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
-    data_to_keep.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'data_to_keep.pkl'))
+    data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))
 
