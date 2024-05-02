@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     for trns_col in ["title","abstract","keywords","keywords_nlp"]:
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=[language])
-    preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, language, '_translated.pkl'))
+    preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.pkl'.format(language)))
 
     print("\nNLP translation completed for {language}")
     logger.info("NLP translation completed for {language}")
