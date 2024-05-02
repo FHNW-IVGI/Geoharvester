@@ -43,8 +43,8 @@ if __name__ == "__main__":
 
     current_working_directory = os.getcwd()
     print(f"current dir: {current_working_directory}")
-    path_file = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
-    print(f"file path: {path_file}")
+    # path_file = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
+    # print(f"file path: {path_file}")
 
     for lang in config.WORKFLOW_TRANSLATE_LANGUAGES:
         lang_found = []

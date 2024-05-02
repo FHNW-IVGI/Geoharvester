@@ -245,10 +245,10 @@ jobs:
 
       - name: Translate IT
         run: |
-          LANG_FROM_PIPELINE=${{'it'}} python ./workflow/translate_job.py¨
+          LANG_FROM_PIPELINE=${{'it'}} python ./workflow/translate_job.py
 
   merge:
-    needs:
+    needs: # Disable any languages/translate-jobs you don't need
       - translate_de
       - translate_en
       - translate_it
