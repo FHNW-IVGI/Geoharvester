@@ -18,7 +18,7 @@ import scraper.configuration as config
 import scraper.utils as utils
 
 
-def merge_databases(translated_data):
+def merge_with_data_to_keep(translated_data):
     data_to_keep = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'data_to_keep.pkl'))
     merged_database = pd.concat([data_to_keep, translated_data], axis=1)
     print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
@@ -43,20 +43,21 @@ if __name__ == "__main__":
 
     current_working_directory = os.getcwd()
     print(f"current dir: {current_working_directory}")
-    # path_file = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
-    # print(f"file path: {path_file}")
 
+    lang_found = []
+    # Detect pickle files for languages dynamically
     for lang in config.WORKFLOW_TRANSLATE_LANGUAGES:
-        lang_found = []
         file_path = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.pkl'.format(lang))
         if os.path.exists(file_path):
             lang_found.append(lang)
-    if len(lang_found) == 1:
-        print(f"Error, {lang_found}" )
+
+    # Process and merge files
+    if len(lang_found) < 1:
+        print(f"Merge not possible, {lang_found} languages found" )
 
     if len(lang_found) == 1:
         df1 = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,  '{}_translated.pkl'.format(lang)))
-        merge_databases(df1)
+        merge_with_data_to_keep(df1)
 
     if len(lang_found) > 1:
         df1 = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,  '{}_translated.pkl'.format(lang_found[0])))
@@ -64,7 +65,4 @@ if __name__ == "__main__":
             translated_columns_to_add = [col_name + "_" + lang for col_name in config.WORKFLOW_TRANSLATE_COLUMNS]
             df2 = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,  '{}_translated.pkl'.format(lang)))
             df1 = df1.merge(df2[translated_columns_to_add], on=config.WORKFLOW_MERGE_COLUMNS)
-    merge_databases(df1)
-
-
-# 
+        merge_with_data_to_keep(df1)

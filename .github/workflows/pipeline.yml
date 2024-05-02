@@ -59,28 +59,6 @@ jobs:
         env: # Set the secrets as env var
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 
-      # If main is protected (in repo settings) pushing will fail
-      #   - name: Push log files to repo
-      #     uses: github-actions-x/commit@v2.9
-      #     with:
-      #       push-branch: "main"
-      #       commit-message: "Scraper done"
-      #       force-add: "true"
-      #       files: scraper/tools/
-      #       name: autoupdate
-
-      # If main is protected (in repo settings) pushing will fail
-      # Subsequent "on push" Actions are only triggered if this
-      # push is done with a Personal Access Token (PAT)
-      #   - name: Push contents of data folder to repo
-      #     uses: github-actions-x/commit@v2.9
-      #     with:
-      #       push-branch: "main"
-      #       commit-message: "Scraper done"
-      #       force-add: "true"
-      #       files: scraper/data/
-      #       name: autoupdate
-
       - uses: actions/upload-artifact@v4
         with:
           name: preprd_data
@@ -130,6 +108,11 @@ jobs:
         run: |
           LANG_FROM_PIPELINE=${{'de'}} python ./workflow/translate_job.py
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: de_translated
+          path: ./scraper/artifacts/de_translated.pkl
+
   translate_en:
     needs: scrape # Wait on the build job to complete
     runs-on: ubuntu-latest
@@ -168,6 +151,11 @@ jobs:
       - name: Translate EN
         run: |
           LANG_FROM_PIPELINE=${{'en'}} python ./workflow/translate_job.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: en_translated
+          path: ./scraper/artifacts/en_translated.pkl
 
   translate_fr:
     needs: scrape # Wait on the build job to complete
@@ -208,6 +196,11 @@ jobs:
         run: |
           LANG_FROM_PIPELINE=${{'fr'}} python ./workflow/translate_job.py
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fr_translated
+          path: ./scraper/artifacts/fr_translated.pkl
+
   translate_it:
     needs: scrape # Wait on the build job to complete
     runs-on: ubuntu-latest
@@ -246,6 +239,11 @@ jobs:
       - name: Translate IT
         run: |
           LANG_FROM_PIPELINE=${{'it'}} python ./workflow/translate_job.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: it_translated
+          path: ./scraper/artifacts/it_translated.pkl
 
   merge:
     needs: # Disable any languages/translate-jobs you don't need
