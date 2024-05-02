@@ -61,7 +61,9 @@ if __name__ == "__main__":
     logger.addHandler(fh)
     current_working_directory = os.getcwd()
 
-    logger.info("dir{current_working_directory}")
+    print("current dir: {current_working_directory}")
+    path_file = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
+    print("file path: {path_file}")
 
     # Load artifact
     preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
