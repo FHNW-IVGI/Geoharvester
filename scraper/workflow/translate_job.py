@@ -72,7 +72,7 @@ if __name__ == "__main__":
         # preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
     language = os.environ['LANG_FROM_PIPELINE']
 
-    for trns_col in ["title","abstract","keywords","keywords_nlp"]:
+    for trns_col in config.WORKFLOW_TRANSLATE_COLUMNS:
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=[language])
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.pkl'.format(language)))
 

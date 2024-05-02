@@ -245,4 +245,47 @@ jobs:
 
       - name: Translate IT
         run: |
-          LANG_FROM_PIPELINE=${{'it'}} python ./workflow/translate_job.py
+          LANG_FROM_PIPELINE=${{'it'}} python ./workflow/translate_job.py¨
+
+  merge:
+    needs:
+      - translate_de
+      - translate_en
+      - translate_it
+      - translate_fr
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./scraper
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@main
+
+      - name: Increase git buffer size
+        run: |
+          git config --global http.postBuffer 1048576000
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase true 
+          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/artifacts/
+          merge-multiple: true
+
+      - name: Merge Databases
+        run: |
+          python ./workflow/merge_job.py
