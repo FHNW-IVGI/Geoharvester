@@ -121,6 +121,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/artifacts/
+          merge-multiple: true
+
       - name: Translate DE
         run: |
           LANG_FROM_PIPELINE=${{'de'}} python ./workflow/translate_job.py
@@ -154,6 +159,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/artifacts/
+          merge-multiple: true
 
       - name: Translate EN
         run: |
@@ -189,6 +199,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/artifacts/
+          merge-multiple: true
+
       - name: Translate FR
         run: |
           LANG_FROM_PIPELINE=${{'fr'}} python ./workflow/translate_job.py
@@ -222,6 +237,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/artifacts/
+          merge-multiple: true
 
       - name: Translate IT
         run: |

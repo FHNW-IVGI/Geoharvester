@@ -771,9 +771,9 @@ if __name__ == "__main__":
 
     preprd_data = preprocessing_NLP(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],
                                                  'to_preprocess.pkl'))
-    pathpart = os.path.split(config.GEOSERVICES_CH_CSV)[0]
+    pathpart = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
 
-    print("\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets, pathpart1 {pathpart}")
+    print(f"\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets, pathpart {pathpart}")
     logger.info(f"NLP preprocessing completed on {len(preprd_data)} datasets, pathpart2 {pathpart}")
 
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
