@@ -284,6 +284,11 @@ jobs:
           path: ./scraper/artifacts/
           merge-multiple: true
 
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/data/
+          merge-multiple: true
+
       - name: Merge Databases
         run: |
           python ./workflow/merge_job.py
