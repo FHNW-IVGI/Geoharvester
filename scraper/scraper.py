@@ -776,6 +776,8 @@ if __name__ == "__main__":
     print(f"\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets, pathpart {pathpart}")
     logger.info(f"NLP preprocessing completed on {len(preprd_data)} datasets, pathpart2 {pathpart}")
 
+    # Save to artifacts, for 2nd pipeline stage
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
+    # Save to data for last pipeline stage
     data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))
 

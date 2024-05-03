@@ -62,12 +62,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: preprd_data
-          path: ./scraper/artifacts/preprd_data.pkl
+          path: ./scraper/artifacts/preprd_data.pkl # From artifacts for 2nd stage
 
       - uses: actions/upload-artifact@v4
         with:
           name: data_to_keep
-          path: ./scraper/artifacts/data_to_keep.pkl
+          path: ./scraper/data/data_to_keep.pkl # From data, for last stage
 
   translate_de:
     needs: scrape # Wait on the build job to complete
