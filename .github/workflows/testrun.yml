@@ -1,4 +1,3 @@
-# Author: David Oesch, https://github.com/davidoesch/geoservice_harvester_poc
 # This is copy of the workflow file run by github actions
 
 name: Test Run scraper
@@ -13,7 +12,7 @@ jobs:
   build:
     # cf. https://docs.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-github-actions
     runs-on: ubuntu-latest
-    timeout-minutes: 600  # Default: 6hrs, not sufficient for NLP preprocessing
+    timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
     defaults:
       run:
         working-directory: ./scraper
@@ -25,7 +24,7 @@ jobs:
       - name: Increase git buffer size
         run: |
           git config --global http.postBuffer 1048576000
-          
+
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
@@ -55,10 +54,10 @@ jobs:
       - name: Run Python script
         run: |
           python -u scraper.py
-        timeout-minutes: 600  # Default: 6hrs, not sufficient for NLP preprocessing
+        timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
         env: # Set the secrets as env var
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          
+
       # If main is protected (in repo settings) pushing will fail
       - name: Push log files to repo
         uses: github-actions-x/commit@v2.9
@@ -68,7 +67,7 @@ jobs:
           force-add: "true"
           files: scraper/tools/
           name: autoupdate
-            
+
       # If main is protected (in repo settings) pushing will fail
       # Subsequent "on push" Actions are only triggered if this
       # push is done with a Personal Access Token (PAT)

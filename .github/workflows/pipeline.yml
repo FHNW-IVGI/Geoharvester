@@ -1,4 +1,3 @@
-# Author: David Oesch, https://github.com/davidoesch/geoservice_harvester_poc
 # This is copy of the workflow file run by github actions
 
 name: Pipeline Run scraper
@@ -13,7 +12,6 @@ jobs:
   scrape:
     # cf. https://docs.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-github-actions
     runs-on: ubuntu-latest
-    timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
     defaults:
       run:
         working-directory: ./scraper
@@ -55,7 +53,6 @@ jobs:
       - name: Run Python script
         run: |
           python scraper.py
-        timeout-minutes: 600 # Default: 6hrs, not sufficient for NLP preprocessing
         env: # Set the secrets as env var
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 

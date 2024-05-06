@@ -23,6 +23,20 @@ import scraper.utils as utils
 def translate_new_data(db, translate_column, languages):
     """
     Translates the preprocessed data
+
+    Parameters
+    ----------
+    db : df
+        Dataframe to be translated
+    translate_column : string
+        Column name from the list of columns to translate as defined in WORKFLOW_TRANSLATE_COLUMNS
+    languages : list
+        Language to translate into, defined by LANG_FROM_PIPELINE
+
+    Output 
+    ----------
+    <language_abbr>_translated.pkl : pickle
+        Outputs a pickle file of the translation which is uploaded as artifact to github
     """
     tlang1 = time()
     db = db.fillna("nan")
@@ -48,7 +62,14 @@ def translate_new_data(db, translate_column, languages):
     return db
 
 if __name__ == "__main__":
+    """
+    Is triggered by github action pipeline which runs this script once per language.
 
+    Parameters
+    ----------
+    LANG_FROM_PIPELINE : string
+        Passes in the language abbr. to translate (e.g. de for german)
+    """
     # Initialize and configure the logger
     logger = logging.getLogger("Scraping log")
     logger.setLevel(logging.INFO)
