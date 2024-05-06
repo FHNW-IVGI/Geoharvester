@@ -66,7 +66,7 @@ if __name__ == "__main__":
         for lang in lang_found[1:]: # start from the second language
             translated_columns_to_add = config.WORKFLOW_MERGE_COLUMNS + [col_name + "_" + lang for col_name in config.WORKFLOW_TRANSLATE_COLUMNS]
             df2 = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,  '{}_translated.pkl'.format(lang)))
-            df1.merge(df2[translated_columns_to_add], on=config.WORKFLOW_MERGE_COLUMNS)
+            df1 = df1.merge(df2[translated_columns_to_add], on=config.WORKFLOW_MERGE_COLUMNS)
         
         print(f"All languages combined have {len(df1.index)} rows")
         merge_with_data_to_keep(df1)
