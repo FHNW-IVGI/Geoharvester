@@ -60,9 +60,11 @@ A scraper, search engine and data portal for Swiss Geoservices (WMS, WFS, WFTS).
 - Make sure that you have created the two files that contain the redis password, as described above.
 - Use `docker compose --env-file ./app/redis/redis.env  up --build` (or another path to where the redis password is located).
 
-##### Error about reaching max_clients and no results in the frontend.
+##### NGINX not (re)starting
 
-Redis allows a limit of 10000 by default and will throw an error if the limit is set to a higher number in code. In order to allow a higher limit, this needs to be set in the redis .conf file and the modified config needs to be copied to the docker instance (which is handled by docker-compose.yml, "volumes" ). Redis v.7.0+ required.
+This can happen if the server became unresponsive when building the frontend.
+The eror iss something like `Job for nginx.service failed because the control process exited with error code.` without any more info.
+Run `sudo killall apache2` to kill any process still running and blocking the restart of NGING, then run `sudo service nginx restart` to restart NGINX.
 
 ##### Error about reaching max_clients and no results in the frontend.
 
