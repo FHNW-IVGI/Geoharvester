@@ -20,6 +20,7 @@ from fastapi import FastAPI, Query
 from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
+from fastapi_pagination.customization import CustomizedPage, UseParamsFields
 from pydantic import Field
 
 from server.app.redis.redis_manager import r
@@ -57,9 +58,11 @@ else:
 
 
 # Pagination settings. Adjust FE table calculations accordingly when changing these!
-Page = Page.with_custom_options(
-    size=Field(DEFAULTSIZE, ge=1, le=DEFAULTSIZE),
-)
+GeoharvesterPage = CustomizedPage[
+    Page,
+    UseParamsFields(size=DEFAULTSIZE)
+]
+
 
 dataframe=None
 datajson=None
@@ -71,8 +74,9 @@ async def startup_event():
     r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
     global dataframe
-    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main/scraper/data/"
-    url_geoservices_CH_pkl = os.path.join(url_github_repo, "preprocessed_data.pkl")
+    # WARNING: change the repo branche back into main!!!!
+    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/multilang_integration/scraper/data/"#"https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main/scraper/data/"
+    url_geoservices_CH_pkl = os.path.join(url_github_repo, "merged_data.pkl")
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
     # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
     # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
@@ -106,7 +110,7 @@ async def root():
 
     return {"message": "running"}
 
-@app.get("/api/getData", response_model=Page[GeoserviceModel])
+@app.get("/api/getData", response_model=GeoharvesterPage[GeoserviceModel])
 async def get_data(query_string: Union[str, None] = None,  service: EnumServiceType = EnumServiceType.none, provider:EnumProviderType = EnumProviderType.none, lang: EnumLangType = EnumLangType.de, page: int = 0, limit: int = 1000):
     """Route for the get_data request
         query: The query string used for searching
@@ -122,7 +126,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_query = redis_query_from_parameters("", service, provider)
         fastapi_logger.info("Redis queried without query_text: {}".format(redis_query))
 
-        redis_data = search_redis(redis_query, lang, 0, 40000)
+        redis_data, parsed_language = search_redis(redis_query, lang, 0, 40000)
         # print(f"Total ET query: {round((time()-t0),2)}")
         return paginate(redis_data.docs)
 
@@ -133,13 +137,15 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         redis_query = redis_query_from_parameters(text_query, service, provider)
         fastapi_logger.info("Redis queried with: {}".format(redis_query))
 
-        redis_data = search_redis(redis_query, lang, 0, 40000)
+        redis_data, parsed_language = search_redis(redis_query, lang, 0, 40000)
         t1 = time()
         fastapi_logger.info(f"Redis queried in {round(t1-t0,2)} seconds")
 
+        print(redis_data.docs)
+
         if len(redis_data.docs) > 0:
-            ranked_results = results_ranking(redis_data.docs, word_list)
-            fastapi_logger.info(f"Ranking ET: {round((time()-t1),2)}")
+            ranked_results = results_ranking(redis_data.docs, word_list, parsed_language)
+            fastapi_logger.info(f"Ranking ET: {round((time()-t1),2)} on columns with lang={parsed_language}")
             return paginate(ranked_results)
         else:
             pass

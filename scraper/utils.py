@@ -13,7 +13,7 @@ import pandas as pd  # 1.5.2
 import pyLDAvis.gensim_models as genvis  # 3.4.0
 import spacy  # 3.3.1 and spacy-legacy 3.0.12 + pretrained models
 # import translators as ts  # 5.5.6
-from deep_translator import GoogleTranslator, DeeplTranslator, ChatGptTranslator
+from deep_translator import GoogleTranslator, exceptions
 from gensim import corpora  # gensim 4.3.0
 from gensim.models import LsiModel
 from gensim.models.coherencemodel import CoherenceModel
@@ -64,35 +64,63 @@ def detect_language(phrase, not_found=False):
         lang = exception
     return lang
 
-def translate(text, to_lang='de', translator='google'):
+def translate_text(text, to_lang, from_lang):
     """
-    Translates a text str from the detected language to another.
-    It uses Google translator API
-
-    Parameters
-    ----------
-    text : str
-        String element to be translated
-    lang : str
-        2 chars output language
-    translator : str
-        Translator to be used for the translation,
-        google; deepl; chatgpt
-    Returns
-    -------
-    _ : str
-        Translated text.
+    Translate title column
     """
-    if translator == 'google':
-        return GoogleTranslator(source='auto', target=to_lang).translate(text)
-    elif translator == 'deepl':
-        return DeeplTranslator(api_key='None', source='auto', target=to_lang,
-                               use_free_api=False).translate(text)
-    elif translator == 'chatgpt':
-        return DeeplTranslator(api_key='None', source='auto', target=to_lang,
-                               use_free_api=False).translate(text)
+    language_dict = {'ENG':'en', 'FRA':'fr', 'DEU':'de', 'ITA':'it','NAN':'na'}
+    if language_dict[from_lang] == to_lang:
+        return text
     else:
-        print(f"Translator {translator} not implemented, please use: google, deepl or chatgpt")
+        try:
+            trnd = GoogleTranslator(source='auto', target=to_lang).translate(text.replace('_',' '))
+            trnd = trnd.replace("'", " ")
+        except exceptions.TranslationNotFound:
+            trnd = 'nan'
+        return trnd
+
+def translate_abstract(text, to_lang, from_lang):
+    """
+    Translate abstract column
+    """
+    language_dict = {'ENG':'en', 'FRA':'fr', 'DEU':'de', 'ITA':'it','NAN':'na'}
+    if to_lang != language_dict[from_lang] and text != 'nan':
+        if not text.startswith('http') or text.startswith('Link zu Metadaten:'):
+            try:
+                trnd = GoogleTranslator(source='auto', target=to_lang).translate(text.replace('_',' '))
+                trnd = trnd.replace("'", " ")
+            except exceptions.TranslationNotFound:
+                trnd = 'nan'
+            return trnd
+        else:
+            return 'nan'
+    else:
+        return text
+    
+def translate_keywords(text, to_lang, from_lang):
+    """
+    Translate keywords column und keywords_nlp column
+    """
+    if type(text) == str:
+        text = [text]
+    kwds = []
+    for kwd in text:
+        language_dict = {'ENG':'en', 'FRA':'fr', 'DEU':'de', 'ITA':'it','NAN':'na'}
+        if kwd != 'nan' and language_dict[from_lang] != to_lang:
+            if not kwd.startswith('http') or kwd.startswith('Link zu Metadaten:'):
+                try:
+                    kwd_trnsd = GoogleTranslator(source='auto', target=to_lang).translate(kwd.replace('_',' '))
+                    kwd_trnsd = kwd_trnsd.replace("'", " ")
+                    if not kwd_trnsd:
+                        kwd_trnsd = 'nan'
+                except exceptions.TranslationNotFound:
+                    kwd_trnsd = 'nan'
+            else:
+                kwd_trnsd = 'nan'
+            kwds.append(kwd_trnsd)
+        else:
+            kwds.append(kwd)
+    return ','.join(kwds)
     
 def is_not_num(str) -> bool:
     """
@@ -624,10 +652,3 @@ def check_metadata_quality(database, search_word='nan',
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
     database['metaquality'] = mask.sum(axis=1)*25 + 25 # Scoring with 4 fields
     return database
-
-
-    # TODO
-    # INSPIRE / eCH classification with pytorch model...
-    # More trainingsdata needed! (one possibility is to use the data from Wmts.geo.admi.ch … WMTSCapabilities.xml)
-    # To find the category we will have to check the link to geocatalog (geocat) and use the id  of the link to 
-    # automate a search in geocat and retrieve the class.
