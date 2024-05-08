@@ -1,6 +1,6 @@
 # This is copy of the workflow file run by github actions
 
-name: Pipeline Run scraper
+name: Run scraper and preprocessing
 
 on:
   schedule:
@@ -27,7 +27,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true
-          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+          git pull origin main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
@@ -84,7 +84,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
-          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+          git pull origin main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
@@ -128,7 +128,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
-          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+          git pull origin main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
@@ -172,7 +172,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
-          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+          git pull origin main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
@@ -216,7 +216,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
-          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+          git pull origin main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
@@ -264,7 +264,7 @@ jobs:
       - name: Pull latest changes
         run: |
           git config pull.rebase true 
-          git pull origin multilang_integration_pipelined ### <----- Changes branch back to main
+          git pull origin main
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
