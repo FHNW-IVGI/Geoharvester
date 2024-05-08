@@ -1,5 +1,6 @@
 {
-    "menu.documentation": "Documentation",
+    "menu.documentation": "Dépôt git",
+    "menu.userguide": "Mode d'emploi",
     "menu.api": "API",
     "menu.impressum": "Impressum",
     "search.searchButton": "Recherche",

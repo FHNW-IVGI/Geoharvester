@@ -9,7 +9,6 @@ import pandas as pd
 sys.path.append('../')
 
 import scraper.configuration as config
-import scraper.utils as utils
 
 
 def merge_with_data_to_keep(translated_data):
@@ -53,10 +52,6 @@ if __name__ == "__main__":
                                   "%(levelname)s - %(message)s")
     fh.setFormatter(formatter)
     logger.addHandler(fh)
-
-
-    current_working_directory = os.getcwd()
-    print(f"current dir: {current_working_directory}")
 
     lang_found = []
     # Detect pickle files for languages dynamically

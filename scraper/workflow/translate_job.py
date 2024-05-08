@@ -7,7 +7,6 @@ Date: 2024-04-29
 import logging
 import os
 import sys
-import warnings
 from time import time
 
 import pandas as pd
@@ -80,17 +79,11 @@ if __name__ == "__main__":
                                   "%(levelname)s - %(message)s")
     fh.setFormatter(formatter)
     logger.addHandler(fh)
-    current_working_directory = os.getcwd()
-
-    print(f"current dir: {current_working_directory}")
-    path_file = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
-    print(f"file path: {path_file}")
 
     # Load artifact
     preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
 
     # Read language from pipeline variable
-        # preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
     language = os.environ['LANG_FROM_PIPELINE']
 
     for trns_col in config.WORKFLOW_TRANSLATE_COLUMNS:

@@ -15,9 +15,10 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore, Translate } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-import DescriptionIcon from "@mui/icons-material/Description";
+import AbcIcon from "@mui/icons-material/Abc";
 import TerminalIcon from "@mui/icons-material/Terminal";
-import InfoIcon from "@mui/icons-material/Terminal";
+import InfoIcon from "@mui/icons-material/StickyNote2";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import { LanguageContext } from "src/lang/LanguageContext";
 import { LANGUAGE } from "src/constants";
 import geoharvesterLogo from "./logo.png";
@@ -88,7 +89,20 @@ export const MenuComponent = () => {
             window.open("https://github.com/FHNW-IVGI/Geoharvester");
           }}
         >
-          <DescriptionIcon style={{ marginRight: 14 }} />
+          <InfoIcon style={{ marginRight: 14 }} />
+          <FormattedMessage
+            id="menu.userguide"
+            defaultMessage="Benutzerhandbuch"
+          />
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            window.open("https://github.com/FHNW-IVGI/Geoharvester");
+          }}
+        >
+          <GitHubIcon style={{ marginRight: 14 }} />
           <FormattedMessage
             id="menu.documentation"
             defaultMessage="Dokumentation"
@@ -106,7 +120,7 @@ export const MenuComponent = () => {
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClickOpenImpressum}>
-          <InfoIcon style={{ marginRight: 14 }} />
+          <AbcIcon style={{ marginRight: 14 }} />
           <FormattedMessage id="menu.impressum" defaultMessage="Impressum" />
         </MenuItem>
         <Divider />

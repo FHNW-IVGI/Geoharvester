@@ -1,8 +1,19 @@
 # NDGI Project Geoharvester
 
-![Stack Diagram](https://user-images.githubusercontent.com/36440175/220350037-c8300e83-8d18-4962-b99a-54b75f5c886a.PNG)
+A scraper, search engine and data portal for Swiss Geoservices (WMS, WFS, WFTS).
 
-## Deployment
+## Add YOUR data to the project.
+
+> [!Tip]
+>
+> We scrape data based on the URLs in this [source.csv file](https://github.com/FHNW-IVGI/Geoharvester/blob/main/scraper/sources.csv). If you have additional services that should be included or know of servers/urls that are no longer valid, please let us know. Either:
+>
+> - Open an [issue for this project](https://github.com/FHNW-IVGI/Geoharvester/issues) OR
+> - Open a pull request with changes to the [source.csv](https://github.com/FHNW-IVGI/Geoharvester/blob/main/scraper/sources.csv).
+
+## Stack & Deployment
+
+![Stack Diagram](https://user-images.githubusercontent.com/36440175/220350037-c8300e83-8d18-4962-b99a-54b75f5c886a.PNG)
 
 ### Frontend:
 
@@ -36,6 +47,9 @@
 
 #### Troubleshooting:
 
+<details>
+  <summary>Expand</summary>
+
 ##### Cannot start Docker from terminal
 
 - Error `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?` Start docker process with `sudo service docker start`
@@ -61,6 +75,8 @@ Docker is set up to automatically copy code changes into the container. However,
 a) You can either set up a venv and install the dependencies from requirements.txt (cd into server/app, then run `python -m venv env &&  source ./env/bin/activate && pip install -r requirements.txt`), then point the Python interpreter of VSCode to it. Make sure to rerun `pip install` if you make changes to the requirements file.
 
 b) For a "single source of truth" approach, install the "dev containers" extension for VSCode (https://code.visualstudio.com/docs/devcontainers/containers), then attach to the container (https://code.visualstudio.com/docs/devcontainers/attach-container). Windows user: This requires Docker Desktop with WSL 2 set up.
+
+</details>
 
 ---
 

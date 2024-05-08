@@ -1,5 +1,6 @@
 {
-    "menu.documentation": "Documentazione",
+    "menu.documentation": "Mode d'emploi",
+    "menu.userguide": "Guida utente",
     "menu.api": "API",
     "menu.impressum": "Impressum",
     "search.searchButton": "Cerca",

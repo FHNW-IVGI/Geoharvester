@@ -633,33 +633,6 @@ def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
         print(f"Preprocessed data saved in {output_folder+'/preprocessed_data.pkl'}")
     return raw_data
 
-# def translate_new_data(db, translate_column, languages):
-#     """
-#     Translates the preprocessed data
-#     """
-#     tlang1 = time()
-#     db = db.fillna("nan")
-#     for lang in languages:
-#         tlang2 = time()
-#         logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
-#         print(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
-#         new_col = translate_column+'_'+lang
-#         if translate_column == 'title':
-#             db[new_col] = db.apply(lambda row: utils.translate_text(
-#                 row[translate_column],to_lang=lang, from_lang=row['lang_3']), axis=1)
-#         elif translate_column == 'abstract':
-#             db[new_col] = db.apply(lambda row: utils.translate_abstract(
-#                 row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
-#         elif translate_column == 'keywords':
-#             db[new_col] = db.apply(lambda row: utils.translate_keywords(
-#                 row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
-#         elif translate_column == 'keywords_nlp':
-#             db[new_col] = db.apply(lambda row: utils.translate_keywords(
-#                 row[translate_column].split(','), to_lang=lang, from_lang=row['lang_3']), axis=1)
-#         else:
-#             print(f"Column {translate_column} could not be translated")
-#     return db
-
 if __name__ == "__main__":
     """
     This code block is the main function of the script. It performs the 
@@ -754,12 +727,7 @@ if __name__ == "__main__":
                 server_operator, server_url))
         n += 1
 
-
-
     write_dataset_info(config.GEOSERVICES_CH_CSV,config.GEOSERVICES_CH_CSV)
-
-    print("\nScraper run completed")
-    logger.info("Scraper run completed")
 
     data_to_keep = check_new_data(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'),
                    config.GEOSERVICES_CH_CSV,
@@ -771,36 +739,10 @@ if __name__ == "__main__":
 
     preprd_data = preprocessing_NLP(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],
                                                  'to_preprocess.pkl'))
-<<<<<<< HEAD
     pathpart = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
-
-    print(f"\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets, pathpart {pathpart}")
-    logger.info(f"NLP preprocessing completed on {len(preprd_data)} datasets, pathpart2 {pathpart}")
 
     # Save to artifacts, for 2nd pipeline stage
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
     # Save to data for last pipeline stage
     data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))
 
-=======
-    pathpart = os.path.split(config.GEOSERVICES_CH_CSV)[0]
-
-    print("\nNLP preprocessing completed on "+str(len(preprd_data))+" datasets, pathpart1 {pathpart}")
-    logger.info(f"NLP preprocessing completed on {len(preprd_data)} datasets, pathpart2 {pathpart}")
-
-    preprd_data.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'preprd_data.pkl'))
-    data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))
-
-# ----
-
-
-    # for trns_col in ["title","abstract","keywords","keywords_nlp"]:
-    #     preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=['en','de','it','fr'])
-
-    # merged_database = pd.concat([data_to_keep, preprd_data], axis=1)
-    # print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
-    # merged_database.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'))
-
-    # print("\nNLP translation completed")
-    # logger.info("NLP translation completed")
->>>>>>> 1efe05f (Shorten sources for testrun, add worflow folder, split code)
