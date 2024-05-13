@@ -294,15 +294,6 @@ jobs:
         with:
           name: merged database
           path: ./scraper/data/merged_data.pkl
-
-      - name: Push log files to repo
-        uses: github-actions-x/commit@v2.9
-        with:
-          push-branch: 'main'
-          commit-message: 'Scraper done'
-          force-add: 'true'
-          files: tools/
-          name: autoupdate
     
       - name: Push contents of data folder to repo
         uses: github-actions-x/commit@v2.9
