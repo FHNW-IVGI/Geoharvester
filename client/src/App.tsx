@@ -140,11 +140,11 @@ function App() {
             rowsPerPage={size}
             setRowsPerPage={setSize}
             {...{
-              updateSearchParameters,
               searchParameters,
               responseState,
               total,
               currentApiPage,
+              triggerSearch,
             }}
             tablePage={tablePage}
             setTablePage={setTablePage}
