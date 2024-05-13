@@ -74,7 +74,7 @@ export const SearchField = ({
               aria-label="clear search"
               onClick={() => {
                 setLocalSearchString("");
-                updateSearchParameters({ searchString: "", page: 0 });
+                // updateSearchParameters({ searchString: "", page: 0 });
               }}
             >
               <CancelIcon style={{ marginRight: -14, marginLeft: -8 }} />
