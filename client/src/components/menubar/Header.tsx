@@ -17,16 +17,17 @@ import { SearchParameters } from "src/types";
 import "../../styles.css";
 
 export type SearchBarProps = {
-  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
+  updateSearchParameters: (parameters: Partial<SearchParameters>) => void;
   searchParameters: SearchParameters;
   responseState: RESPONSESTATE;
+  triggerSearch: (parameters: SearchParameters) => void;
 };
 
 export const Header = ({
   updateSearchParameters,
   searchParameters,
-  // resetPageToZero,
   responseState,
+  triggerSearch,
 }: SearchBarProps) => {
   const theme = useTheme();
   const { width } = useViewport();
@@ -70,6 +71,8 @@ export const Header = ({
             {...{
               updateSearchParameters,
               setDrawerOpen,
+              triggerSearch,
+              searchParameters,
             }}
           />
         ) : (
@@ -77,6 +80,8 @@ export const Header = ({
             {...{
               updateSearchParameters,
               setDrawerOpen,
+              triggerSearch,
+              searchParameters,
             }}
             drawerOpen={drawerOpen}
           />

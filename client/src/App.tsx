@@ -70,22 +70,20 @@ function App() {
   const { items, total } = searchResult;
 
   const updateSearchParameters = (parameter: Partial<SearchParameters>) => {
-    responseState === RESPONSESTATE.UNINITIALIZED &&
-      setResponseState(RESPONSESTATE.WAITING);
     setSearchParameters({ ...searchParameters, ...parameter });
   };
 
-  useEffect(() => {
-    responseState !== RESPONSESTATE.UNINITIALIZED && triggerSearch();
-  }, [
-    searchParameters.searchString,
-    searchParameters.provider,
-    searchParameters.service,
-    searchParameters.page,
-  ]);
+  // useEffect(() => {
+  //   responseState !== RESPONSESTATE.UNINITIALIZED && triggerSearch();
+  // }, [
+  //   searchParameters.searchString,
+  //   searchParameters.provider,
+  //   searchParameters.service,
+  //   searchParameters.page,
+  // ]);
 
-  const triggerSearch = async () => {
-    const { searchString, service, provider, page } = searchParameters;
+  const triggerSearch = async (parameters: SearchParameters) => {
+    const { searchString, service, provider, page } = parameters;
 
     setResponseState(RESPONSESTATE.WAITING);
 
@@ -123,6 +121,7 @@ function App() {
             updateSearchParameters,
             searchParameters,
             responseState,
+            triggerSearch,
           }}
         />
         {responseState === RESPONSESTATE.UNINITIALIZED ? (
@@ -132,6 +131,7 @@ function App() {
             {...{
               updateSearchParameters,
               triggerSearch,
+              searchParameters,
             }}
           />
         ) : (

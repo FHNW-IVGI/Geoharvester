@@ -15,8 +15,10 @@ import { SearchParameters } from "src/types";
 import { FormattedMessage, useIntl } from "react-intl";
 
 export type SearchProps = {
-  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
+  updateSearchParameters: (parameters: Partial<SearchParameters>) => void;
   setDrawerOpen: (state: boolean) => void;
+  triggerSearch: (parameter: SearchParameters) => void;
+  searchParameters: SearchParameters;
 };
 
 export type SearchFieldProps = {
@@ -27,6 +29,8 @@ export const SearchField = ({
   updateSearchParameters,
   setDrawerOpen,
   fromDrawer,
+  triggerSearch,
+  searchParameters,
 }: SearchFieldProps) => {
   const theme = useTheme();
   const responsiveUI = useViewport().width < BREAKPOINT1000;
@@ -74,7 +78,6 @@ export const SearchField = ({
               aria-label="clear search"
               onClick={() => {
                 setLocalSearchString("");
-                // updateSearchParameters({ searchString: "", page: 0 });
               }}
             >
               <CancelIcon style={{ marginRight: -14, marginLeft: -8 }} />
@@ -86,8 +89,8 @@ export const SearchField = ({
         id="search-button"
         size="small"
         onClick={() => {
-          updateSearchParameters({ searchString: localSearchString, page: 0 });
           drawerEnabled && setDrawerOpen(false);
+          triggerSearch(searchParameters);
         }}
         sx={{
           fontSize: 14,

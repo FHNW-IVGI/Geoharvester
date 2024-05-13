@@ -6,6 +6,8 @@ export const FirstSearchUI = ({
   updateSearchParameters,
   setDrawerOpen,
   fromDrawer,
+  triggerSearch,
+  searchParameters,
 }: SearchProps & {
   fromDrawer: boolean;
   setDrawerOpen: (state: boolean) => void;
@@ -18,6 +20,8 @@ export const FirstSearchUI = ({
             updateSearchParameters,
             setDrawerOpen,
             fromDrawer,
+            triggerSearch,
+            searchParameters,
           }}
         />
       </Box>
