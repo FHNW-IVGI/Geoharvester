@@ -301,5 +301,5 @@ jobs:
           push-branch: 'main'
           commit-message: 'Scraper done'
           force-add: 'true'
-          files: data/ ISSUES.md
+          files: ./scraper/data/
           name: autoupdate
