@@ -646,9 +646,10 @@ def check_metadata_quality(database, search_word='nan',
                            search_columns=['abstract', 'keywords', 'metadata'],
                            case_sensitive=False):
     """
-    Calculate metadata quality score based on columns: abstract, keywords, metadata
+    Calculates a metadata quality score for each field containing the search_word.
+    it removes 25 points from 100 points for each empty field (nan).
     """
     database[search_columns] = database[search_columns].replace({' ': 'nan', '??':'nan','n.a.':'nan'})
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
-    database['metaquality'] = mask.sum(axis=1)*25 + 25 # Scoring with 4 fields
+    database['metaquality'] = 100 - mask.sum(axis=1)*25 # Scoring with 4 fields!
     return database
