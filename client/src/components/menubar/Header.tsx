@@ -20,12 +20,14 @@ export type SearchBarProps = {
   searchParameters: SearchParameters;
   responseState: RESPONSESTATE;
   triggerSearch: (parameters: SearchParameters) => void;
+  updateSearchParameters: (parameters: SearchParameters) => void;
 };
 
 export const Header = ({
   searchParameters,
   responseState,
   triggerSearch,
+  updateSearchParameters,
 }: SearchBarProps) => {
   const theme = useTheme();
   const { width } = useViewport();
@@ -72,6 +74,7 @@ export const Header = ({
               setDrawerOpen,
               triggerSearch,
               searchParameters,
+              updateSearchParameters,
             }}
           />
         ) : (
@@ -80,6 +83,7 @@ export const Header = ({
               setDrawerOpen,
               triggerSearch,
               searchParameters,
+              updateSearchParameters,
             }}
             drawerOpen={drawerOpen}
           />

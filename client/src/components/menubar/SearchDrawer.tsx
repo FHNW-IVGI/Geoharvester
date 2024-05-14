@@ -11,6 +11,7 @@ export const SearchDrawer = ({
   drawerOpen,
   triggerSearch,
   searchParameters,
+  updateSearchParameters,
 }: SearchProps & { drawerOpen: boolean }) => {
   return (
     <div>
@@ -33,6 +34,7 @@ export const SearchDrawer = ({
               setDrawerOpen,
               triggerSearch,
               searchParameters,
+              updateSearchParameters,
             }}
           />
         </Box>

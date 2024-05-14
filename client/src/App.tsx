@@ -71,18 +71,9 @@ function App() {
   const { items, total } = searchResult;
 
   const updateSearchParameters = (parameter: SearchParameters) => {
-    console.log("New search parameters", JSON.stringify(parameter));
+    // Required for resetting the search string with the x button and syncing state
     setSearchParameters(parameter);
   };
-
-  // useEffect(() => {
-  //   responseState !== RESPONSESTATE.UNINITIALIZED && triggerSearch();
-  // }, [
-  //   searchParameters.searchString,
-  //   searchParameters.provider,
-  //   searchParameters.service,
-  //   searchParameters.page,
-  // ]);
 
   const triggerSearch = async (parameters: SearchParameters) => {
     const { searchString, service, provider, page } = parameters;

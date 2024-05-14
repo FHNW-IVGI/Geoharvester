@@ -75,8 +75,8 @@ class GeoserviceModel(BaseModel):
     # update: Optional[str] # WARNING: field not used
     service: str
     max_zoom: int
-    center_lat: float
-    center_lon: float
+    center_lat: Optional[float] #NOTE: Change to float once nan vales are removed
+    center_lon: Optional[float] #NOTE: Change to float once nan vales are removed
     bbox: str
     # summary: Optional[str] # WARNING: field not used
     lang_3:  Optional[str]
