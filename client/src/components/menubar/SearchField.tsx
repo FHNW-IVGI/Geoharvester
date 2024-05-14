@@ -15,7 +15,6 @@ import { SearchParameters } from "src/types";
 import { FormattedMessage, useIntl } from "react-intl";
 
 export type SearchProps = {
-  updateSearchParameters: (parameters: Partial<SearchParameters>) => void;
   setDrawerOpen: (state: boolean) => void;
   triggerSearch: (parameter: SearchParameters) => void;
   searchParameters: SearchParameters;
@@ -26,7 +25,6 @@ export type SearchFieldProps = {
 } & SearchProps;
 
 export const SearchField = ({
-  updateSearchParameters,
   setDrawerOpen,
   fromDrawer,
   triggerSearch,
@@ -66,8 +64,7 @@ export const SearchField = ({
         }}
         onChange={(e) => setLocalSearchString(e.target.value)}
         onKeyDown={(e) =>
-          e.key === "Enter" &&
-          updateSearchParameters({ searchString: localSearchString, page: 0 })
+          e.key === "Enter" && triggerSearch({ ...searchParameters, page: 0 })
         }
         startAdornment={
           <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
@@ -90,7 +87,7 @@ export const SearchField = ({
         size="small"
         onClick={() => {
           drawerEnabled && setDrawerOpen(false);
-          triggerSearch(searchParameters);
+          triggerSearch({ ...searchParameters, page: 0 });
         }}
         sx={{
           fontSize: 14,

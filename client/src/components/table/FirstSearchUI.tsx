@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import "../../styles.css";
 
 export const FirstSearchUI = ({
-  updateSearchParameters,
   setDrawerOpen,
   fromDrawer,
   triggerSearch,
@@ -17,7 +16,6 @@ export const FirstSearchUI = ({
       <Box className="SearchBox" sx={{ width: 700 }}>
         <SearchField
           {...{
-            updateSearchParameters,
             setDrawerOpen,
             fromDrawer,
             triggerSearch,

@@ -58,7 +58,8 @@ function App() {
   const { language } = useContext(LanguageContext);
 
   const defaultSearchParameter = {
-    searchString: undefined, // Using an empty string would cause useEffect diffing to fail when searching without text
+    // searchString: undefined, // Using an empty string would cause useEffect diffing to fail when searching without text
+    searchString: "", // Using an empty string would cause useEffect diffing to fail when searching without text
     service: SERVICE.NONE,
     provider: PROVIDER.NONE,
     page: 0,
@@ -69,8 +70,9 @@ function App() {
   );
   const { items, total } = searchResult;
 
-  const updateSearchParameters = (parameter: Partial<SearchParameters>) => {
-    setSearchParameters({ ...searchParameters, ...parameter });
+  const updateSearchParameters = (parameter: SearchParameters) => {
+    console.log("New search parameters", JSON.stringify(parameter));
+    setSearchParameters(parameter);
   };
 
   // useEffect(() => {
@@ -96,6 +98,7 @@ function App() {
       DEFAULTCHUNKSIZE
     )
       .then((res) => {
+        updateSearchParameters(parameters);
         const { data } = res;
         if (data.items.length > 0) {
           setResponseState(RESPONSESTATE.SUCCESS);
