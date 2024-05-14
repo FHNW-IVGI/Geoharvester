@@ -56,7 +56,7 @@ geoservices_schema = (
 
 
 class GeoserviceModel(BaseModel):
-    # Any fields not in the csv (and added by preprocessing) need to be optional!
+    # Add only fields that are returned here
     # Any fields added (optional or not) need to be returned by the search_redis method in redis/methods.py
     _primary_key_field: str = "id"
     provider: str
@@ -72,32 +72,14 @@ class GeoserviceModel(BaseModel):
     contact: str
     endpoint: str
     metadata: str
-    # update: Optional[str] # WARNING: field not used
     service: str
     max_zoom: int
     center_lat: Optional[float] #NOTE: Change to float once nan vales are removed
     center_lon: Optional[float] #NOTE: Change to float once nan vales are removed
     bbox: str
-    # summary: Optional[str] # WARNING: field not used
     lang_3:  Optional[str]
-    # lang_2:  Optional[str] # WARNING: field not used
     metaquality: Optional[int]
-    title_en: Optional[str]
-    title_de: Optional[str]
-    title_it: Optional[str]
-    title_fr: Optional[str]
-    abstract_en: Optional[str]
-    abstract_de: Optional[str]
-    abstract_it: Optional[str]
-    abstract_fr: Optional[str]
-    keywords_en: Optional[str]
-    keywords_de: Optional[str]
-    keywords_it: Optional[str]
-    keywords_fr: Optional[str]
-    keywords_nlp_en: Optional[str]
-    keywords_nlp_de: Optional[str]
-    keywords_nlp_it: Optional[str]
-    keywords_nlp_fr: Optional[str]
+
 
     class Config:
         from_attributes = True
