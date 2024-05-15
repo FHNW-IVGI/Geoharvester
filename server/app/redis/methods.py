@@ -192,9 +192,6 @@ def redis_query_from_parameters(query_string: Union[str, None] = None,
 def search_redis(redis_query, lang: EnumLangType, offset, limit):
     parsed_language = "french" if lang == EnumLangType.fr else "italian" if lang == EnumLangType.it else "english" if lang == EnumLangType.en else "german"
     lang_string = "fr" if lang == EnumLangType.fr else "it" if lang == EnumLangType.it else "en" if lang == EnumLangType.en else "de"
-    print("--- lang", lang_string)
-
-    limited_fields = [f"title_{lang}", f"abstract_{lang}", f"keywords_{lang}", f"keywords_nlp_{lang}"]
 
     return r.ft(SVC_INDEX_ID).search(Query(redis_query)
             # Define all fields that should be searched here, as limit_fields restricts searching to a list of field names:
