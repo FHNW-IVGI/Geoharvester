@@ -26,7 +26,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import "../../styles.css";
 
 type TableProps = {
-  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
   docs: Geoservice[];
   responseState: RESPONSESTATE;
   total: number;
@@ -35,12 +34,13 @@ type TableProps = {
   tablePage: number;
   setTablePage: (page: number) => void;
   rowsPerPage: number;
+  triggerSearch: (parameters: SearchParameters) => void;
+  searchParameters: SearchParameters;
 };
 
 type Order = "asc" | "desc";
 
 export const ServiceTable = ({
-  updateSearchParameters,
   docs,
   responseState,
   total,
@@ -49,6 +49,8 @@ export const ServiceTable = ({
   setTablePage,
   setRowsPerPage,
   rowsPerPage,
+  triggerSearch,
+  searchParameters,
 }: TableProps) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
@@ -72,7 +74,7 @@ export const ServiceTable = ({
   ) => {
     const processedResults = rowsPerPage * newPage;
     if (processedResults >= DEFAULTCHUNKSIZE && processedResults <= total) {
-      updateSearchParameters({ page: currentApiPage + 1 });
+      triggerSearch({ ...searchParameters, page: currentApiPage + 1 });
       setTablePage(0);
     } else {
       setTablePage(newPage);
@@ -90,7 +92,7 @@ export const ServiceTable = ({
       processedResults <= DEFAULTCHUNKSIZE * currentApiPage &&
       processedResults > 0
     ) {
-      updateSearchParameters({ page: currentApiPage - 1 });
+      triggerSearch({ ...searchParameters, page: currentApiPage - 1 });
       setTablePage(Math.abs(pagesBeforeReload) - 1);
     } else {
       setTablePage(newPage);
@@ -101,7 +103,7 @@ export const ServiceTable = ({
   const handleSetPageZero = () => {
     if (currentApiPage > 0) {
       // Reset results
-      updateSearchParameters({ page: 0 });
+      triggerSearch({ ...searchParameters, page: 0 });
     }
     // Reset UI is sufficent
     setTablePage(0);
@@ -210,26 +212,29 @@ export const ServiceTable = ({
                       id: "table.header.provider",
                       defaultMessage: "Anbieter",
                     }),
+                    sortProperty: "provider",
                   },
                   {
                     col_header: intl.formatMessage({
                       id: "table.header.service",
                       defaultMessage: "Dienst",
                     }),
+                    sortProperty: "service",
                   },
                   {
                     col_header: intl.formatMessage({
                       id: "table.header.metaquality",
                       defaultMessage: "Metaqualität",
                     }),
+                    sortProperty: "metaquality",
                   },
                 ].map((column, index) => {
-                  const { col_header } = column;
+                  const { col_header, sortProperty } = column;
                   return (
                     <>
                       <CenteredTableCell
                         key={index}
-                        sortDirection={orderBy === col_header ? order : false}
+                        sortDirection={orderBy === sortProperty ? order : false}
                         sx={{ padding: "0 !important" }}
                       >
                         <TableSortLabel
@@ -242,11 +247,11 @@ export const ServiceTable = ({
                             },
                           }}
                           active={true}
-                          direction={orderBy === col_header ? order : "desc"}
-                          onClick={createSortHandler(col_header)}
+                          direction={orderBy === sortProperty ? order : "desc"}
+                          onClick={createSortHandler(sortProperty)}
                         >
                           {mobileMode ? col_header.slice(0, 8) : col_header}
-                          {orderBy === col_header ? (
+                          {orderBy === sortProperty ? (
                             <Box component="span" sx={visuallyHidden}>
                               {order === "desc"
                                 ? "sorted descending"

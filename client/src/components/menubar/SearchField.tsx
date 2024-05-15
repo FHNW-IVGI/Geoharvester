@@ -15,8 +15,10 @@ import { SearchParameters } from "src/types";
 import { FormattedMessage, useIntl } from "react-intl";
 
 export type SearchProps = {
-  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
   setDrawerOpen: (state: boolean) => void;
+  triggerSearch: (parameter: SearchParameters) => void;
+  searchParameters: SearchParameters;
+  updateSearchParameters: (parameter: SearchParameters) => void;
 };
 
 export type SearchFieldProps = {
@@ -24,9 +26,11 @@ export type SearchFieldProps = {
 } & SearchProps;
 
 export const SearchField = ({
-  updateSearchParameters,
   setDrawerOpen,
   fromDrawer,
+  triggerSearch,
+  searchParameters,
+  updateSearchParameters,
 }: SearchFieldProps) => {
   const theme = useTheme();
   const responsiveUI = useViewport().width < BREAKPOINT1000;
@@ -63,7 +67,11 @@ export const SearchField = ({
         onChange={(e) => setLocalSearchString(e.target.value)}
         onKeyDown={(e) =>
           e.key === "Enter" &&
-          updateSearchParameters({ searchString: localSearchString, page: 0 })
+          triggerSearch({
+            ...searchParameters,
+            page: 0,
+            searchString: localSearchString,
+          })
         }
         startAdornment={
           <SearchIcon style={{ marginLeft: -8, marginRight: 6 }} />
@@ -74,6 +82,10 @@ export const SearchField = ({
               aria-label="clear search"
               onClick={() => {
                 setLocalSearchString("");
+                updateSearchParameters({
+                  ...searchParameters,
+                  searchString: "",
+                });
               }}
             >
               <CancelIcon style={{ marginRight: -14, marginLeft: -8 }} />
@@ -85,8 +97,12 @@ export const SearchField = ({
         id="search-button"
         size="small"
         onClick={() => {
-          updateSearchParameters({ searchString: localSearchString, page: 0 });
           drawerEnabled && setDrawerOpen(false);
+          triggerSearch({
+            ...searchParameters,
+            page: 0,
+            searchString: localSearchString,
+          });
         }}
         sx={{
           fontSize: 14,

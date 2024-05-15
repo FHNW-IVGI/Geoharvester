@@ -7,9 +7,11 @@ import { FormattedMessage } from "react-intl";
 import "../../styles.css";
 
 export const SearchDrawer = ({
-  updateSearchParameters,
   setDrawerOpen,
   drawerOpen,
+  triggerSearch,
+  searchParameters,
+  updateSearchParameters,
 }: SearchProps & { drawerOpen: boolean }) => {
   return (
     <div>
@@ -29,8 +31,10 @@ export const SearchDrawer = ({
           <SearchField
             fromDrawer
             {...{
-              updateSearchParameters,
               setDrawerOpen,
+              triggerSearch,
+              searchParameters,
+              updateSearchParameters,
             }}
           />
         </Box>

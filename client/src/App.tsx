@@ -58,7 +58,8 @@ function App() {
   const { language } = useContext(LanguageContext);
 
   const defaultSearchParameter = {
-    searchString: undefined, // Using an empty string would cause useEffect diffing to fail when searching without text
+    // searchString: undefined, // Using an empty string would cause useEffect diffing to fail when searching without text
+    searchString: "", // Using an empty string would cause useEffect diffing to fail when searching without text
     service: SERVICE.NONE,
     provider: PROVIDER.NONE,
     page: 0,
@@ -69,23 +70,13 @@ function App() {
   );
   const { items, total } = searchResult;
 
-  const updateSearchParameters = (parameter: Partial<SearchParameters>) => {
-    responseState === RESPONSESTATE.UNINITIALIZED &&
-      setResponseState(RESPONSESTATE.WAITING);
-    setSearchParameters({ ...searchParameters, ...parameter });
+  const updateSearchParameters = (parameter: SearchParameters) => {
+    // Required for resetting the search string with the x button and syncing state
+    setSearchParameters(parameter);
   };
 
-  useEffect(() => {
-    responseState !== RESPONSESTATE.UNINITIALIZED && triggerSearch();
-  }, [
-    searchParameters.searchString,
-    searchParameters.provider,
-    searchParameters.service,
-    searchParameters.page,
-  ]);
-
-  const triggerSearch = async () => {
-    const { searchString, service, provider, page } = searchParameters;
+  const triggerSearch = async (parameters: SearchParameters) => {
+    const { searchString, service, provider, page } = parameters;
 
     setResponseState(RESPONSESTATE.WAITING);
 
@@ -98,6 +89,7 @@ function App() {
       DEFAULTCHUNKSIZE
     )
       .then((res) => {
+        updateSearchParameters(parameters);
         const { data } = res;
         if (data.items.length > 0) {
           setResponseState(RESPONSESTATE.SUCCESS);
@@ -123,6 +115,7 @@ function App() {
             updateSearchParameters,
             searchParameters,
             responseState,
+            triggerSearch,
           }}
         />
         {responseState === RESPONSESTATE.UNINITIALIZED ? (
@@ -132,6 +125,7 @@ function App() {
             {...{
               updateSearchParameters,
               triggerSearch,
+              searchParameters,
             }}
           />
         ) : (
@@ -140,11 +134,11 @@ function App() {
             rowsPerPage={size}
             setRowsPerPage={setSize}
             {...{
-              updateSearchParameters,
               searchParameters,
               responseState,
               total,
               currentApiPage,
+              triggerSearch,
             }}
             tablePage={tablePage}
             setTablePage={setTablePage}

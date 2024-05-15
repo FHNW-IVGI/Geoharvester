@@ -17,30 +17,33 @@ import { SearchParameters } from "src/types";
 import "../../styles.css";
 
 export type SearchBarProps = {
-  updateSearchParameters: (parameter: Partial<SearchParameters>) => void;
   searchParameters: SearchParameters;
   responseState: RESPONSESTATE;
+  triggerSearch: (parameters: SearchParameters) => void;
+  updateSearchParameters: (parameters: SearchParameters) => void;
 };
 
 export const Header = ({
-  updateSearchParameters,
   searchParameters,
-  // resetPageToZero,
   responseState,
+  triggerSearch,
+  updateSearchParameters,
 }: SearchBarProps) => {
   const theme = useTheme();
   const { width } = useViewport();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleChangeService = (event: SelectChangeEvent) => {
-    updateSearchParameters({
+    triggerSearch({
+      ...searchParameters,
       service: event.target.value as SERVICE,
       page: 0,
     });
   };
 
   const handleChangeProvider = (event: SelectChangeEvent) => {
-    updateSearchParameters({
+    triggerSearch({
+      ...searchParameters,
       provider: event.target.value as PROVIDER,
       page: 0,
     });
@@ -68,15 +71,19 @@ export const Header = ({
           <SearchField
             fromDrawer={false}
             {...{
-              updateSearchParameters,
               setDrawerOpen,
+              triggerSearch,
+              searchParameters,
+              updateSearchParameters,
             }}
           />
         ) : (
           <SearchDrawer
             {...{
-              updateSearchParameters,
               setDrawerOpen,
+              triggerSearch,
+              searchParameters,
+              updateSearchParameters,
             }}
             drawerOpen={drawerOpen}
           />
