@@ -24,7 +24,7 @@ def translate_new_data(db, translate_column, languages):
     Translates the preprocessed data
     """
     tlang1 = time()
-    db = db.fillna("nan")
+    db = db.fillna("")
     for lang in languages:
         tlang2 = time()
         logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
