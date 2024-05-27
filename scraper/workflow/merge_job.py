@@ -33,6 +33,7 @@ def merge_with_data_to_keep(translated_data):
     data_to_keep = pd.read_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))
     merged_database = pd.concat([data_to_keep, translated_data], axis=0)
     print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
+    merged_database = merged_database.replace(to_replace='nan', value="", regex=True) # replace nan with empty string!
     merged_database.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'))
     print("\n Merge completed")
     logger.info("Merge completed")

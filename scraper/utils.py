@@ -650,5 +650,5 @@ def check_metadata_quality(database, search_word='nan',
     """
     database[search_columns] = database[search_columns].replace({' ': 'nan', '??':'nan','n.a.':'nan'})
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
-    database['metaquality'] = mask.sum(axis=1)*25 + 25 # Scoring with 4 fields
+    database['metaquality'] = 100 - mask.sum(axis=1)*25 # Scoring with 3 fields
     return database
