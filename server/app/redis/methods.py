@@ -250,7 +250,7 @@ def json_to_pandas(redis_output):
         doc = doc.replace('’’', "")
         doc = doc.replace("\\", "")
         doc = doc.replace("ß", "ss")
-        doc = doc.replace('""', '"')
+        #doc = doc.replace('""', '"')
         doc = doc.replace("xa0","")
         # Append results to a pandas df
         try:
@@ -259,10 +259,10 @@ def json_to_pandas(redis_output):
             query_results = pd.concat([query_results, df], axis=0)
         except ValueError:
             skipped += 1
-            # print(doc.replace("Document ", ""))
+            print(doc.replace("Document ", ""))
         # print(len(redis_output)-i)
     # BUG: check the transformation json-pandas maybe with a binary format instead of json
-    print(f"skipped {skipped} datasets!")
+    print(f"skipped {skipped} of {skipped + len(query_results)} datasets due to json-binary conversion!")
     return query_results
 
 def pandas_to_dict(ranked_results_df):
@@ -377,31 +377,34 @@ def results_ranking(redis_output, query_words_list, parsed_lang):
     t0 = time()
     query_results_df = json_to_pandas(redis_output)
     # initialize ranking score and the length counter
-    query_results_df['score'] = 0
-    query_results_df['inv_title_length'] = query_results_df['title'].apply(lambda x: 200 - len(x))
-    query_results_df['metaquality'] = query_results_df['metaquality'].astype('int')
     lang = lang_dict[parsed_lang]
+    if len(query_results_df) > 0:
+        query_results_df['score'] = 0
+        query_results_df['inv_title_length'] = query_results_df['title'].apply(lambda x: 200 - len(x))
+        query_results_df['metaquality'] = query_results_df['metaquality'].astype('int')
     
-    # Calculate the scores
-    if query_words_list:
-        for query_word in query_words_list:
-            # query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 4)
-            # query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp'], query_word, 2)
-            # query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 6)
-            # query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp'], query_word, 3)
-            query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords_nlp'], query_word, 1)
-            query_results_df = contains_match_scoring(query_results_df, ['title_'+lang, 'keywords_'+lang], query_word, 4)
-            query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp_'+lang], query_word, 2)
-            query_results_df = exact_match_scoring(query_results_df, ['title_'+lang, 'keywords_'+lang], query_word, 6)
-            query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp_'+lang], query_word, 3)
-            #query_results_df = exact_match_scoring(query_results_df, ['summary'], query_word, 2)
-    else:
-        query_results_df['score'] = 1
-    query_results_df = evaluate_metaquality(query_results_df, 25)
+        # Calculate the scores
+        if query_words_list:
+            for query_word in query_words_list:
+                # query_results_df = contains_match_scoring(query_results_df, ['title', 'keywords'], query_word, 4)
+                # query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp'], query_word, 2)
+                # query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords'], query_word, 6)
+                # query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp'], query_word, 3)
+                query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords_nlp'], query_word, 1)
+                query_results_df = contains_match_scoring(query_results_df, ['title_'+lang, 'keywords_'+lang], query_word, 4)
+                query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp_'+lang], query_word, 2)
+                query_results_df = exact_match_scoring(query_results_df, ['title_'+lang, 'keywords_'+lang], query_word, 6)
+                query_results_df = exact_match_scoring(query_results_df, ['keywords_nlp_'+lang], query_word, 3)
+                #query_results_df = exact_match_scoring(query_results_df, ['summary'], query_word, 2)
+        else:
+            query_results_df['score'] = 1
+        query_results_df = evaluate_metaquality(query_results_df, 25)
 
-    query_results_df.sort_values(by=['score', 'inv_title_length', 'title'], axis=0, inplace=True, ascending=False)
-    # Replace nans with empty str for a cleaner visualisation
-    query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
-    ranked_results = pandas_to_dict(query_results_df)
-    # print(f'ET ranking: {round(time()-t0, 2)}')
+        query_results_df.sort_values(by=['score', 'inv_title_length', 'title'], axis=0, inplace=True, ascending=False)
+        # Replace nans with empty str for a cleaner visualisation
+        query_results_df = query_results_df.replace(to_replace='nan', value="", regex=True)
+        ranked_results = pandas_to_dict(query_results_df)
+        # print(f'ET ranking: {round(time()-t0, 2)}')
+    else:
+        ranked_results = None
     return ranked_results
