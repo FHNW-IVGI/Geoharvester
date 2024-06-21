@@ -641,6 +641,26 @@ class NLP_spacy():
         summaries = [self.summarize(progress(text)) for text in texts[column].values.tolist()]
         return summaries
 
+def set_nans(row, apply_on_column='abstract', check_columns=['title', 'name']):
+    """
+    Set a nan value to the field if the column is equal to check columns or
+    starts with "https" or with "Link zu Metadaten".
+    """
+    if str(row[apply_on_column]) != 'nan':
+        if len(str(row[apply_on_column]).split()) < 2 or str(row[apply_on_column]).startswith('http') or str(row[apply_on_column]).startswith('Link zu Metadaten:') or str(row[apply_on_column]).startswith('?') or str(row[apply_on_column]).startswith('WMS/WFS Dienst des Kantons') or str(row[apply_on_column]).startswith('Geodienst des GIS'):
+            new_value = 'nan'
+        else:
+            new_value = row[apply_on_column]
+            for col in check_columns:
+                if row[col].lower() == row[apply_on_column].lower() and new_value != 'nan':
+                    new_value = 'nan'
+                elif new_value != 'nan':
+                    new_value = row[apply_on_column]
+                else:
+                    pass
+    else:
+        new_value = 'nan'
+    return new_value
 
 def check_metadata_quality(database, search_word='nan',
                            search_columns=['abstract', 'keywords', 'metadata'],
@@ -649,6 +669,7 @@ def check_metadata_quality(database, search_word='nan',
     Calculate metadata quality score based on columns: abstract, keywords, metadata
     """
     database[search_columns] = database[search_columns].replace({' ': 'nan', '??':'nan','n.a.':'nan'})
+    database['abstract'] = database.apply(set_nans, axis=1)
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
     database['metaquality'] = 100 - mask.sum(axis=1)*25 # Scoring with 3 fields
     return database
