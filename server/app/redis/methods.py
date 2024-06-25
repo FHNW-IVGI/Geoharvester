@@ -122,8 +122,14 @@ def is_not_num(str) -> bool:
     except ValueError:
         return True
 
+def restore_capital(word: str, original_word: str):
+    if not original_word.isupper() and not original_word.islower():
+        w = word.capitalize()
+    else:
+        w = word
+    return w
 
-def stemming_sentence(list_of_words):
+def stemming_sentence(list_of_words: list[str], lang: str):
     """
     Stems and cleans the words in a sentence returning a list
     of cleaned words.
@@ -132,6 +138,8 @@ def stemming_sentence(list_of_words):
     ----------
     sentence : [str, str]
         List of str to be stemmed
+    lang : str
+        language of the query in format "xx"
     Returns
     -------
     _ : list
@@ -142,17 +150,22 @@ def stemming_sentence(list_of_words):
         lang = detect_language(list_of_words)
 
     stemmer = SnowballStemmer(lang)
-    words_cleaned_list = [stemmer.stem(word.lower()) for word in list_of_words
-                          if word.lower() not in list(punctuation) and is_not_num(word)]
+    if lang != 'german':
+        words_cleaned_list = [stemmer.stem(word.lower()) for word in list_of_words
+                            if word not in list(punctuation) and is_not_num(word)]
+    else:
+        words_cleaned_list = [restore_capital(stemmer.stem(word), word) for word in list_of_words
+                            if word not in list(punctuation) and is_not_num(word)]
     return words_cleaned_list
 
 
-def transform_wordlist_to_query(wordlist: list[str]):
+def transform_wordlist_to_query(wordlist: list[str], lang: str):
     """Whitespaces in redis queries are parsed as AND, thus this method adds pipes (|) to force OR logic.
        See: https://redis.io/docs/stack/search/reference/query_syntax/
     """
     query_string = ""
-    cleaned_wordlist = stemming_sentence(wordlist)
+    cleaned_wordlist = stemming_sentence(wordlist, lang)
+    print(cleaned_wordlist)
     for index, word in enumerate(cleaned_wordlist):
         query_string += "{} | ".format(word+'*') if index < (len(cleaned_wordlist)-1) else "{}".format(word+'*') # the * allows the contain opt
     return query_string
