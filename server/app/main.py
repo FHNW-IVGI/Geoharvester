@@ -22,6 +22,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
 from fastapi_pagination.customization import CustomizedPage, UseParamsFields
 from pydantic import Field
+# WARNING: update docker container with stopwords package!
+# from nltk.corpus import stopwords
 
 from server.app.redis.redis_manager import r
 
@@ -131,7 +133,10 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
 
     elif (query_string is not None and len(query_string) > 1):
         word_list = split_search_string(query_string)
-        text_query = transform_wordlist_to_query(word_list)
+        stop_words = ["und","and","e","et"]# WARNING: update docker container with stopwords (already in scraper)
+        # stop_words = stopwords.words(lang)
+        word_list_clean = [word for word in word_list if word not in stop_words]
+        text_query = transform_wordlist_to_query(word_list_clean, lang)
 
         redis_query = redis_query_from_parameters(text_query, service, provider)
         fastapi_logger.info("Redis queried with: {}".format(redis_query))
