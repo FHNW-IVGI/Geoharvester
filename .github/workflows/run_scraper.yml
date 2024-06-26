@@ -63,8 +63,27 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
+          name: preprd_data_csv
+          path: ./scraper/artifacts/preprd_data.csv
+
+      - uses: actions/upload-artifact@v4
+        with:
           name: data_to_keep
           path: ./scraper/data/data_to_keep.pkl # From data, for last stage
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: data_to_keep_csv
+          path: ./scraper/data/data_to_keep.csv
+
+      - name: Push log files to repo
+        uses: github-actions-x/commit@v2.9
+        with:
+          push-branch: "main"
+          commit-message: "Push logs"
+          force-add: "true"
+          files: tools/
+          name: autoupdate
 
   translate_de:
     needs: scrape # Wait on the build job to complete
@@ -110,6 +129,11 @@ jobs:
           name: de_translated
           path: ./scraper/artifacts/de_translated.pkl
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: de_translated_csv
+          path: ./scraper/artifacts/de_translated.csv
+
   translate_en:
     needs: scrape # Wait on the build job to complete
     runs-on: ubuntu-latest
@@ -153,6 +177,11 @@ jobs:
         with:
           name: en_translated
           path: ./scraper/artifacts/en_translated.pkl
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: en_translated_csv
+          path: ./scraper/artifacts/en_translated.csv
 
   translate_fr:
     needs: scrape # Wait on the build job to complete
@@ -198,6 +227,11 @@ jobs:
           name: fr_translated
           path: ./scraper/artifacts/fr_translated.pkl
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fr_translated_csv
+          path: ./scraper/artifacts/fr_translated.csv
+
   translate_it:
     needs: scrape # Wait on the build job to complete
     runs-on: ubuntu-latest
@@ -241,6 +275,11 @@ jobs:
         with:
           name: it_translated
           path: ./scraper/artifacts/it_translated.pkl
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: it_translated_csv
+          path: ./scraper/artifacts/it_translated.csv
 
   merge:
     needs: # Disable any languages/translate-jobs you don't need
@@ -294,12 +333,17 @@ jobs:
         with:
           name: merged database
           path: ./scraper/data/merged_data.pkl
-    
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: merged database_csv
+          path: ./scraper/data/merged_data.csv
+
       - name: Push contents of data folder to repo
         uses: github-actions-x/commit@v2.9
         with:
-          push-branch: 'main'
-          commit-message: 'Scraper done'
-          force-add: 'true'
+          push-branch: "main"
+          commit-message: "Scraper done"
+          force-add: "true"
           files: ./scraper/data/
           name: autoupdate

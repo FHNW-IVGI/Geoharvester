@@ -35,6 +35,7 @@ def merge_with_data_to_keep(translated_data):
     print(f"Merged database has {len(merged_database.index)} rows, saving to pickle...")
     merged_database = merged_database.replace(to_replace='nan', value="", regex=True) # replace nan with empty string!
     merged_database.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.pkl'))
+    merged_database.to_csv(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'merged_data.csv'))
     print("\n Merge completed")
     logger.info("Merge completed")
 

@@ -1,3 +1,5 @@
+[![Scraper](https://github.com/FHNW-IVGI/Geoharvester/actions/workflows/run_scraper.yml/badge.svg)](https://github.com/FHNW-IVGI/Geoharvester/actions/workflows/run_scraper.yml)
+
 # NDGI Project Geoharvester
 
 A scraper, search engine and data portal for Swiss Geoservices (WMS, WFS, WFTS).
