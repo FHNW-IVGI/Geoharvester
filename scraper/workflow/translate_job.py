@@ -89,7 +89,8 @@ if __name__ == "__main__":
     for trns_col in config.WORKFLOW_TRANSLATE_COLUMNS:
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=[language])
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.pkl'.format(language)))
+    preprd_data.to_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.csv'.format(language)))
 
-    print("\nNLP translation completed for {language}")
-    logger.info("NLP translation completed for {language}")
+    print("\nNLP translation completed for {}".format(language))
+    logger.info("NLP translation completed for {}".format(language))
 
