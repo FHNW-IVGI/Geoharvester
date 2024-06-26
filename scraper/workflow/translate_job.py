@@ -37,25 +37,33 @@ def translate_new_data(db, translate_column, languages):
     <language_abbr>_translated.pkl : pickle
         Outputs a pickle file of the translation which is uploaded as artifact to github
     """
-    tlang1 = time()
     db = db.fillna("nan")
     for lang in languages:
-        tlang2 = time()
-        logger.info(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
-        print(f"Start processsing new language {lang} {tlang2-tlang1} after process start")
         new_col = translate_column+'_'+lang
         if translate_column == 'title':
+            tlang1 = time()
             db[new_col] = db.apply(lambda row: utils.translate_text(
                 row[translate_column],to_lang=lang, from_lang=row['lang_3']), axis=1)
+            tlang2 = time()
+            print(f"Processed 'Title' for {lang} {tlang2-tlang1} after process start")
         elif translate_column == 'abstract':
+            tlang1 = time()
             db[new_col] = db.apply(lambda row: utils.translate_abstract(
                 row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
+            tlang2 = time()
+            print(f"Processed 'Abstract' for {lang} {tlang2-tlang1} after process start")
         elif translate_column == 'keywords':
+            tlang1 = time()
             db[new_col] = db.apply(lambda row: utils.translate_keywords(
                 row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
+            tlang2 = time()
+            print(f"Processed 'Keywords' for {lang} {tlang2-tlang1} after process start")
         elif translate_column == 'keywords_nlp':
+            tlang1 = time()
             db[new_col] = db.apply(lambda row: utils.translate_keywords(
                 row[translate_column].split(','), to_lang=lang, from_lang=row['lang_3']), axis=1)
+            tlang2 = time()
+            print(f"Processed 'Keywords_NLP' for {lang} {tlang2-tlang1} after process start")
         else:
             print(f"Column {translate_column} could not be translated")
     return db
