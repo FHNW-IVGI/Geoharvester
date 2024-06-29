@@ -1,2 +1,0 @@
-Timestamp,Operator,URL,Issue
-2023-12-12T02:02:45.104152+01:00,KT_GE,https://ge.ch/sitgags1/services/VECTOR/SITG_OPENDATA_03/MapServer/WMSServer?request=GetCapabilities&service=WMS,"GET requested yielded HTTP response status code 400"
