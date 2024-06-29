@@ -82,7 +82,7 @@ jobs:
           push-branch: "main"
           commit-message: "Push logs"
           force-add: "true"
-          files: tools/
+          files: ./scraper/tools/
           name: autoupdate
 
   translate_de:
