@@ -77,6 +77,7 @@ if __name__ == "__main__":
     LANG_FROM_PIPELINE : string
         Passes in the language abbr. to translate (e.g. de for german)
     """
+     tstart = time()
     # Initialize and configure the logger
     logger = logging.getLogger("Scraping log")
     logger.setLevel(logging.INFO)
@@ -88,13 +89,17 @@ if __name__ == "__main__":
     fh.setFormatter(formatter)
     logger.addHandler(fh)
 
+    print(f"T1 {time()-tstart} after process start")
     # Load artifact
     preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
+    print(preprd_data)
+    print(f"T2 {time()-tstart} after process start")
 
     # Read language from pipeline variable
     language = os.environ['LANG_FROM_PIPELINE']
 
     for trns_col in config.WORKFLOW_TRANSLATE_COLUMNS:
+        print(f"TX {time()-tstart} after process start")
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=[language])
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.pkl'.format(language)))
     preprd_data.to_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.csv'.format(language)))
