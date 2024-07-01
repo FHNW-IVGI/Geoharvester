@@ -3,8 +3,9 @@ FROM python:3.9
 WORKDIR /server
 RUN mkdir app
 COPY ./app/requirements.txt /server/app/requirements.txt
-RUN python -m nltk.downloader all -d /usr/share/nltk_data
 RUN pip install --no-cache-dir --upgrade -r /server/app/requirements.txt
+RUN rm -rf /usr/share/nltk_data
+RUN python -m nltk.downloader all -d /usr/share/nltk_data
 COPY ./app server/app
 EXPOSE 8000
 RUN cd /server
