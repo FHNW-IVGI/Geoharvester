@@ -77,7 +77,7 @@ if __name__ == "__main__":
     LANG_FROM_PIPELINE : string
         Passes in the language abbr. to translate (e.g. de for german)
     """
-     tstart = time()
+    tstart = time()
     # Initialize and configure the logger
     logger = logging.getLogger("Scraping log")
     logger.setLevel(logging.INFO)
