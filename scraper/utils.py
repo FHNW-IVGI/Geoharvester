@@ -3,7 +3,8 @@ Utilities for the elaboration of texts with NLP and TF-IDF
 """
 
 import itertools
-import sys, os
+import os
+import sys
 from string import punctuation
 
 import matplotlib.pyplot as plt
@@ -14,6 +15,7 @@ import pyLDAvis.gensim_models as genvis  # 3.4.0
 import spacy  # 3.3.1 and spacy-legacy 3.0.12 + pretrained models
 # import translators as ts  # 5.5.6
 from deep_translator import GoogleTranslator, exceptions
+from dotenv import load_dotenv
 from gensim import corpora  # gensim 4.3.0
 from gensim.models import LsiModel
 from gensim.models.coherencemodel import CoherenceModel
@@ -30,7 +32,6 @@ from summarizer.sbert import \
     SBertSummarizer  # bert-extractive-summarizer 0.10.1
 from tqdm import tqdm
 
-from dotenv import load_dotenv
 load_dotenv(dotenv_path=sys.path[0]+"/translator.env")
 chatgpt_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -110,11 +111,13 @@ def translate_keywords(text, to_lang, from_lang):
             if not kwd.startswith('http') or kwd.startswith('Link zu Metadaten:'):
                 try:
                     kwd_trnsd = GoogleTranslator(source='auto', target=to_lang).translate(kwd.replace('_',' '))
-                    kwd_trnsd = kwd_trnsd.replace("'", " ")
                     if not kwd_trnsd:
                         kwd_trnsd = 'nan'
+                    kwd_trnsd = kwd_trnsd.replace("'", " ")
                 except exceptions.TranslationNotFound:
                     kwd_trnsd = 'nan'
+                finally:
+                    continue
             else:
                 kwd_trnsd = 'nan'
             kwds.append(kwd_trnsd)
