@@ -88,15 +88,16 @@ if __name__ == "__main__":
                                   "%(levelname)s - %(message)s")
     fh.setFormatter(formatter)
     logger.addHandler(fh)
+    # Read language from pipeline variable
+    language = os.environ['LANG_FROM_PIPELINE']
+    print(f"Translating for ${language}")
 
     print(f"T1 {time()-tstart} after process start")
     # Load artifact
-    preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
+    preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'{}_preprd_data.pkl'.format(language)))
     print(preprd_data)
     print(f"T2 {time()-tstart} after process start")
 
-    # Read language from pipeline variable
-    language = os.environ['LANG_FROM_PIPELINE']
 
     for trns_col in config.WORKFLOW_TRANSLATE_COLUMNS:
         print(f"TX {time()-tstart} after process start")

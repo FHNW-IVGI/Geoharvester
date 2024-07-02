@@ -742,7 +742,8 @@ if __name__ == "__main__":
     pathpart = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
 
     # Save to artifacts, for 2nd pipeline stage
-    preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
+    for lang in ['de', 'en', 'it', 'fr']:
+        preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'{}_preprd_data.pkl'.format(lang)))
     preprd_data.to_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.csv'))
     # Save to data for last pipeline stage
     data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))

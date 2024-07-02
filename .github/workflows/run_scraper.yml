@@ -58,8 +58,20 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: preprd_data
-          path: ./scraper/artifacts/preprd_data.pkl # From artifacts for 2nd stage
+          name: de_preprd_data
+          path: ./scraper/artifacts/de_preprd_data.pkl # From artifacts for 2nd stage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: en_preprd_data
+          path: ./scraper/artifacts/en_preprd_data.pkl # From artifacts for 2nd stage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: it_preprd_data
+          path: ./scraper/artifacts/it_preprd_data.pkl # From artifacts for 2nd stage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fr_preprd_data
+          path: ./scraper/artifacts/fr_preprd_data.pkl # From artifacts for 2nd stage
 
       - uses: actions/upload-artifact@v4
         with:
@@ -117,8 +129,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/
-          merge-multiple: true
+          path: ./scraper/artifacts/de_preprd_data.pkl
+          # merge-multiple: true
 
       - name: Translate DE
         run: |
@@ -166,8 +178,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/
-          merge-multiple: true
+          path: ./scraper/artifacts/en_preprd_data.pkl
+          # merge-multiple: true
 
       - name: Translate EN
         run: |
@@ -215,8 +227,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/
-          merge-multiple: true
+          path: ./scraper/artifacts/fr_preprd_data.pkl
+          # merge-multiple: true
 
       - name: Translate FR
         run: |
@@ -264,8 +276,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/
-          merge-multiple: true
+          path: ./scraper/artifacts/it_preprd_data.pkl
+          # merge-multiple: true
 
       - name: Translate IT
         run: |
