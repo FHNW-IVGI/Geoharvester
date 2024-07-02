@@ -70,7 +70,8 @@ export const MenuComponent = () => {
           src={String(geoharvesterLogo)}
           width="242"
           height="29"
-          style={{ marginLeft: -10 }}
+          style={{ marginLeft: -10, cursor: "pointer" }}
+          onClick={() => window.location.reload()}
         />
       </div>
       <Menu
