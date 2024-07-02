@@ -7,6 +7,8 @@ import { FormattedMessage } from "react-intl";
 import "../../styles.css";
 
 export const SearchDrawer = ({
+  localSearchString,
+  setLocalSearchString,
   setDrawerOpen,
   drawerOpen,
   triggerSearch,
@@ -31,6 +33,8 @@ export const SearchDrawer = ({
           <SearchField
             fromDrawer
             {...{
+              localSearchString,
+              setLocalSearchString,
               setDrawerOpen,
               triggerSearch,
               searchParameters,

@@ -15,6 +15,8 @@ import { SearchParameters } from "src/types";
 import { FormattedMessage, useIntl } from "react-intl";
 
 export type SearchProps = {
+  localSearchString: string;
+  setLocalSearchString: (searchstring: string) => void;
   setDrawerOpen: (state: boolean) => void;
   triggerSearch: (parameter: SearchParameters) => void;
   searchParameters: SearchParameters;
@@ -26,6 +28,8 @@ export type SearchFieldProps = {
 } & SearchProps;
 
 export const SearchField = ({
+  localSearchString,
+  setLocalSearchString,
   setDrawerOpen,
   fromDrawer,
   triggerSearch,
@@ -36,7 +40,7 @@ export const SearchField = ({
   const responsiveUI = useViewport().width < BREAKPOINT1000;
   const intl = useIntl();
 
-  const [localSearchString, setLocalSearchString] = useState("");
+  // const [localSearchString, setLocalSearchString] = useState("");
   const drawerEnabled = fromDrawer ? fromDrawer : false;
 
   return (
@@ -82,8 +86,9 @@ export const SearchField = ({
               aria-label="clear search"
               onClick={() => {
                 setLocalSearchString("");
-                updateSearchParameters({
+                triggerSearch({
                   ...searchParameters,
+                  page: 0,
                   searchString: "",
                 });
               }}

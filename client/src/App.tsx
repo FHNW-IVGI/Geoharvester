@@ -54,6 +54,7 @@ function App() {
   const [tablePage, setTablePage] = useState<number>(0); // Needed for the table UI and to dertermine when to make an API call
   const [currentApiPage, setCurrentApiPage] = useState(0); // Page of the paginated API, different than the UI table page.
   const [size, setSize] = useState(DEFAULTROWSPERPAGE);
+  const [localSearchString, setLocalSearchString] = useState("");
 
   const { language } = useContext(LanguageContext);
 
@@ -112,6 +113,8 @@ function App() {
       <Stack sx={{ height: "100vh" }}>
         <Header
           {...{
+            localSearchString,
+            setLocalSearchString,
             updateSearchParameters,
             searchParameters,
             responseState,
@@ -123,6 +126,8 @@ function App() {
             setDrawerOpen={() => false}
             fromDrawer={false}
             {...{
+              localSearchString,
+              setLocalSearchString,
               updateSearchParameters,
               triggerSearch,
               searchParameters,

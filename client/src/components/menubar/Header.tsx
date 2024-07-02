@@ -17,6 +17,8 @@ import { SearchParameters } from "src/types";
 import "../../styles.css";
 
 export type SearchBarProps = {
+  localSearchString: string;
+  setLocalSearchString: (searchstring: string) => void;
   searchParameters: SearchParameters;
   responseState: RESPONSESTATE;
   triggerSearch: (parameters: SearchParameters) => void;
@@ -24,6 +26,8 @@ export type SearchBarProps = {
 };
 
 export const Header = ({
+  localSearchString,
+  setLocalSearchString,
   searchParameters,
   responseState,
   triggerSearch,
@@ -71,6 +75,8 @@ export const Header = ({
           <SearchField
             fromDrawer={false}
             {...{
+              localSearchString,
+              setLocalSearchString,
               setDrawerOpen,
               triggerSearch,
               searchParameters,
@@ -80,6 +86,8 @@ export const Header = ({
         ) : (
           <SearchDrawer
             {...{
+              localSearchString,
+              setLocalSearchString,
               setDrawerOpen,
               triggerSearch,
               searchParameters,

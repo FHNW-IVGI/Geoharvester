@@ -72,7 +72,7 @@ export const ServiceRow = ({
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
-            style={{ color: "#007CC3", padding: 0 }}
+            style={{ color: "#007CC3", padding: 0, cursor: "pointer" }}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>

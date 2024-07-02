@@ -183,7 +183,7 @@ export const ServiceTable = ({
         <TableContainer
           component={Paper}
           sx={{
-            cursor: "pointer",
+            // cursor: "pointer",
             overflowX: "auto",
             marginTop: "50px",
           }}
@@ -235,7 +235,7 @@ export const ServiceTable = ({
                       <CenteredTableCell
                         key={index}
                         sortDirection={orderBy === sortProperty ? order : false}
-                        sx={{ padding: "0 !important" }}
+                        sx={{ padding: "0 !important", cursor: "pointer" }}
                       >
                         <TableSortLabel
                           sx={{
