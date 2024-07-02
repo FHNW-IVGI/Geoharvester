@@ -73,7 +73,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
         disabled={page === 0 && currentApiPage === 0}
         aria-label="first page"
       >
-        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+        {theme.direction === "rtl" ? <div /> : <FirstPageIcon />}
       </IconButton>
       <IconButton
         onClick={handleBackButtonClick}
@@ -103,7 +103,7 @@ export const TablePaginationActions = (props: TablePaginationActionsProps) => {
           disabled
           aria-label="first page"
         >
-          {theme.direction === "ltr" ? <LastPageIcon /> : <FirstPageIcon />}
+          {theme.direction === "ltr" ? <div /> : <FirstPageIcon />}
         </IconButton>
       )}
     </Box>

@@ -100,16 +100,6 @@ export const ServiceTable = ({
     scrollToTop();
   };
 
-  const handleSetPageZero = () => {
-    if (currentApiPage > 0) {
-      // Reset results
-      triggerSearch({ ...searchParameters, page: 0 });
-    }
-    // Reset UI is sufficent
-    setTablePage(0);
-    scrollToTop();
-  };
-
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -183,7 +173,6 @@ export const ServiceTable = ({
         <TableContainer
           component={Paper}
           sx={{
-            // cursor: "pointer",
             overflowX: "auto",
             marginTop: "50px",
           }}
@@ -326,7 +315,7 @@ export const ServiceTable = ({
                       currentApiPage={currentApiPage}
                       displayedRecordsStart={displayedRecordsStart}
                       displayedRecordsEnd={displayedRecordsEnd}
-                      handleSetPageZero={handleSetPageZero}
+                      handleSetPageZero={() => setTablePage(0)}
                       mobileMode={mobileMode}
                       {...props}
                     />

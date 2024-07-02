@@ -96,15 +96,18 @@ function App() {
           setResponseState(RESPONSESTATE.SUCCESS);
           setSearchResult(data);
           setCurrentApiPage(data.page);
+          page === 0 && setTablePage(0);
         } else {
           setResponseState(RESPONSESTATE.EMPTY);
           setSearchResult({} as SearchResult); // Fallback on error
+          setTablePage(0);
         }
       })
       .catch((e) => {
         console.error(e);
         setResponseState(RESPONSESTATE.ERROR);
         setSearchResult({} as SearchResult); // Fallback on error
+        setTablePage(0);
       });
   };
 
