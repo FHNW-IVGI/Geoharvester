@@ -129,8 +129,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/de_preprd_data.pkl
-          merge-multiple: true
+          path: ./scraper/artifacts/de_preprd_data/de_preprd_data.pkl
 
       - name: Translate DE
         run: |
@@ -178,8 +177,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/en_preprd_data.pkl
-          merge-multiple: true
+          path: ./scraper/artifacts/en_preprd_data/en_preprd_data.pkl
 
       - name: Translate EN
         run: |
@@ -227,8 +225,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/fr_preprd_data.pkl
-          merge-multiple: true
+          path: ./scraper/artifacts/fr_preprd_data/fr_preprd_data.pkl
 
       - name: Translate FR
         run: |
@@ -276,8 +273,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/it_preprd_data.pkl
-          merge-multiple: true
+          path: ./scraper/artifacts/it_preprd_data/it_preprd_data.pkl
 
       - name: Translate IT
         run: |
