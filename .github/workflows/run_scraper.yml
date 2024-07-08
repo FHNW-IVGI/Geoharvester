@@ -130,7 +130,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: ./scraper/artifacts/de_preprd_data.pkl
-          # merge-multiple: true
+          merge-multiple: true
 
       - name: Translate DE
         run: |
@@ -179,7 +179,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: ./scraper/artifacts/en_preprd_data.pkl
-          # merge-multiple: true
+          merge-multiple: true
 
       - name: Translate EN
         run: |
@@ -228,7 +228,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: ./scraper/artifacts/fr_preprd_data.pkl
-          # merge-multiple: true
+          merge-multiple: true
 
       - name: Translate FR
         run: |
@@ -277,7 +277,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: ./scraper/artifacts/it_preprd_data.pkl
-          # merge-multiple: true
+          merge-multiple: true
 
       - name: Translate IT
         run: |
