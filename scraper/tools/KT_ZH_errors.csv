@@ -1,6 +1,0 @@
-Timestamp,Operator,URL,Issue
-2024-07-08T11:04:24.479372+02:00,KT_ZH,https://wms.zh.ch/FnsSVOZHWMS?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
-2024-07-08T11:04:27.929915+02:00,KT_ZH,https://wms.zh.ch/kkgeo_gws_zh?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
-2024-07-08T11:05:07.093857+02:00,KT_ZH,https://wms.zh.ch/AwelWBhauptZHWMS?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 401"
-2024-07-08T11:05:50.632588+02:00,KT_ZH,https://wms.zh.ch/AwelWindpotenzialZHWMS?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
-2024-07-08T11:08:55.210576+02:00,KT_ZH,https://maps.zh.ch/wfs/AwelWbAbflussZHWFS?service=WFS&request=GetCapabilities,"expected string or bytes-like object"
