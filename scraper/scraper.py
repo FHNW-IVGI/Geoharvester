@@ -702,8 +702,9 @@ if __name__ == "__main__":
     sources = load_source_collection()
     num_sources = len(sources)
     n = 1
-
+    t0 = time()
     for source in sources:
+        print(f"New Source in {time()-t0}s ({time()-t0/60} min)")
         server_operator = source['Description']
         server_url = source['URL']
         # Check if a custom scraper exists for this source
@@ -721,7 +722,10 @@ if __name__ == "__main__":
         # Check if this server is online. If yes, proceed to gather
         # information
         if is_online(source):
+            to0 = time()
             get_service_info(source)
+            to1 = time()
+            print(f"Response time for {source['URL']} is {to1-to0}s")
         else:
             logger.warning("Scraping %s > %s aborted" % (
                 server_operator, server_url))
