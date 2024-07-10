@@ -1,2 +1,2 @@
 Timestamp,Operator,URL,Issue
-2024-07-09T09:35:31.902573+02:00,KT_BS,https://wms.geo.bs.ch/?SERVICE=WMS&REQUEST=GetCapabilities,"'NoneType' object has no attribute 'identification'"
+2024-07-10T15:36:34.706679+02:00,KT_BS,https://wms.geo.bs.ch/?SERVICE=WMS&REQUEST=GetCapabilities,"'NoneType' object has no attribute 'identification'"
