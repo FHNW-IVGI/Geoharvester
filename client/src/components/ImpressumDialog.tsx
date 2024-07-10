@@ -116,14 +116,12 @@ export function ImpressumDialog(props: any) {
           <Typography variant="body1">
             {" "}
             Die Urheber- und alle anderen Rechte an Inhalten, Bildern, Fotos
-            oder anderen Dateien auf dieser Website, gehören ausschliesslich
-            [name] oder den speziell genannten Rechteinhabern. Für die
-            Reproduktion jeglicher Elemente ist die schriftliche Zustimmung des
-            Urheberrechtsträgers im Voraus einzuholen.{" "}
+            oder anderen Dateien auf dieser Website, gehören ausschliesslich der
+            Fachhochschule Nordwestschweiz oder den speziell genannten
+            Rechteinhabern. Für die Reproduktion jeglicher Elemente ist die
+            schriftliche Zustimmung des Urheberrechtsträgers im Voraus
+            einzuholen.{" "}
           </Typography>
-          {/* <Typography sx={{ mt: 6 }} variant="subtitle2">
-          Quelle:{" "}
-          </Typography> */}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
