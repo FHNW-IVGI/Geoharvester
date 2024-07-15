@@ -48,19 +48,19 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: de_preprd_data
-          path: ./scraper/artifacts/de_preprd_data/de_preprd_data.csv # From artifacts for 2nd stage
+          path: ./scraper/artifacts/de_preprd_data.csv # From artifacts for 2nd stage
       - uses: actions/upload-artifact@v4
         with:
           name: en_preprd_data
-          path: ./scraper/artifacts/en_preprd_data/en_preprd_data.csv # From artifacts for 2nd stage
+          path: ./scraper/artifacts/en_preprd_data.csv # From artifacts for 2nd stage
       - uses: actions/upload-artifact@v4
         with:
           name: it_preprd_data
-          path: ./scraper/artifacts/it_preprd_data/it_preprd_data.csv # From artifacts for 2nd stage
+          path: ./scraper/artifacts/it_preprd_data.csv # From artifacts for 2nd stage
       - uses: actions/upload-artifact@v4
         with:
           name: fr_preprd_data
-          path: ./scraper/artifacts/fr_preprd_data/fr_preprd_data.csv # From artifacts for 2nd stage
+          path: ./scraper/artifacts/fr_preprd_data.csv # From artifacts for 2nd stage
 
   translate_de:
     needs: scrape # Wait on the build job to complete
@@ -94,7 +94,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/de_preprd_data/
+          path: ./scraper/artifacts/
           merge-multiple: true
 
       - name: Translate DE
@@ -133,7 +133,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/en_preprd_data/
+          path: ./scraper/artifacts/
           merge-multiple: true
 
       - name: Translate EN
