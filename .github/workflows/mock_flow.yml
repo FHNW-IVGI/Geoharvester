@@ -99,7 +99,7 @@ jobs:
 
       - name: Translate DE
         run: |
-          LANG_FROM_PIPELINE=${{'de'}} python ./test2.py
+          LANG_FROM_PIPELINE=${{'de'}} python ./workflow/test2.py
 
   translate_en:
     needs: scrape # Wait on the build job to complete
@@ -138,4 +138,4 @@ jobs:
 
       - name: Translate EN
         run: |
-          LANG_FROM_PIPELINE=${{'en'}} python ./test2.py
+          LANG_FROM_PIPELINE=${{'en'}} python ./workflow/test2.py
