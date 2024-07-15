@@ -1,0 +1,141 @@
+# This is copy of the workflow file run by github actions
+
+name: Test Job
+
+on:
+  schedule:
+    - cron: "0 0 * * 0"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    # cf. https://docs.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-github-actions
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./scraper
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@main
+
+      - name: Increase git buffer size
+        run: |
+          git config --global http.postBuffer 1048576000
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase true
+          git pull origin main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
+
+      - name: Run Python script
+        run: |
+          python test.py
+        env: # Set the secrets as env var
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: de_preprd_data
+          path: ./scraper/artifacts/de_preprd_data/de_preprd_data.csv # From artifacts for 2nd stage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: en_preprd_data
+          path: ./scraper/artifacts/en_preprd_data/en_preprd_data.csv # From artifacts for 2nd stage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: it_preprd_data
+          path: ./scraper/artifacts/it_preprd_data/it_preprd_data.csv # From artifacts for 2nd stage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fr_preprd_data
+          path: ./scraper/artifacts/fr_preprd_data/fr_preprd_data.csv # From artifacts for 2nd stage
+
+  translate_de:
+    needs: scrape # Wait on the build job to complete
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./scraper
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@main
+
+      - name: Increase git buffer size
+        run: |
+          git config --global http.postBuffer 1048576000
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase true 
+          git pull origin main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/artifacts/de_preprd_data/
+          merge-multiple: true
+
+      - name: Translate DE
+        run: |
+          LANG_FROM_PIPELINE=${{'de'}} python ./test2.py
+
+  translate_en:
+    needs: scrape # Wait on the build job to complete
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./scraper
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@main
+
+      - name: Increase git buffer size
+        run: |
+          git config --global http.postBuffer 1048576000
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase true 
+          git pull origin main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./scraper/artifacts/en_preprd_data/
+          merge-multiple: true
+
+      - name: Translate EN
+        run: |
+          LANG_FROM_PIPELINE=${{'en'}} python ./test2.py
