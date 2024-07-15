@@ -1,0 +1,3 @@
+Timestamp,Operator,URL,Issue
+2024-07-15T08:56:34.941131+02:00,Geodienste,https://geodienste.ch/db/npl_waldgrenzen/deu?SERVICE=WMS&REQUEST=GetCapabilities,"'NoneType' object has no attribute 'identification'"
+2024-07-15T08:56:35.733878+02:00,Geodienste,https://geodienste.ch/db/planungszonen_v1_0_0/deu?SERVICE=WMS&REQUEST=GetCapabilities,"not well-formed (invalid token): line 6, column 32"
