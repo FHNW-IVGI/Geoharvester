@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
 
     try:    
-        dir_list = os.listdir(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data'))
+        dir_list = os.listdir(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER))
         print("2", dir_list)
     finally: 
         print()
@@ -23,6 +23,6 @@ if __name__ == "__main__":
     finally: 
         print()
 
-    print("1", os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data.pkl'))
-    preprd_data = pd.read_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data.csv'))
+    print("1", os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data.csv'))
+    preprd_data = pd.read_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data.csv'))
     print("4", preprd_data)
