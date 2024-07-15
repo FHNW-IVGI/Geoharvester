@@ -100,12 +100,17 @@ if __name__ == "__main__":
         dir_list = os.listdir(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data'))
         print("2", dir_list)
     finally: 
-        try:
-            dir_list = os.listdir(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data'))
-            print("3", dir_list)
-        finally:
-            dir_list = os.listdir(os.path.join(os.getcwd(), config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data'))
-            print("4", dir_list)
+        print()
+    try:
+        dir_list = os.listdir(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data'))
+        print("3", dir_list)
+    finally: 
+        print()
+    try:
+        dir_list = os.listdir(os.path.join(os.getcwd(), config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data'))
+        print("4", dir_list)
+    finally: 
+        print()
 
     preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data.pkl'))
     print(preprd_data)
