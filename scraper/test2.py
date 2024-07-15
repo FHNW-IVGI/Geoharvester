@@ -6,11 +6,6 @@ import pandas as pd
 
 sys.path.append('../')
 
-
-
-import scraper.configuration as config
-import scraper.utils as utils
-
 if __name__ == "__main__":
     language = os.environ['LANG_FROM_PIPELINE']
 
