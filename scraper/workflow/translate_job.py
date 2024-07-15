@@ -94,19 +94,18 @@ if __name__ == "__main__":
 
     print(f"T1 {time()-tstart} after process start")
     # Load artifact
-    print(os.getcwd())
-    print(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data.pkl'))
+    print("1", os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data.pkl'))
 
     try:    
         dir_list = os.listdir(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data'))
-        print(dir_list)
+        print("2", dir_list)
     finally: 
         try:
             dir_list = os.listdir(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data'))
-            print(dir_list)
+            print("3", dir_list)
         finally:
             dir_list = os.listdir(os.path.join(os.getcwd(), config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data'))
-            print(dir_list)
+            print("4", dir_list)
 
     preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data.pkl'))
     print(preprd_data)
