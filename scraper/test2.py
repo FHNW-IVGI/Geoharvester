@@ -9,7 +9,6 @@ sys.path.append('../')
 if __name__ == "__main__":
     language = os.environ['LANG_FROM_PIPELINE']
 
-    preprd_data = pd.read_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data.csv'))
 
     print("1", os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data.pkl'))
 
@@ -29,4 +28,5 @@ if __name__ == "__main__":
     finally: 
         print()
 
+    preprd_data = pd.read_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data',f'{language}_preprd_data.csv'))
     print("4", preprd_data)
