@@ -1,2 +1,3 @@
 Timestamp,Operator,URL,Issue
-2024-07-16T11:10:32.029881+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00038_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 502"
+2024-07-16T20:06:03.660698+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00034_WFS/guest?REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
+2024-07-16T20:06:05.071040+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00034_WMS/guest?REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
