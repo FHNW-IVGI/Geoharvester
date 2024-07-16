@@ -147,7 +147,7 @@ jobs:
           path: ./scraper/artifacts/de_translated.csv
 
   translate_en:
-    needs: scrape # Wait on the build job to complete
+    needs: translate_de # Wait on the translate job to complete
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -196,7 +196,7 @@ jobs:
           path: ./scraper/artifacts/en_translated.csv
 
   translate_fr:
-    needs: scrape # Wait on the build job to complete
+    needs: translate_en # Wait on the translate job to complete
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -245,7 +245,7 @@ jobs:
           path: ./scraper/artifacts/fr_translated.csv
 
   translate_it:
-    needs: scrape # Wait on the build job to complete
+    needs: translate_fr # Wait on the translate job to complete
     runs-on: ubuntu-latest
     defaults:
       run:
