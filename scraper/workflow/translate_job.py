@@ -45,25 +45,25 @@ def translate_new_data(db, translate_column, languages):
             db[new_col] = db.apply(lambda row: utils.translate_text(
                 row[translate_column],to_lang=lang, from_lang=row['lang_3']), axis=1)
             tlang2 = time()
-            print(f"Processed 'Title' for {lang} {tlang2-tlang1} after process start")
+            print(f"Processed 'Title' in {lang} {round(tlang2-tlang1)} s'")
         elif translate_column == 'abstract':
             tlang1 = time()
             db[new_col] = db.apply(lambda row: utils.translate_abstract(
                 row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
             tlang2 = time()
-            print(f"Processed 'Abstract' for {lang} {tlang2-tlang1} after process start")
+            print(f"Processed 'Abstract' in {lang} {round(tlang2-tlang1)} s'")
         elif translate_column == 'keywords':
             tlang1 = time()
             db[new_col] = db.apply(lambda row: utils.translate_keywords(
                 row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
             tlang2 = time()
-            print(f"Processed 'Keywords' for {lang} {tlang2-tlang1} after process start")
+            print(f"Processed 'Keywords' in {lang} {round(tlang2-tlang1)} s'")
         elif translate_column == 'keywords_nlp':
             tlang1 = time()
             db[new_col] = db.apply(lambda row: utils.translate_keywords(
                 row[translate_column].split(','), to_lang=lang, from_lang=row['lang_3']), axis=1)
             tlang2 = time()
-            print(f"Processed 'Keywords_NLP' for {lang} {tlang2-tlang1} after process start")
+            print(f"Processed 'Keywords_NLP' in {lang} {round(tlang2-tlang1)} s'")
         else:
             print(f"Column {translate_column} could not be translated")
     return db
@@ -91,18 +91,13 @@ if __name__ == "__main__":
     # Read language from pipeline variable
     language = os.environ['LANG_FROM_PIPELINE']
 
-    print(f"T1 {time()-tstart} after process start")
-
     preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data.pkl'))
-    print(f"T2 {time()-tstart} after process start")
-
 
     for trns_col in config.WORKFLOW_TRANSLATE_COLUMNS:
-        print(f"TX {time()-tstart} after process start")
+        print(f"Start translating {trns_col} {round(time()-tstart)}s after process start")
         preprd_data = translate_new_data(preprd_data, translate_column=trns_col, languages=[language])
     preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.pkl'.format(language)))
     preprd_data.to_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER, '{}_translated.csv'.format(language)))
 
     print("\nNLP translation completed for {}".format(language))
-    logger.info("NLP translation completed for {}".format(language))
 
