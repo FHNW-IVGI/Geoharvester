@@ -1,0 +1,2 @@
+Timestamp,Operator,URL,Issue
+2024-07-16T11:10:32.029881+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00038_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 502"

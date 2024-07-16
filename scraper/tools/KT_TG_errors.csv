@@ -1,0 +1,4 @@
+Timestamp,Operator,URL,Issue
+2024-07-16T11:33:38.654149+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WMS&Version=1.3.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
+2024-07-16T11:36:59.420457+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/revitalisierung_gewaesser?Service=WFS&Version=2.0.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
+2024-07-16T11:37:57.104951+02:00,KT_TG,https://ows.geo.tg.ch/geofy_access_proxy/grundwassermodell_thurtal?Service=WMS&Version=1.3.0&Request=GetCapabilities,"GET requested yielded HTTP response status code 401"
