@@ -1,7 +1,7 @@
 FROM python:3.9
 COPY ./ /scraper/
 WORKDIR /scraper
-RUN pip install --no-cache-dir --upgrade -r /scraper/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /scraper/requirements_translate.txt
 
 ENV LANG_FROM_PIPELINE=${LANG_FROM_PIPELINE}
 
