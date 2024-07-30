@@ -2,3 +2,7 @@ FROM python:3.9
 COPY ./ /scraper/
 WORKDIR /scraper
 RUN pip install --no-cache-dir --upgrade -r /scraper/requirements.txt
+
+ENV LANG_FROM_PIPELINE=${LANG_FROM_PIPELINE}
+
+CMD python -u ./workflow/translate_job.py --LANG_FROM_PIPELINE=$LANG_FROM_PIPELINE

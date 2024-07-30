@@ -4,12 +4,22 @@ Author: Elia Ferrari
 Date: 2024-04-29
 """
 
+import argparse
 import logging
 import os
 import sys
 from time import time
 
 import pandas as pd
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    '--LANG_FROM_PIPELINE', 
+    type=str, 
+)
+args = parser.parse_args()
+LANG_FROM_PIPELINE = args.LANG_FROM_PIPELINE
 
 sys.path.append('../')
 
