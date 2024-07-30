@@ -1,16 +1,13 @@
 FROM python:3.9
-COPY ./* /scraper/
+COPY ./ /scraper/
 WORKDIR /scraper
-RUN mkdir ./tools
 RUN pip install --no-cache-dir --upgrade -r /scraper/requirements.txt
-
 RUN python -m spacy download en_core_web_sm
 RUN python -m spacy download fr_core_news_sm
 RUN python -m spacy download de_core_news_sm
 RUN python -m spacy download it_core_news_sm
 
-RUN python -m nltk.downloader all
-
-RUN python scraper.py
+RUN --mount=type=cache target=/usr/share/nltk_data python -m nltk.downloader all
 
 
+CMD ["python","-u","scraper.py"]
