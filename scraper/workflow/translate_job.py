@@ -15,10 +15,10 @@ import pandas as pd
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
-    '--LANG_FROM_PIPELINE', 
+    'LANG_FROM_PIPELINE', 
     type=str, 
 )
-args = parser.parse_args()
+args, unknown = parser.parse_known_args()
 LANG_FROM_PIPELINE = args.LANG_FROM_PIPELINE
 
 sys.path.append('../')
@@ -49,6 +49,7 @@ def translate_new_data(db, translate_column, languages):
     """
     db = db.fillna("nan")
     for lang in languages:
+        print(f"Translating {lang}")
         new_col = translate_column+'_'+lang
         if translate_column == 'title':
             tlang1 = time()

@@ -70,6 +70,7 @@ def translate_text(text, to_lang, from_lang):
     Translate title column
     """
     language_dict = {'ENG':'en', 'FRA':'fr', 'DEU':'de', 'ITA':'it','NAN':'na'}
+    print(f"Translating {from_lang} to {to_lang}")
     if language_dict[from_lang] == to_lang:
         return text
     else:

@@ -2,7 +2,6 @@
 import logging
 import os
 import sys
-from time import time
 
 import pandas as pd
 

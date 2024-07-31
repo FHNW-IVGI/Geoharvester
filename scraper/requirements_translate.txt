@@ -14,3 +14,6 @@ scipy==1.9.3
 scikit-learn==1.2.0
 bert-extractive-summarizer==0.10.1
 python-dotenv
+torch
+sentence-transformers
+deep-translator
