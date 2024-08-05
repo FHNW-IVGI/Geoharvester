@@ -4,12 +4,22 @@ Author: Elia Ferrari
 Date: 2024-04-29
 """
 
+import argparse
 import logging
 import os
 import sys
 from time import time
 
 import pandas as pd
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    'LANG_FROM_PIPELINE', 
+    type=str, 
+)
+args, unknown = parser.parse_known_args()
+LANG_FROM_PIPELINE = args.LANG_FROM_PIPELINE
 
 sys.path.append('../')
 
@@ -39,6 +49,7 @@ def translate_new_data(db, translate_column, languages):
     """
     db = db.fillna("nan")
     for lang in languages:
+        print(f"Translating {lang}")
         new_col = translate_column+'_'+lang
         if translate_column == 'title':
             tlang1 = time()
@@ -91,7 +102,7 @@ if __name__ == "__main__":
     # Read language from pipeline variable
     language = os.environ['LANG_FROM_PIPELINE']
 
-    preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data.pkl'))
+    preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'preprd_data.pkl'))
 
     for trns_col in config.WORKFLOW_TRANSLATE_COLUMNS:
         print(f"Start translating {trns_col} {round(time()-tstart)}s after process start")

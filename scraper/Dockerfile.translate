@@ -1,0 +1,10 @@
+FROM python:3.9
+COPY ./ /scraper/
+WORKDIR /scraper
+RUN pip install --no-cache-dir --upgrade -r /scraper/requirements_translate.txt
+
+ARG LANG_FROM_PIPELINE
+
+RUN echo $LANG_FROM_PIPELINE
+
+CMD ["sh", "-c", "python -u ./workflow/translate_job.py $LANG_FROM_PIPELINE"]

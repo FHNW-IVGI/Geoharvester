@@ -1,0 +1,108 @@
+# This is copy of the workflow file run by github actions
+
+# name: Run scraper and preprocessing
+
+# on:
+#   schedule:
+#     - cron: "0 0 * * 0"
+#   # Allows you to run this workflow manually from the Actions tab
+#   workflow_dispatch:
+
+services:
+  scraper:
+    container_name: scraper
+    build:
+      context: .
+      dockerfile: Dockerfile.scrape
+    restart: "no"
+    volumes:
+    # Allow hot reloading on code changes for Docker. Uvicorn also requires --reload flag
+      - ./data:/scraper/data
+      - ./artifacts:/scraper/artifacts
+    environment:
+      # Required for Python to print to terminal
+      PYTHONUNBUFFERED: 1
+      LOG_LEVEL: debug
+
+  translate_de:
+    depends_on:
+      scraper:
+        condition: service_completed_successfully
+    image: python:3.9-slim
+    container_name: translate_de
+    environment:
+      - LANG_FROM_PIPELINE=de
+    build:
+      context: .
+      dockerfile: Dockerfile.translate
+
+
+  translate_en:
+    depends_on:
+      scraper:
+        condition: service_completed_successfully
+      translate_de:
+        condition: service_completed_successfully
+    image: python:3.9-slim
+    container_name: translate_en
+    environment:
+      - LANG_FROM_PIPELINE=en
+    build:
+      context: .
+      dockerfile: Dockerfile.translate
+
+  translate_fr:
+    depends_on:
+      scraper:
+        condition: service_completed_successfully
+      translate_de:
+        condition: service_completed_successfully
+      translate_en:
+        condition: service_completed_successfully
+    image: python:3.9-slim
+    container_name: translate_fr
+    environment:
+      - LANG_FROM_PIPELINE=fr
+    build:
+      context: .
+      dockerfile: Dockerfile.translate
+
+  translate_it:
+    depends_on:
+      scraper:
+        condition: service_completed_successfully
+      translate_de:
+        condition: service_completed_successfully
+      translate_en:
+        condition: service_completed_successfully
+      translate_fr:
+        condition: service_completed_successfully
+    image: python:3.9-slim
+    container_name: translate_it
+    environment:
+      - LANG_FROM_PIPELINE=it
+    build:
+      context: .
+      dockerfile: Dockerfile.translate
+
+  merge:
+    depends_on:
+      scraper:
+        condition: service_completed_successfully
+      translate_de:
+        condition: service_completed_successfully
+      translate_en:
+        condition: service_completed_successfully
+      translate_fr:
+        condition: service_completed_successfully
+      translate_it:
+        condition: service_completed_successfully
+    image: python:3.9-slim
+    container_name: merge-job
+
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+       pip install pandas
+       python ./workflow/merge_job.py
+
