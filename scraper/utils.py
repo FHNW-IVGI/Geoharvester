@@ -118,7 +118,7 @@ def translate_keywords(text, to_lang, from_lang):
                 kwd_trnsd = GoogleTranslator(source='auto', target=to_lang).translate(';'.join(kwds_one).replace('_',' '))
                 if not kwd_trnsd:
                     kwd_trnsd = 'nan'
-                # kwd_trnsd = kwd_trnsd.replace("'", " ")
+                kwd_trnsd = kwd_trnsd.replace("'", " ")
             except exceptions.TranslationNotFound:
                 kwd_trnsd = 'nan'
             kwds = kwd_trnsd.split(';')
