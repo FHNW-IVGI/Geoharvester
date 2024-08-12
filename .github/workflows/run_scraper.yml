@@ -129,7 +129,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/de_preprd_data/de_preprd_data.pkl
+          path: ./scraper/artifacts/
+          merge-multiple: true
 
       - name: Translate DE
         run: |
@@ -146,7 +147,7 @@ jobs:
           path: ./scraper/artifacts/de_translated.csv
 
   translate_en:
-    needs: scrape # Wait on the build job to complete
+    needs: translate_de # Wait on the translate job to complete
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -177,7 +178,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/en_preprd_data/en_preprd_data.pkl
+          path: ./scraper/artifacts/
+          merge-multiple: true
 
       - name: Translate EN
         run: |
@@ -185,8 +187,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: en_translated
-          path: ./scraper/artifacts/en_translated.pkl
+          name: en_translated.pkl
+          path: ./scraper/artifacts/
 
       - uses: actions/upload-artifact@v4
         with:
@@ -194,7 +196,7 @@ jobs:
           path: ./scraper/artifacts/en_translated.csv
 
   translate_fr:
-    needs: scrape # Wait on the build job to complete
+    needs: translate_en # Wait on the translate job to complete
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -225,7 +227,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/fr_preprd_data/fr_preprd_data.pkl
+          path: ./scraper/artifacts/
+          merge-multiple: true
 
       - name: Translate FR
         run: |
@@ -242,7 +245,7 @@ jobs:
           path: ./scraper/artifacts/fr_translated.csv
 
   translate_it:
-    needs: scrape # Wait on the build job to complete
+    needs: translate_fr # Wait on the translate job to complete
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -273,7 +276,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: ./scraper/artifacts/it_preprd_data/it_preprd_data.pkl
+          path: ./scraper/artifacts/
+          merge-multiple: true
 
       - name: Translate IT
         run: |
