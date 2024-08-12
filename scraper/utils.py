@@ -8,7 +8,7 @@ import sys
 from string import punctuation
 
 import matplotlib.pyplot as plt
-import numpy as np  # 1.23.5
+import numpy as np  # >= 1.23 < 1.26
 import openai  # 0.27.0
 import pandas as pd  # 1.5.2
 import pyLDAvis.gensim_models as genvis  # 3.4.0
@@ -97,32 +97,33 @@ def translate_abstract(text, to_lang, from_lang):
             return 'nan'
     else:
         return text
-    
 def translate_keywords(text, to_lang, from_lang):
     """
     Translate keywords column und keywords_nlp column
     """
     if type(text) == str:
         text = [text]
-    kwds = []
+    kwds, kwds_one = [], []
+    language_dict = {'ENG':'en', 'FRA':'fr', 'DEU':'de', 'ITA':'it','NAN':'na'}
     for kwd in text:
-        language_dict = {'ENG':'en', 'FRA':'fr', 'DEU':'de', 'ITA':'it','NAN':'na'}
-        if kwd != 'nan' and language_dict[from_lang] != to_lang:
-            if not kwd.startswith('http') or kwd.startswith('Link zu Metadaten:'):
-                try:
-                    kwd_trnsd = GoogleTranslator(source='auto', target=to_lang).translate(kwd.replace('_',' '))
-                    if not kwd_trnsd:
-                        kwd_trnsd = 'nan'
-                    kwd_trnsd = kwd_trnsd.replace("'", " ")
-                except exceptions.TranslationNotFound:
-                    kwd_trnsd = 'nan'
-                finally:
-                    continue
+        if kwd != 'nan' and kwd != '':
+            if not kwd.startswith('http') or not kwd.startswith('Link zu Metadaten:'):
+                kwds_one.append(kwd)
             else:
-                kwd_trnsd = 'nan'
-            kwds.append(kwd_trnsd)
+                kwds_one.append('nan')
         else:
-            kwds.append(kwd)
+            kwds_one.append('nan')
+        if language_dict[from_lang] != to_lang:
+            try:
+                kwd_trnsd = GoogleTranslator(source='auto', target=to_lang).translate(';'.join(kwds_one).replace('_',' '))
+                if not kwd_trnsd:
+                    kwd_trnsd = 'nan'
+                # kwd_trnsd = kwd_trnsd.replace("'", " ")
+            except exceptions.TranslationNotFound:
+                kwd_trnsd = 'nan'
+            kwds = kwd_trnsd.split(';')
+        else:
+            kwds = kwds_one
     return ','.join(kwds)
     
 def is_not_num(str) -> bool:

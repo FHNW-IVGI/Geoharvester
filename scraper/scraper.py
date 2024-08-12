@@ -612,7 +612,6 @@ def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
     raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][0], axis=1)
     t3 = time()
     print(f"Languages detected succesfully in {t3-t2} seconds")
-    # Translate the main columns
 
     # Check and add metadata quality
     print(f"Adding metadata scores...")
