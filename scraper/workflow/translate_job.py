@@ -40,7 +40,7 @@ def translate_new_data(db, translate_column, languages, one_shot=True):
         Outputs a pickle file of the translation which is uploaded as artifact to github
     """
 
-    # TODO: process the one shot translation in language chunks (datasets can have differenz languages)
+    # TODO: process the one shot translation in language chunks (datasets can have different languages)
 
     db = db.fillna("nan")
     for lang in languages:
@@ -73,33 +73,51 @@ def translate_new_data(db, translate_column, languages, one_shot=True):
             else:
                 print(f"Column {translate_column} could not be translated")
         else:
-            col_oncie = '|'.join(db.loc[translate_column].to_list())
-            if translate_column == 'title':
-                tlang1 = time()
-                title_oncie_trnsd = utils.translate_text(col_oncie, to_lang=lang, from_lang='NAN')
-                db[new_col] = title_oncie_trnsd.split('|')
-                tlang2 = time()
-                print(f"Processed 'Title' in {lang} {round(tlang2-tlang1)} s'")
-            elif translate_column == 'abstract':
-                tlang1 = time()
-                abstract_oncie_trnsd = utils.translate_abstract(col_oncie, to_lang=lang, from_lang='NAN')
-                db[new_col] = abstract_oncie_trnsd.split('|')
-                tlang2 = time()
-                print(f"Processed 'Abstract' in {lang} {round(tlang2-tlang1)} s'")
-            elif translate_column == 'keywords':
-                tlang1 = time()
-                keywords_oncie_trnsd = utils.translate_keywords(col_oncie, to_lang=lang, from_lang='NAN')
-                db[new_col] = keywords_oncie_trnsd.split('|')
-                tlang2 = time()
-                print(f"Processed 'Keywords' in {lang} {round(tlang2-tlang1)} s'")
-            elif translate_column == 'keywords_nlp':
-                tlang1 = time()
-                keywords_nlp_oncie_trnsd = utils.translate_keywords(col_oncie, to_lang=lang, from_lang='NAN')
-                db[new_col] = keywords_nlp_oncie_trnsd.split('|')
-                tlang2 = time()
-                print(f"Processed 'Keywords_NLP' in {lang} {round(tlang2-tlang1)} s'")
-            else:
-                print(f"Column {translate_column} could not be translated")
+            separator = ''
+            chunk_size = 200
+            for i in range(int(len(db)/chunk_size)+1):
+                while utils.check_length_text(' | '.join(db[i*chunk_size:chunk_size*(i+1)][translate_column].to_list())):
+                    chunk_size = int(chunk_size/2)
+            print(f"Set chunk size to {chunk_size}")
+
+            translated_chunks = []
+            for i in range(int(len(db)/chunk_size)+1):
+                if db[i*chunk_size:chunk_size*(i+1)][translate_column].empty:
+                    continue
+                col_oncie = separator.join(db[i*chunk_size:chunk_size*(i+1)][translate_column].to_list())
+                if translate_column == 'title':
+                    tlang1 = time()
+                    title_oncie_trnsd = utils.translate_text(col_oncie.replace('_',' '), to_lang=lang, from_lang='NAN')
+
+                    if len(col_oncie.split(separator)) != len(title_oncie_trnsd.split(separator)):
+                        print(col_oncie)
+                        print(title_oncie_trnsd)
+                        print('--')
+                    
+                    translated_chunks.extend(title_oncie_trnsd.split(separator))
+                    tlang2 = time()
+                    # print(f"Processed 'Title' in {lang} {round(tlang2-tlang1)} s'")
+                elif translate_column == 'abstract':
+                    tlang1 = time()
+                    abstract_oncie_trnsd = utils.translate_abstract(col_oncie, to_lang=lang, from_lang='NAN')
+                    translated_chunks.extend(abstract_oncie_trnsd.split(separator))
+                    tlang2 = time()
+                    # print(f"Processed 'Abstract' in {lang} {round(tlang2-tlang1)} s'")
+                elif translate_column == 'keywords':
+                    tlang1 = time()
+                    keywords_oncie_trnsd = utils.translate_keywords(col_oncie, to_lang=lang, from_lang='NAN')
+                    translated_chunks.extend(keywords_oncie_trnsd.split(separator))
+                    tlang2 = time()
+                    # print(f"Processed 'Keywords' in {lang} {round(tlang2-tlang1)} s'")
+                elif translate_column == 'keywords_nlp':
+                    tlang1 = time()
+                    keywords_nlp_oncie_trnsd = utils.translate_keywords(col_oncie, to_lang=lang, from_lang='NAN')
+                    translated_chunks.extend(keywords_nlp_oncie_trnsd.split(separator))
+                    tlang2 = time()
+                    # print(f"Processed 'Keywords_NLP' in {lang} {round(tlang2-tlang1)} s'")
+                else:
+                    print(f"Column {translate_column} could not be translated")
+            db[new_col] = translated_chunks
     return db
 
 if __name__ == "__main__":

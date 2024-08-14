@@ -745,6 +745,7 @@ if __name__ == "__main__":
     pathpart = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
 
     # Save to artifacts, for 2nd pipeline stage
+    # BUG: it will save the same preprd_data.pkl for all languages with all the data
     for lang in ['de', 'en', 'it', 'fr']:
         preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'{}_preprd_data.pkl'.format(lang)))
     preprd_data.to_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.csv'))

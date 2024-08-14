@@ -143,6 +143,23 @@ def is_not_num(str) -> bool:
         return False
     except ValueError:
         return True
+    
+def check_length_text(text, min_length=4500):
+    """
+    Tests if a str element contains a number and return True or False.
+    
+    Parameters
+    ----------
+    text : str
+          String element to be checked
+    Returns
+    -------
+    _ : False if shorter / True if longer
+    """
+    if len(text) > min_length:
+        return True
+    else:
+        return False
 
 def stemming_sentence(sentence, stem_words = True):
     """
