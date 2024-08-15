@@ -73,10 +73,10 @@ def translate_new_data(db, translate_column, languages, one_shot=True):
             else:
                 print(f"Column {translate_column} could not be translated")
         else:
-            separator = ''
+            separator = ' | '
             chunk_size = 200
             for i in range(int(len(db)/chunk_size)+1):
-                while utils.check_length_text(' | '.join(db[i*chunk_size:chunk_size*(i+1)][translate_column].to_list())):
+                while utils.check_length_text(separator.join(db[i*chunk_size:chunk_size*(i+1)][translate_column].to_list())):
                     chunk_size = int(chunk_size/2)
             print(f"Set chunk size to {chunk_size}")
 
