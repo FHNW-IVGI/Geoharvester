@@ -17,8 +17,12 @@ services:
     restart: "no"
     volumes:
     # Allow hot reloading on code changes for Docker. Uvicorn also requires --reload flag
-      - ./data:/scraper/data
-      - ./artifacts:/scraper/artifacts
+      - type: bind  # Write output to host for debugging
+        source: ./data/
+        target: /scraper/data
+      - type: bind  # Write output to host for debugging
+        source: ./artifacts/
+        target: /scraper/artifacts
     environment:
       # Required for Python to print to terminal
       PYTHONUNBUFFERED: 1
@@ -35,6 +39,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.translate
+    volumes:
+      - type: bind  # Write output to host for debugging
+        source: ./data/
+        target: /scraper/data
+      - type: bind  # Write output to host for debugging
+        source: ./artifacts/
+        target: /scraper/artifacts
 
 
   translate_en:
@@ -50,6 +61,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.translate
+    volumes:
+      - type: bind  # Write output to host for debugging
+        source: ./data/
+        target: /scraper/data
+      - type: bind  # Write output to host for debugging
+        source: ./artifacts/
+        target: /scraper/artifacts
 
   translate_fr:
     depends_on:
@@ -66,6 +84,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.translate
+    volumes:
+      - type: bind  # Write output to host for debugging
+        source: ./data/
+        target: /scraper/data
+      - type: bind  # Write output to host for debugging
+        source: ./artifacts/
+        target: /scraper/artifacts
 
   translate_it:
     depends_on:
@@ -84,6 +109,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.translate
+    volumes:
+      - type: bind  # Write output to host for debugging
+        source: ./data/
+        target: /scraper/data
+      - type: bind  # Write output to host for debugging
+        source: ./artifacts/
+        target: /scraper/artifacts
 
   merge:
     depends_on:
@@ -98,6 +130,13 @@ services:
       translate_it:
         condition: service_completed_successfully
     image: python:3.9-slim
+    volumes:
+      - type: bind  # Write output to host for debugging
+        source: ./data/
+        target: /scraper/data
+      - type: bind  # Write output to host for debugging
+        source: ./artifacts/
+        target: /scraper/artifacts
     container_name: merge-job
 
     entrypoint: ["/bin/sh","-c"]
