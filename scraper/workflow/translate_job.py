@@ -99,8 +99,8 @@ def translate_new_data(db, translate_column, languages, one_shot=True):
                     # print(f"Processed 'Title' in {lang} {round(tlang2-tlang1)} s'")
                 elif translate_column == 'abstract':
                     tlang1 = time()
-                    abstract_oncie_trnsd = utils.translate_abstract(col_oncie, to_lang=lang, from_lang='NAN')
-                    translated_chunks.extend(abstract_oncie_trnsd.split(separator))
+                    db[new_col] = db.apply(lambda row: utils.translate_abstract(
+                        row[translate_column], to_lang=lang, from_lang=row['lang_3']), axis=1)
                     tlang2 = time()
                     # print(f"Processed 'Abstract' in {lang} {round(tlang2-tlang1)} s'")
                 elif translate_column == 'keywords':
@@ -117,7 +117,8 @@ def translate_new_data(db, translate_column, languages, one_shot=True):
                     # print(f"Processed 'Keywords_NLP' in {lang} {round(tlang2-tlang1)} s'")
                 else:
                     print(f"Column {translate_column} could not be translated")
-            db[new_col] = translated_chunks
+            if not translate_column == 'abstract':
+                db[new_col] = translated_chunks
     return db
 
 if __name__ == "__main__":
