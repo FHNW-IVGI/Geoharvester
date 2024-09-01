@@ -1,2 +1,2 @@
 Timestamp,Operator,URL,Issue
-2024-08-25T03:31:19.463807+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00019_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
+2024-09-01T03:35:11.487395+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00019_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
