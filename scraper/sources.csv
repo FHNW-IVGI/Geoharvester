@@ -694,7 +694,7 @@
 "KT_ZH","https://maps.zh.ch/wfs/TBAAnlagenZHWFS?service=WFS&request=GetCapabilities"
 "ST_ZH","https://www.ogc.stadt-zuerich.ch/mapproxy/wmts/1.0.0/WMTSCapabilities.xml"
 "ST_ZH","https://www.ogc.stadt-zuerich.ch/mapproxy/service?SERVICE=WMS&REQUEST=GetCapabilities"
-"KT_VD","https://www.ogc.vd.ch/public/services/OGC/wmsVD/Mapserver/WMSServer?"
+"KT_VD","https://www.ogc.vd.ch/public/services/OGC/wmsVD/Mapserver/WMSServer?SERVICE=WMS&REQUEST=GetCapabilities"
 "KT_FR","https://geo.fr.ch/ags/services/OpenData/Accidents_de_la_circulation_routiere/MapServer/WFSServer?request=GetCapabilities&service=WFS"
 "KT_FR","https://geo.fr.ch/ags/services/OpenData/Accroissement_annuel_de_trafic_2015_2020/MapServer/WFSServer?request=GetCapabilities&service=WFS"
 "KT_FR","https://geo.fr.ch/ags/services/OpenData/Admissibilite_des_sondes_geothermiques_SGV/MapServer/WFSServer?request=GetCapabilities&service=WFS"
