@@ -21,8 +21,8 @@ from fastapi.logger import logger as fastapi_logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination, paginate
 from fastapi_pagination.customization import CustomizedPage, UseParamsFields
-from pydantic import Field
 from nltk.corpus import stopwords
+from pydantic import Field
 
 from server.app.redis.redis_manager import r
 
@@ -75,7 +75,8 @@ async def startup_event():
     r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
     global dataframe
-    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main/scraper/data/"
+    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main/scraper/temp_data/" # Temporary fix
+    #url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main/scraper/data/" # Restore once pipeline works
     url_geoservices_CH_pkl = os.path.join(url_github_repo, "merged_data.pkl")
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
     # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
