@@ -656,6 +656,7 @@ if __name__ == "__main__":
       reading the csv, preprocessing the data and generating a pickle
     6 Logs and prints a message indicating that the scraper has completed.
     """
+    ft0=time()
     # Initialize and configure the logger
     logger = logging.getLogger("Scraping log")
     logger.setLevel(logging.INFO)
@@ -702,6 +703,8 @@ if __name__ == "__main__":
     num_sources = len(sources)
     n = 1
     t0 = time()
+    ft1 = time()
+    print(f"Startup time until scraping: {int(ft1-ft0)}s")
     for source in sources:
         server_operator = source['Description']
         server_url = source['URL']
