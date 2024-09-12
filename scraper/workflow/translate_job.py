@@ -73,9 +73,9 @@ def translate_new_data(db, translate_column, languages, one_shot=True):
             else:
                 print(f"Column {translate_column} could not be translated")
         else:
+            chunk_size = 200
             if translate_column != 'abstract':
                 separator = ' | '
-                chunk_size = 200
                 chunk_lenghts = [True]
                 while any(chunk_lenghts) and chunk_size > 1:
                     chunk_lenghts= []
