@@ -122,7 +122,7 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@main
+        uses: actions/checkout@main # May need additional pull directive
 
       - name: Increase git buffer size
         run: |
