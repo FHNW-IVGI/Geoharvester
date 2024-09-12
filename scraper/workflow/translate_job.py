@@ -85,43 +85,34 @@ def translate_new_data(db, translate_column, languages, one_shot=True):
                 print(f"Set translation chunk size to {chunk_size}")
 
             translated_chunks = []
-            for i in range(int(len(db)/chunk_size)+1):
+            for i in range(round(len(db)/chunk_size)+1):
                 if db[i*chunk_size:chunk_size*(i+1)][translate_column].empty:
                     continue
                 col_oncie = separator.join(db[i*chunk_size:chunk_size*(i+1)][translate_column].to_list())
                 if translate_column == 'title':
-                    # tlang1 = time()
                     title_oncie_trnsd = utils.translate_text(col_oncie.replace('_',' '), to_lang=lang, from_lang='NAN')
 
-                    if len(col_oncie.split(separator)) != len(title_oncie_trnsd.split(separator)):
+                    if len(title_oncie_trnsd.split(separator)) != chunk_size:
                         translated_chunks.extend([utils.translate_text(dataset,
                             to_lang=lang, from_lang='NAN') for dataset in db[i*chunk_size:chunk_size*(i+1)][translate_column].to_list()])
                     else:
                         translated_chunks.extend(title_oncie_trnsd.split(separator))
-                    # tlang2 = time()
-                    # print(f"Processed 'Title' in {lang} {round(tlang2-tlang1)} s'")
                 elif translate_column == 'keywords':
-                    # tlang1 = time()
                     keywords_oncie_trnsd = utils.translate_keywords(col_oncie, to_lang=lang, from_lang='NAN')
                     
-                    if len(col_oncie.split(separator)) != len(keywords_oncie_trnsd.split(separator)):
+                    if len(keywords_oncie_trnsd.split(separator)) != chunk_size:
                         translated_chunks.extend(utils.translate_keywords(dataset,
                             to_lang=lang, from_lang='NAN') for dataset in db[i*chunk_size:chunk_size*(i+1)][translate_column].to_list())
                     else:
                         translated_chunks.extend(keywords_oncie_trnsd.split(separator))
-                    # tlang2 = time()
-                    # print(f"Processed 'Keywords' in {lang} {round(tlang2-tlang1)} s'")
                 elif translate_column == 'keywords_nlp':
-                    # tlang1 = time()
                     keywords_nlp_oncie_trnsd = utils.translate_keywords(col_oncie, to_lang=lang, from_lang='NAN')
                     
-                    if len(col_oncie.split(separator)) != len(keywords_nlp_oncie_trnsd.split(separator)):
+                    if len(keywords_nlp_oncie_trnsd.split(separator)) != chunk_size:
                         translated_chunks.extend(utils.translate_keywords(dataset,
                             to_lang=lang, from_lang='NAN') for dataset in db[i*chunk_size:chunk_size*(i+1)][translate_column].to_list())
                     else:
                         translated_chunks.extend(keywords_nlp_oncie_trnsd.split(separator))
-                    # tlang2 = time()
-                    # print(f"Processed 'Keywords_NLP' in {lang} {round(tlang2-tlang1)} s'")
                 elif translate_column == 'abstract':
                     pass
                 else:
