@@ -703,7 +703,6 @@ if __name__ == "__main__":
     n = 1
     t0 = time()
     for source in sources:
-        print(f"New Source in {time()-t0}s ({time()-t0/60} min)")
         server_operator = source['Description']
         server_url = source['URL']
         # Check if a custom scraper exists for this source
@@ -724,7 +723,7 @@ if __name__ == "__main__":
             to0 = time()
             get_service_info(source)
             to1 = time()
-            print(f"Response time for {source['URL']} is {to1-to0}s")
+            print(f"Response time for {source['URL']} is {int(to1-to0)}s")
         else:
             logger.warning("Scraping %s > %s aborted" % (
                 server_operator, server_url))
@@ -744,10 +743,7 @@ if __name__ == "__main__":
                                                  'to_preprocess.pkl'))
     pathpart = os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl')
 
-    # Save to artifacts, for 2nd pipeline stage
-    # BUG: it will save the same preprd_data.pkl for all languages with all the data
-    for lang in ['de', 'en', 'it', 'fr']:
-        preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'{}_preprd_data.pkl'.format(lang)))
+    preprd_data.to_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
     preprd_data.to_csv(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.csv'))
     # Save to data for last pipeline stage
     data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))

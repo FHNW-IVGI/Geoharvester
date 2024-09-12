@@ -157,7 +157,7 @@ if __name__ == "__main__":
     # Read language from pipeline variable
     language = os.environ['LANG_FROM_PIPELINE']
 
-    preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,f'{language}_preprd_data.pkl'))
+    preprd_data = pd.read_pickle(os.path.join(config.WORKFLOW_ARTIFACT_FOLDER,'preprd_data.pkl'))
 
     for trns_col in config.WORKFLOW_TRANSLATE_COLUMNS:
         print(f"Start translating {trns_col} {round(time()-tstart)}s after process start")
