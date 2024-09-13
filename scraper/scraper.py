@@ -734,7 +734,7 @@ if __name__ == "__main__":
 
     write_dataset_info(config.GEOSERVICES_CH_CSV,config.GEOSERVICES_CH_CSV)
 
-    data_to_keep = check_new_data(os.path.join(TEMP_PROCESSED_DATA_PKL),
+    data_to_keep = check_new_data(os.path.join(config.TEMP_PROCESSED_DATA_PKL),
                    config.GEOSERVICES_CH_CSV,
                    match_columns=['name','title','provider','keywords','abstract','endpoint'],
                    output_path=os.path.split(config.GEOSERVICES_CH_CSV)[0])
