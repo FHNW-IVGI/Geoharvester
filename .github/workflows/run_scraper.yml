@@ -66,19 +66,6 @@ jobs:
           name: geoservices_CH
           path: ./scraper/data/geoservices_CH.csv
 
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: en_preprd_data
-      #     path: ./scraper/artifacts/en_preprd_data.pkl # From artifacts for 2nd stage
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: it_preprd_data
-      #     path: ./scraper/artifacts/it_preprd_data.pkl # From artifacts for 2nd stage
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: fr_preprd_data
-      #     path: ./scraper/artifacts/fr_preprd_data.pkl # From artifacts for 2nd stage
-
       - uses: actions/upload-artifact@v4
         with:
           name: preprd_data_csv
@@ -163,7 +150,7 @@ jobs:
           path: ./scraper/artifacts/de_translated.csv
 
   translate_en:
-    needs: translate_de # Wait on the translate job to complete
+    needs: scrape
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -212,7 +199,7 @@ jobs:
           path: ./scraper/artifacts/en_translated.csv
 
   translate_fr:
-    needs: translate_en # Wait on the translate job to complete
+    needs: scrape
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -261,7 +248,7 @@ jobs:
           path: ./scraper/artifacts/fr_translated.csv
 
   translate_it:
-    needs: translate_fr # Wait on the translate job to complete
+    needs: scrape
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -366,6 +353,11 @@ jobs:
         with:
           name: merged database_csv
           path: ./scraper/data/merged_data.csv
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: merged database_csv
+          path: ./scraper/data/geoservices_CH.csv
 
       - name: Push contents of data folder to repo
         uses: github-actions-x/commit@v2.9
