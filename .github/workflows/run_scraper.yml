@@ -199,7 +199,7 @@ jobs:
           path: ./scraper/artifacts/en_translated.csv
 
   translate_fr:
-    needs: scrape
+    needs: translate_en
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -248,7 +248,7 @@ jobs:
           path: ./scraper/artifacts/fr_translated.csv
 
   translate_it:
-    needs: scrape
+    needs: translate_de
     runs-on: ubuntu-latest
     defaults:
       run:
