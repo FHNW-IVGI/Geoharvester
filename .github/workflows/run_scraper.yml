@@ -91,14 +91,14 @@ jobs:
           name: autoupdate
 
           # Subsequent "on push" Actions are only triggered if this
-      - name: Push contents of data folder to repo
-        uses: github-actions-x/commit@v2.9
-        with:
-          push-branch: "main"
-          commit-message: "Scraping done"
-          force-add: "true"
-          files: ./scraper/data/geoservices_CH.csv
-          name: autoupdate
+      # - name: Push contents of data folder to repo
+      #   uses: github-actions-x/commit@v2.9
+      #   with:
+      #     push-branch: "main"
+      #     commit-message: "Scraping done"
+      #     force-add: "true"
+      #     files: ./scraper/data/geoservices_CH.csv
+      #     name: autoupdate
 
   translate_de:
     needs: scrape # Wait on the build job to complete
