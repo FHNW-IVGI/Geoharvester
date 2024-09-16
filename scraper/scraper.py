@@ -616,7 +616,7 @@ def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
     # Check and add metadata quality
     print(f"Adding metadata scores...")
     raw_data = utils.check_metadata_quality(raw_data, search_word='nan',
-                                            search_columns=['abstract', 'keywords', 'metadata'],
+                                            search_columns=['abstract', 'keywords', 'metadata','contact'],
                                             case_sensitive=False)
     
     # Characters cleaning for compatibility with redis -> Already done by checking the new data
