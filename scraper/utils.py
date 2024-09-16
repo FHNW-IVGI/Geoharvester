@@ -684,14 +684,14 @@ def set_nans(row, apply_on_column='abstract', check_columns=['title', 'name']):
     return new_value
 
 def check_metadata_quality(database, search_word='nan',
-                           search_columns=['abstract', 'keywords', 'metadata'],
+                           search_columns=['abstract', 'keywords', 'metadata','contact'],
                            case_sensitive=False):
     """
-    Calculate metadata quality score based on columns: abstract, keywords, metadata
+    Calculate metadata quality score based on columns: abstract, keywords, metadata, contact
     """
     database[search_columns] = database[search_columns].replace({' ': 'nan', '??':'nan','n.a.':'nan'})
     database['abstract_nan'] = database.apply(set_nans, axis=1)
     search_columns[search_columns.index("abstract")]='abstract_nan'
     mask = database[search_columns].apply(lambda x:x.str.match(search_word, case=case_sensitive))
-    database['metaquality'] = round(100 - mask.sum(axis=1)*33.33) # Scoring with 3 fields
+    database['metaquality'] = round(100 - mask.sum(axis=1)*25) # Scoring with 4 fields
     return database.drop(columns=['abstract_nan'])
