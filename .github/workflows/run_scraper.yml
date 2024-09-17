@@ -61,11 +61,6 @@ jobs:
           name: preprd_data
           path: ./scraper/artifacts/preprd_data.pkl # From artifacts for 2nd stage
 
-      # - uses: actions/upload-artifact@v4 # to be removed: save at end of workflow instead
-      #   with:
-      #     name: geoservices_CH
-      #     path: ./scraper/data/geoservices_CH.csv
-
       - uses: actions/upload-artifact@v4
         with:
           name: preprd_data_csv
@@ -89,16 +84,6 @@ jobs:
           force-add: "true"
           files: ./scraper/tools/
           name: autoupdate
-
-          # Subsequent "on push" Actions are only triggered if this
-      # - name: Push contents of data folder to repo
-      #   uses: github-actions-x/commit@v2.9
-      #   with:
-      #     push-branch: "main"
-      #     commit-message: "Scraping done"
-      #     force-add: "true"
-      #     files: ./scraper/data/geoservices_CH.csv
-      #     name: autoupdate
 
   translate_de:
     needs: scrape # Wait on the build job to complete
@@ -354,10 +339,10 @@ jobs:
           name: merged database_csv
           path: ./scraper/data/merged_data.csv
 
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: merged database_csv
-      #     path: ./scraper/data/geoservices_CH.csv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: geoservices file
+          path: ./scraper/data/geoservices_CH.csv
 
       - name: Push contents of data folder to repo
         uses: github-actions-x/commit@v2.9
