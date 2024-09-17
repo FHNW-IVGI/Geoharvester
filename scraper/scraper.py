@@ -656,7 +656,7 @@ if __name__ == "__main__":
       reading the csv, preprocessing the data and generating a pickle
     6 Logs and prints a message indicating that the scraper has completed.
     """
-    ft0=time()
+    process_startT=time()
     # Initialize and configure the logger
     logger = logging.getLogger("Scraping log")
     logger.setLevel(logging.INFO)
@@ -702,10 +702,11 @@ if __name__ == "__main__":
     sources = load_source_collection()
     num_sources = len(sources)
     n = 1
-    t0 = time()
-    ft1 = time()
-    print(f"Startup time until scraping: {int(ft1-ft0)}s")
+
+    scraping_startT = time()
+    print(f"Startup time until scraping: {int((process_startT-scraping_startT) / 60)} mins")
     for source in sources:
+        scrape_source_startT = time()
         server_operator = source['Description']
         server_url = source['URL']
         # Check if a custom scraper exists for this source
@@ -723,14 +724,17 @@ if __name__ == "__main__":
         # Check if this server is online. If yes, proceed to gather
         # information
         if is_online(source):
-            to0 = time()
             get_service_info(source)
-            to1 = time()
-            print(f"Response time for {source['URL']} is {int(to1-to0)}s")
+           
         else:
             logger.warning("Scraping %s > %s aborted" % (
                 server_operator, server_url))
         n += 1
+        scrape_source_endT = time()
+        logger.info(f"Dataset {source['URL']} processed in {int(scrape_source_endT-scrape_source_startT)} seconds")
+
+    scraping_endT = time()
+    print(f"Scraping took: {int((scraping_endT-scraping_startT) / 60)} mins")
 
     write_dataset_info(config.GEOSERVICES_CH_CSV,config.GEOSERVICES_CH_CSV)
 
@@ -752,3 +756,5 @@ if __name__ == "__main__":
     data_to_keep.to_pickle(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.pkl'))
     data_to_keep.to_csv(os.path.join(os.path.split(config.GEOSERVICES_CH_CSV)[0],'data_to_keep.csv'))
 
+    process_endT = time()
+    print(f"Job took: {int((process_endT-process_startT) / 60)} mins")
