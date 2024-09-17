@@ -354,10 +354,10 @@ jobs:
           name: merged database_csv
           path: ./scraper/data/merged_data.csv
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: merged database_csv
-          path: ./scraper/data/geoservices_CH.csv
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: merged database_csv
+      #     path: ./scraper/data/geoservices_CH.csv
 
       - name: Push contents of data folder to repo
         uses: github-actions-x/commit@v2.9
