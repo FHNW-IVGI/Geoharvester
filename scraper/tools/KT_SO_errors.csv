@@ -1,4 +1,3 @@
 Timestamp,Operator,URL,Issue
-2024-09-17T10:57:58.046758+02:00,KT_SO,https://geo.so.ch/api/wfs?SERVICE=WFS&REQUEST=GetCapabilities,"Service does not seem to be a valid WMS, WMTS or WFS"
-2024-09-17T10:58:10.356212+02:00,KT_SO,ch.so.afu.erdwaerme.sonde,"cannot convert float infinity to integer"
-2024-09-17T10:58:10.369361+02:00,KT_SO,ch.so.afu.wasserbewirtschaftung,"cannot convert float infinity to integer"
+2024-09-22T03:47:58.735570+02:00,KT_SO,ch.so.afu.erdwaerme.sonde,"cannot convert float infinity to integer"
+2024-09-22T03:47:58.748389+02:00,KT_SO,ch.so.afu.wasserbewirtschaftung,"cannot convert float infinity to integer"
