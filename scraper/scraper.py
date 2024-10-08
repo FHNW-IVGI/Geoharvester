@@ -608,8 +608,10 @@ def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
     # print(f"Abstracts summarized succesfully in {t2-t1} seconds")
     # Add the detected dataset language (applied on title)
     language_dict = {'english':('EN', 'ENG'), 'french':('FR','FRA'), 'german':('DE','DEU'), 'italian':('IT','ITA'), 'not_found':('NA','NAN')}
-    raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][1], axis=1)
-    raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][0], axis=1)
+    raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['abstract'], not_found=True)][1], axis=1)
+    raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['abstract'], not_found=True)][0], axis=1)
+    raw_data['lang_3'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][1] if row['lang_3']=='NAN' else row['lang_3'], axis=1)
+    raw_data['lang_2'] = raw_data.apply(lambda row: language_dict[utils.detect_language(row['title'], not_found=True)][0] if row['lang_2']=='NAN' else row['lang_2'], axis=1)
     t3 = time()
     print(f"Languages detected succesfully in {t3-t2} seconds")
 
