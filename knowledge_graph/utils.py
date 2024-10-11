@@ -105,7 +105,9 @@ def generate_knowledge_graph(kg_data:pd.DataFrame, cog_home:str, update:bool=Fal
     TODO: Add description
     """
     kg = Graph("Geoharvester", cog_home=cog_home)
-    kg_data = filter_languages(kg_data)
+    print("Filtering translations...")
+    kg_data = filter_translations(kg_data)
+    print("Loading data in the knowledge graph...")
     for i, row in kg_data.iterrows():
         kg.put(row["ENG"].lower(), "means", row["DEU"].title(), update=update)
         kg.put(row["ITA"].lower(), "means", row["DEU"].title(), update=update)
@@ -114,13 +116,35 @@ def generate_knowledge_graph(kg_data:pd.DataFrame, cog_home:str, update:bool=Fal
         kg.put(row["FRA"].lower(), "lang", "french", update=update)
         kg.put(row["ENG"].lower(), "lang", "english", update=update)
         kg.put(row["ITA"].lower(), "lang", "italian", update=update)
+    print("Building synonyms...")
+    build_synonyms(kg, "german", ["english", "french", "italian"])
     return kg
 
-def filter_languages(kg_data:pd.DataFrame):
-
-
+def filter_translations(kg_data:pd.DataFrame):
+    """
+    Filters rows if all languages are the same
+    """
+    for i, row in kg_data.iterrows():
+        if row["DEU"].lower().replace(" ", "") == row["ENG"].lower().replace(" ", "") == row["ITA"].lower().replace(" ", "") == row["FRA"].lower().replace(" ", ""):
+            kg_data.drop(i, inplace=True)
     return kg_data
 
+def build_synonyms(kg:Graph, reference_language:str,
+                   synonyms_languages:list, update:bool=False)->None:
+    """
+    builds synonyms basing on the reference language (german) for all other languages
+    """
+    for reference in find_edges_by_language(kg, reference_language):
+        for lang in synonyms_languages:
+            assert lang in ["english", "french", "german", "italian"], "Invalid language encountred"
+            trns = [k['id'] for k in kg.v(vertex=reference).inc("means").has('lang', lang).all()['result']]
+            if len(trns) > 1:
+                for word in trns:
+                    for synonym in trns:
+                        if word != synonym:
+                            kg.put(word, "synonym", synonym, update=update)
+
+        
 
 def find_edges_by_language(kg:Graph, language:str)->list:
     """
