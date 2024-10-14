@@ -166,8 +166,14 @@ def find_nodes_by_language(kg:Graph, language:str)->list:
     assert language in ["english", "french", "german", "italian"], "Invalid language"
     response = [k['id'] for k in kg.v(vertex=language).inc().all()['result']]
     if not response:
-        print("No edges found")
-    return response
+        print("No nodes found")
+    else:
+        node_list = []
+        # remove duplicates
+        for w in response:
+            if w not in node_list:
+                node_list.append(w)
+    return node_list
 
 def traverse_knowledge_graph(kg:Graph, language:str, query:str)->list:
     """
