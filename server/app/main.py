@@ -8,9 +8,11 @@ from typing import Union
 
 from app.constants import (DEFAULTSIZE, EnumLangType, EnumProviderType,
                            EnumServiceType)
-from app.processing.methods import (import_csv_into_dataframe,
-                                    import_pkl_into_dataframe,
-                                    split_search_string)
+from app.processing.methods import (import_pkl_into_dataframe,
+                                    split_search_string,
+                                    generate_knowledge_graph,
+                                    open_knowledge_graph,
+                                    traverse_knowledge_graph)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters, results_ranking,
                                search_redis, transform_wordlist_to_query)
@@ -70,16 +72,18 @@ datajson=None
 
 @app.on_event("startup")
 async def startup_event():
-    """Startup Event: Load csv into data frame"""
+    """Startup Event: Load csv into data frame and knwoledge graph"""
     # Overwrite config limit for a maximum of 10000 search results:
     r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
-    global dataframe
-    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main/scraper/data/" # Restore once pipeline works
-    url_geoservices_CH_pkl = os.path.join(url_github_repo, "merged_data.pkl")
+    global dataframe, kg
+    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/knowledge_graph/" # Restore once pipeline works
+    url_geoservices_CH_pkl = os.path.join(url_github_repo, 'scraper/data/', "merged_data.pkl")
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
-    # url_geoservices_CH_csv = "app/tmp/geoservices_CH.csv"
-    # dataframe =  import_csv_into_dataframe(url_geoservices_CH_csv)
+    url_kg_dataframe = os.path.join(url_github_repo, 'knowledge_graph/', "kg_data.pkl")
+    t0 = time()
+    kg = generate_knowledge_graph(url_kg_dataframe, "knowledge_graph")
+    print(f"Knowledge graph generated in {round(time() - t0,2)} seconds")
     
     global datajson
     datajson = json.loads(dataframe.to_json(orient='records'))
@@ -131,10 +135,15 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         return paginate(redis_data.docs)
 
     elif (query_string is not None and len(query_string) > 1):
-        word_list = split_search_string(query_string)
         language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
+        # Traverse knowledge graph for search terms
+        known_terms = traverse_knowledge_graph(kg, language_dict[lang], query_string)
+        # create word list without known terms
+        word_list = split_search_string(query_string, known_terms)
+        # stop words removal just for redis
         stop_words = stopwords.words(language_dict[lang])
         word_list_clean = [word for word in word_list if word not in stop_words]
+        # build query for redis
         text_query = transform_wordlist_to_query(word_list_clean, lang)
 
         redis_query = redis_query_from_parameters(text_query, service, provider)
@@ -147,7 +156,8 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         # print(redis_data.docs)
 
         if len(redis_data.docs) > 0:
-            ranked_results = results_ranking(redis_data.docs, word_list, parsed_language)
+            
+            ranked_results = results_ranking(redis_data.docs, word_list, known_terms, parsed_language)
             fastapi_logger.info(f"Ranking ET: {round((time()-t1),2)} on columns with lang={parsed_language}")
             if ranked_results:
                 return paginate(ranked_results)

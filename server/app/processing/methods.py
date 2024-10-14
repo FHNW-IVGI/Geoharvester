@@ -1,6 +1,7 @@
 import re
 import shlex
 from typing import List
+from cog.torque import Graph
 
 import pandas as pd
 
@@ -23,8 +24,12 @@ def import_pkl_into_dataframe(url):
     """
     return pd.read_pickle(url)
 
-def split_search_string(query: str) -> List[str]:
+def split_search_string(query: str, known_terms: List[str]) -> List[str]:
     """Split the incoming request by delimiter to create a list of terms"""
+    if known_terms:
+        for term in known_terms:
+            if len(term.split()) > 1:
+                query = query.replace(term, "")
     word_list_with_delimiters = shlex.split(query)
 
     def split_delimiters(word_list_with_delimiters: List[str]) -> List[str]:
@@ -46,14 +51,16 @@ def split_search_string(query: str) -> List[str]:
     # Also split terms with delimiters
     word_list_without_delimiters = split_delimiters(word_list_with_delimiters)
 
-    # TODO: Implement the stop words for all the languages with NLP -> see preprocessing utils.py
     strings_to_remove = [""]
     filtered_word_list = list(filter(lambda string: string not in strings_to_remove, word_list_without_delimiters))
 
     # Trim whitespaces of terms which may originate from splitting:
     trimmed_word_list = list(map(lambda string: string.strip(), filtered_word_list))
-
-    return trimmed_word_list
+    if trimmed_word_list:
+        trimmed_word_list.extend(known_terms)
+        return trimmed_word_list
+    else:
+        return known_terms
 
 
 def search_by_terms_dataframe(word_list: List[str], dataframe):
@@ -84,3 +91,100 @@ def search_by_terms_dataframe(word_list: List[str], dataframe):
         search_result["docs"] = docs
 
     return search_result
+
+
+def open_knowledge_graph(cog_home:str, kg_name:str)->Graph:
+    return Graph(kg_name, cog_home=cog_home)
+def generate_knowledge_graph(kg_data_path:str, cog_home:str,
+                             load_synonyms:bool=False, update:bool=False):
+    """
+    initializes the knowledge graph loading the data from the dataframe
+    Parameters
+    ----------
+    kg_data : pd.DataFrame
+        data frame with the data to be loaded
+    cog_home : str
+        path of the cog home
+    load_synonyms : bool
+        if the synonyms should be built (requires more time)
+    update : bool
+        if the knowledge graph should be updated
+
+    Returns
+    -------
+    _: Graph
+        initialized graph
+    """
+    kg = Graph("Geoharvester", cog_home=cog_home)
+    print("KG: Filtering translations...")
+    kg_data = pd.read_pickle(kg_data_path)
+    kg_data = filter_translations(kg_data)
+    print("KG: Loading data in the knowledge graph...")
+    for i, row in kg_data.iterrows():
+        kg.put(row["ENG"].lower(), "means", row["DEU"].title(), update=update)
+        kg.put(row["ITA"].lower(), "means", row["DEU"].title(), update=update)
+        kg.put(row["FRA"].lower(), "means", row["DEU"].title(), update=update)
+        kg.put(row["DEU"].title(), "lang", "german", update=update)
+        kg.put(row["FRA"].lower(), "lang", "french", update=update)
+        kg.put(row["ENG"].lower(), "lang", "english", update=update)
+        kg.put(row["ITA"].lower(), "lang", "italian", update=update)
+    if load_synonyms:
+        print("KG: Building synonyms...")
+
+        build_synonyms(kg, "german", ["english", "french", "italian"])
+    return kg
+
+def filter_translations(kg_data:pd.DataFrame):
+    """
+    Filters rows if all languages are the same
+    Parameters
+    """
+    for i, row in kg_data.iterrows():
+        if row["DEU"].lower().replace(" ", "") == row["ENG"].lower().replace(" ", "") == row["ITA"].lower().replace(" ", "") == row["FRA"].lower().replace(" ", ""):
+            kg_data.drop(i, inplace=True)
+    return kg_data
+
+def build_synonyms(kg:Graph, reference_language:str,
+                   synonyms_languages:list, update:bool=False)->None:
+    """
+    builds synonyms basing on the reference language (german) for all other languages
+    """
+    for reference in find_nodes_by_language(kg, reference_language):
+        for lang in synonyms_languages:
+            assert lang in ["english", "french", "german", "italian"], "Invalid language encountred"
+            trns = [k['id'] for k in kg.v(vertex=reference).inc("means").has('lang', lang).all()['result']]
+            if len(trns) > 1:
+                for word in trns:
+                    for synonym in trns:
+                        if word != synonym:
+                            kg.put(word, "synonym", synonym, update=update)
+
+def find_nodes_by_language(kg:Graph, language:str)->list:
+    """
+    Returns all incoming edges from a given language vertex
+    """
+    assert language in ["english", "french", "german", "italian"], "Invalid language"
+    response = [k['id'] for k in kg.v(vertex=language).inc().all()['result']]
+    if not response:
+        print("No edges found")
+    return response
+
+def traverse_knowledge_graph(kg:Graph, language:str, query:str)->list:
+    """
+    traverses the graph to find terms in the query.
+    """
+    lang_terms = find_nodes_by_language(kg, language)
+    return [t for t in lang_terms if t in query]
+
+
+def find_translation(kg:Graph, text:str, verify_language:str=None)->list:
+    # TODO: Maybe a dictionary would be better using .has('lang', 'german')
+    if verify_language:
+        assert verify_language in ["english", "french", "german", "italian"], "Invalid language"
+        graph_lang = kg.v(vertex=text).out("lang").all()['result'][0]['id']
+        assert graph_lang == verify_language, "Language mismatch"
+    if graph_lang != "german":
+        text = kg.v(vertex=text).out("means").all()['result'][0]['id']
+    translations = [k['id'] for k in kg.v(vertex=text).inc("means").all()['result']]
+    translations.append(text)
+    return translations

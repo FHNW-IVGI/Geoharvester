@@ -100,14 +100,33 @@ def check_length(translations:dict, length:int):
         
     return True
 
-def generate_knowledge_graph(kg_data:pd.DataFrame, cog_home:str, update:bool=False):
+def open_knowledge_graph(cog_home:str, kg_name:str)->Graph:
+    return Graph(kg_name, cog_home=cog_home)
+def generate_knowledge_graph(kg_data_path:str, cog_home:str,
+                             load_synonyms:bool=False, update:bool=False):
     """
-    TODO: Add description
+    initializes the knowledge graph loading the data from the dataframe
+    Parameters
+    ----------
+    kg_data : pd.DataFrame
+        data frame with the data to be loaded
+    cog_home : str
+        path of the cog home
+    load_synonyms : bool
+        if the synonyms should be built (requires more time)
+    update : bool
+        if the knowledge graph should be updated
+
+    Returns
+    -------
+    _: Graph
+        initialized graph
     """
     kg = Graph("Geoharvester", cog_home=cog_home)
-    print("Filtering translations...")
+    print("KG: Filtering translations...")
+    kg_data = pd.read_pickle(kg_data_path)
     kg_data = filter_translations(kg_data)
-    print("Loading data in the knowledge graph...")
+    print("KG: Loading data in the knowledge graph...")
     for i, row in kg_data.iterrows():
         kg.put(row["ENG"].lower(), "means", row["DEU"].title(), update=update)
         kg.put(row["ITA"].lower(), "means", row["DEU"].title(), update=update)
@@ -116,13 +135,16 @@ def generate_knowledge_graph(kg_data:pd.DataFrame, cog_home:str, update:bool=Fal
         kg.put(row["FRA"].lower(), "lang", "french", update=update)
         kg.put(row["ENG"].lower(), "lang", "english", update=update)
         kg.put(row["ITA"].lower(), "lang", "italian", update=update)
-    print("Building synonyms...")
-    build_synonyms(kg, "german", ["english", "french", "italian"])
+    if load_synonyms:
+        print("KG: Building synonyms...")
+
+        build_synonyms(kg, "german", ["english", "french", "italian"])
     return kg
 
 def filter_translations(kg_data:pd.DataFrame):
     """
     Filters rows if all languages are the same
+    Parameters
     """
     for i, row in kg_data.iterrows():
         if row["DEU"].lower().replace(" ", "") == row["ENG"].lower().replace(" ", "") == row["ITA"].lower().replace(" ", "") == row["FRA"].lower().replace(" ", ""):
@@ -134,7 +156,7 @@ def build_synonyms(kg:Graph, reference_language:str,
     """
     builds synonyms basing on the reference language (german) for all other languages
     """
-    for reference in find_edges_by_language(kg, reference_language):
+    for reference in find_nodes_by_language(kg, reference_language):
         for lang in synonyms_languages:
             assert lang in ["english", "french", "german", "italian"], "Invalid language encountred"
             trns = [k['id'] for k in kg.v(vertex=reference).inc("means").has('lang', lang).all()['result']]
@@ -144,9 +166,7 @@ def build_synonyms(kg:Graph, reference_language:str,
                         if word != synonym:
                             kg.put(word, "synonym", synonym, update=update)
 
-        
-
-def find_edges_by_language(kg:Graph, language:str)->list:
+def find_nodes_by_language(kg:Graph, language:str)->list:
     """
     Returns all incoming edges from a given language vertex
     """
@@ -155,6 +175,14 @@ def find_edges_by_language(kg:Graph, language:str)->list:
     if not response:
         print("No edges found")
     return response
+
+def traverse_knowledge_graph(kg:Graph, language:str, query:str)->list:
+    """
+    traverses the graph to find terms in the query.
+    """
+    lang_terms = find_nodes_by_language(kg, language)
+    return [t for t in lang_terms if t in query]
+
 
 def find_translation(kg:Graph, text:str, verify_language:str=None)->list:
     # TODO: Maybe a dictionary would be better using .has('lang', 'german')
