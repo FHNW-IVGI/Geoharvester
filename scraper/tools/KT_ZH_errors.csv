@@ -1,7 +1,7 @@
 Timestamp,Operator,URL,Issue
-2024-10-13T04:16:14.516566+02:00,KT_ZH,https://wms.zh.ch/FnsSVOZHWMS?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
-2024-10-13T04:16:17.901171+02:00,KT_ZH,https://wms.zh.ch/kkgeo_gws_zh?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
-2024-10-13T04:16:55.294094+02:00,KT_ZH,https://wms.zh.ch/AwelWBhauptZHWMS?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 401"
-2024-10-13T04:17:36.486847+02:00,KT_ZH,https://wms.zh.ch/AwelWindpotenzialZHWMS?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
-2024-10-13T04:18:03.547136+02:00,KT_ZH,https://wms.zh.ch/OGDAwelLHKlimaanalyseZH?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
-2024-10-13T04:20:30.495397+02:00,KT_ZH,https://maps.zh.ch/wfs/AwelWbAbflussZHWFS?service=WFS&request=GetCapabilities,"expected string or bytes-like object"
+2024-10-20T04:17:25.375625+02:00,KT_ZH,https://wms.zh.ch/FnsSVOZHWMS?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
+2024-10-20T04:17:28.778089+02:00,KT_ZH,https://wms.zh.ch/kkgeo_gws_zh?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
+2024-10-20T04:18:07.215120+02:00,KT_ZH,https://wms.zh.ch/AwelWBhauptZHWMS?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 401"
+2024-10-20T04:18:49.141263+02:00,KT_ZH,https://wms.zh.ch/AwelWindpotenzialZHWMS?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
+2024-10-20T04:19:16.080631+02:00,KT_ZH,https://wms.zh.ch/OGDAwelLHKlimaanalyseZH?service=WMS&request=GetCapabilities,"expected string or bytes-like object"
+2024-10-20T04:21:45.827982+02:00,KT_ZH,https://maps.zh.ch/wfs/AwelWbAbflussZHWFS?service=WFS&request=GetCapabilities,"expected string or bytes-like object"
