@@ -1465,3 +1465,4 @@
 "Bund"," https://wms.geo.admin.ch/?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities"
 "ASIT"," https://wmts.asit-asso.ch/wmts/1.0.0/WMTSCapabilities.xml"
 "SOSM","https://tile.osm.ch/1.0.0/WMTSCapabilities.xml"
+"ST_BE","https://map.bern.ch/arcgis/rest/services/Geoportal/STEK2016_Entwicklungspotenziale/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"
