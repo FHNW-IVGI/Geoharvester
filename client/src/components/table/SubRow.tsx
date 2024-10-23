@@ -19,6 +19,7 @@ import {
   getQgisWMTS,
 } from "../../requests";
 import { Geoservice } from "../../types";
+import { PROVIDER } from "src/constants";
 
 export const SubRow = ({
   row,
@@ -143,7 +144,13 @@ export const SubRow = ({
                       <Button
                         style={{ padding: 0 }}
                         variant="text"
-                        onClick={() => window.open(row.preview)}
+                        onClick={() => {
+                          const url =
+                            row.provider === PROVIDER.BUND
+                              ? row.preview.replace("??", "'")
+                              : row.preview;
+                          window.open(url);
+                        }}
                         disabled={
                           row.preview === "n.a." ||
                           row.preview === null ||
