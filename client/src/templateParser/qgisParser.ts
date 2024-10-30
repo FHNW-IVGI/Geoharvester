@@ -7,8 +7,7 @@ export const parseQgisTemplate = async (data: Geoservice, response: any) => {
     const ymin = bboxArray[1];
     const xmax = bboxArray[2];
     const ymax = bboxArray[3];
-    const urlParts = data.endpoint.split("/")
-    const serviceSnippet = `${urlParts[0]}//${urlParts[2]}/`.trim()
+    const serviceSnippet = data.endpoint.trim()
     projectXml = projectXml.replace("{{endpoint}}", serviceSnippet);
     projectXml = projectXml.replace("{{name}}", data.name);
     projectXml = projectXml.replace("{{name}}", data.name);
