@@ -102,12 +102,14 @@ def check_length(translations:dict, length:int):
 
 def open_knowledge_graph(cog_home:str, kg_name:str)->Graph:
     return Graph(kg_name, cog_home=cog_home)
-def generate_knowledge_graph(kg_data_path:str, cog_home:str,
+def generate_knowledge_graph(kg_name:str,kg_data_path:str, cog_home:str,
                              load_synonyms:bool=False, update:bool=False):
     """
     initializes the knowledge graph loading the data from the dataframe
     Parameters
     ----------
+    kg_name : str
+        name of the knowledge graph
     kg_data : pd.DataFrame
         data frame with the data to be loaded
     cog_home : str
@@ -122,7 +124,7 @@ def generate_knowledge_graph(kg_data_path:str, cog_home:str,
     _: Graph
         initialized graph
     """
-    kg = Graph("Geoharvester", cog_home=cog_home)
+    kg = Graph(kg_name, cog_home=cog_home)
     print("KG: Filtering translations...")
     kg_data = pd.read_pickle(kg_data_path)
     kg_data = filter_translations(kg_data)
