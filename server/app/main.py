@@ -12,7 +12,8 @@ from app.processing.methods import (import_pkl_into_dataframe,
                                     split_search_string,
                                     generate_knowledge_graph,
                                     open_knowledge_graph,
-                                    traverse_knowledge_graph)
+                                    traverse_knowledge_graph,
+                                    find_translation)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters, results_ranking,
                                search_redis, transform_wordlist_to_query)
@@ -80,9 +81,10 @@ async def startup_event():
     url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/knowledge_graph/" # Restore once pipeline works
     url_geoservices_CH_pkl = os.path.join(url_github_repo, 'scraper/data/', "merged_data.pkl")
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
-    url_kg_dataframe = os.path.join(url_github_repo, 'knowledge_graph/', "kg_data.pkl")
+    url_kg_dataframe = os.path.join(url_github_repo, 'knowledge_graph', "kg_data.pkl")
     t0 = time()
-    kg = generate_knowledge_graph(url_kg_dataframe, "knowledge_graph")
+    kg = generate_knowledge_graph('GeoHarvester', url_kg_dataframe, "knowledge_graph",
+                                  load_synonyms=True)
     print(f"Knowledge graph generated in {round(time() - t0,2)} seconds")
     
     global datajson
@@ -138,6 +140,10 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         language_dict = {'en': 'english', 'fr': 'french', 'de': 'german', 'it': 'italian'}
         # Traverse knowledge graph for search terms
         known_terms = traverse_knowledge_graph(kg, language_dict[lang], query_string)
+        for known_term in known_terms:
+            if len(known_term.split()) == 1:
+                known_terms.remove(known_term)
+        print(f"Knwon terms and synonyms from KG: {known_terms}")
         # create word list without known terms
         word_list = split_search_string(query_string, known_terms)
         # stop words removal just for redis
@@ -157,7 +163,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
 
         if len(redis_data.docs) > 0:
             
-            ranked_results = results_ranking(redis_data.docs, word_list, known_terms, parsed_language)
+            ranked_results = results_ranking(redis_data.docs, word_list_clean, known_terms, parsed_language)
             fastapi_logger.info(f"Ranking ET: {round((time()-t1),2)} on columns with lang={parsed_language}")
             if ranked_results:
                 return paginate(ranked_results)

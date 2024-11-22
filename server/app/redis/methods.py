@@ -401,7 +401,7 @@ def results_ranking(redis_output, query_words_list, known_terms, parsed_lang):
             for query_word in query_words_list:
                 bs = 1
                 if query_word in known_terms:
-                    bs += 1
+                    bs += 2
                 query_results_df = exact_match_scoring(query_results_df, ['title', 'keywords_nlp'], query_word, 1)
                 query_results_df = contains_match_scoring(query_results_df, ['title_'+lang, 'keywords_'+lang], query_word, 4)
                 query_results_df = contains_match_scoring(query_results_df, ['keywords_nlp_'+lang], query_word, 2)

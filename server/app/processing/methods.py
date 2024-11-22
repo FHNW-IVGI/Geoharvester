@@ -26,10 +26,13 @@ def import_pkl_into_dataframe(url):
 
 def split_search_string(query: str, known_terms: List[str]) -> List[str]:
     """Split the incoming request by delimiter to create a list of terms"""
+    query_clean = query
     if known_terms:
         for term in known_terms:
             if len(term.split()) > 1:
-                query = query.replace(term, "")
+                query_clean = query_clean.replace(term, "")
+    if len(query_clean.split()) > 0:
+        query = query_clean
     word_list_with_delimiters = shlex.split(query)
 
     def split_delimiters(word_list_with_delimiters: List[str]) -> List[str]:
@@ -95,12 +98,14 @@ def search_by_terms_dataframe(word_list: List[str], dataframe):
 
 def open_knowledge_graph(cog_home:str, kg_name:str)->Graph:
     return Graph(kg_name, cog_home=cog_home)
-def generate_knowledge_graph(kg_data_path:str, cog_home:str,
+def generate_knowledge_graph(kg_name:str,kg_data_path:str, cog_home:str,
                              load_synonyms:bool=False, update:bool=False):
     """
     initializes the knowledge graph loading the data from the dataframe
     Parameters
     ----------
+    kg_name : str
+        name of the knowledge graph
     kg_data : pd.DataFrame
         data frame with the data to be loaded
     cog_home : str
@@ -115,7 +120,7 @@ def generate_knowledge_graph(kg_data_path:str, cog_home:str,
     _: Graph
         initialized graph
     """
-    kg = Graph("Geoharvester", cog_home=cog_home)
+    kg = Graph(kg_name, cog_home=cog_home)
     print("KG: Filtering translations...")
     kg_data = pd.read_pickle(kg_data_path)
     kg_data = filter_translations(kg_data)
@@ -179,9 +184,19 @@ def traverse_knowledge_graph(kg:Graph, language:str, query:str)->list:
     """
     traverses the graph to find terms in the query.
     """
+    terms_synonyms = []
     lang_terms = find_nodes_by_language(kg, language)
-    return [t for t in lang_terms if t in query]
+    known_terms = [t for t in lang_terms if t in query]
+    if known_terms:
+        for known_term in known_terms:
+            synonyms = find_sysnoms(kg, known_term)
+            if synonyms:
+                terms_synonyms.extend(synonyms)
+    terms_synonyms.extend(known_terms)
+    return terms_synonyms
 
+def find_sysnoms(kg:Graph, text:str)->list:
+    return [k['id'] for k in kg.v(vertex=text).inc("synonym").all()['result']]
 
 def find_translation(kg:Graph, text:str, verify_language:str=None)->list:
     # TODO: Maybe a dictionary would be better using .has('lang', 'german')
