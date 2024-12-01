@@ -1,2 +1,0 @@
-Timestamp,Operator,URL,Issue
-2024-11-24T05:26:36.138604+01:00,FL_LI,https://service.geo.llv.li/service/wms?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 503"
