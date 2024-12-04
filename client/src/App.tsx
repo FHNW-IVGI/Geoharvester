@@ -96,7 +96,7 @@ function App() {
           setResponseState(RESPONSESTATE.SUCCESS);
           setSearchResult(data);
           setCurrentApiPage(data.page);
-          page === 0 && setTablePage(0);
+          setTablePage(0);
         } else {
           setResponseState(RESPONSESTATE.EMPTY);
           setSearchResult({} as SearchResult); // Fallback on error

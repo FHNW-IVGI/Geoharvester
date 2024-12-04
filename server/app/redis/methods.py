@@ -208,7 +208,7 @@ def search_redis(redis_query, lang: EnumLangType, offset, limit):
 
     return r.ft(SVC_INDEX_ID).search(Query(redis_query)
             # Define all fields that should be searched here, as limit_fields restricts searching to a list of field names:
-            .limit_fields("provider", "service", "name", "keywords", f"title_{lang_string}", f"abstract_{lang_string}", f"keywords_{lang_string}", f"keywords_nlp_{lang_string}")
+            .limit_fields("provider", "service", "name", "keywords", "keywords_nlp", f"title_{lang_string}", f"abstract_{lang_string}", f"keywords_{lang_string}", f"keywords_nlp_{lang_string}")
             .sort_by('metaquality', asc=False)
             .paging(offset, 50000)
             .return_field('title')

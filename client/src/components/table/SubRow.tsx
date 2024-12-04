@@ -19,6 +19,7 @@ import {
   getQgisWMTS,
 } from "../../requests";
 import { Geoservice } from "../../types";
+import { PROVIDER } from "src/constants";
 
 export const SubRow = ({
   row,
@@ -43,6 +44,8 @@ export const SubRow = ({
         "metadata",
         "endpoint",
       ];
+
+  const NULLVALUES = ["", "nan", "n.a", null];
 
   const routeObjectBuilder = () => {
     if (!row || !row.service) {
@@ -143,12 +146,14 @@ export const SubRow = ({
                       <Button
                         style={{ padding: 0 }}
                         variant="text"
-                        onClick={() => window.open(row.preview)}
-                        disabled={
-                          row.preview === "n.a." ||
-                          row.preview === null ||
-                          row.preview === ""
-                        }
+                        onClick={() => {
+                          const url =
+                            row.provider === PROVIDER.BUND
+                              ? row.preview.replace("??", "'")
+                              : row.preview;
+                          window.open(url);
+                        }}
+                        disabled={NULLVALUES.includes(row.preview)}
                       >
                         Service in MapGeo öffnen
                       </Button>
@@ -170,11 +175,7 @@ export const SubRow = ({
                         <Button
                           onClick={() => window.open(row.legend)}
                           style={{ padding: 0 }}
-                          disabled={
-                            row.legend === "n.a." ||
-                            row.legend === null ||
-                            row.legend === ""
-                          }
+                          disabled={NULLVALUES.includes(row.legend)}
                         >
                           Legende öffnen
                         </Button>
@@ -196,6 +197,7 @@ export const SubRow = ({
                         }}
                         onClick={routeObjectBuilder().arcgis_handler}
                         startIcon={<DownloadIcon />}
+                        disabled={NULLVALUES.includes(row.endpoint)}
                       >
                         For ArcGIS Pro
                       </Button>
@@ -203,6 +205,7 @@ export const SubRow = ({
                         variant="outlined"
                         onClick={routeObjectBuilder().qgis_handler}
                         startIcon={<DownloadIcon />}
+                        disabled={NULLVALUES.includes(row.endpoint)}
                       >
                         For QGIS
                       </Button>

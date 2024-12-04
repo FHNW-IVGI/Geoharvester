@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import re
 import warnings
 from time import time
 from typing import Union
@@ -148,8 +149,7 @@ async def get_data(query_string: Union[str, None] = None,  service: EnumServiceT
         word_list = split_search_string(query_string, known_terms)
         # stop words removal just for redis
         stop_words = stopwords.words(language_dict[lang])
-        word_list_clean = [word for word in word_list if word not in stop_words]
-        # build query for redis
+        word_list_clean = [re.escape(word) for word in word_list if word not in stop_words] # Escape all special chars except _, otherwise Redis throws error
         text_query = transform_wordlist_to_query(word_list_clean, lang)
 
         redis_query = redis_query_from_parameters(text_query, service, provider)
