@@ -79,7 +79,7 @@ async def startup_event():
     r.ft().config_set("MAXSEARCHRESULTS", "-1" )
 
     global dataframe, kg
-    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/knowledge_graph/" # Restore once pipeline works
+    url_github_repo = "https://raw.githubusercontent.com/FHNW-IVGI/Geoharvester/main/"
     url_geoservices_CH_pkl = os.path.join(url_github_repo, 'scraper/data/', "merged_data.pkl")
     dataframe = import_pkl_into_dataframe(url_geoservices_CH_pkl)
     url_kg_dataframe = os.path.join(url_github_repo, 'knowledge_graph', "kg_data.pkl")
