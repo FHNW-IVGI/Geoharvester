@@ -622,9 +622,9 @@ def preprocessing_NLP(raw_data_path, output_folder=None, column='abstract'):
                                             case_sensitive=False)
     
     # Characters cleaning for compatibility with redis -> Already done by checking the new data
-    # print(f"Cleaning up...")
-    # raw_data = raw_data.replace(to_replace="'", value="-", regex=True)
-    # raw_data = raw_data.replace(to_replace='\"', value="-", regex=True)
+    print(f"Cleaning up metadata...")
+    raw_data = raw_data.replace(to_replace="\'", value=" ", regex=True)
+    raw_data = raw_data.replace(to_replace='\"', value="-", regex=True)
     # raw_data = raw_data.replace(to_replace="  ", value = " ", regex=True)
     # raw_data = raw_data.replace(to_replace="    ", value = " ", regex=True)
     
