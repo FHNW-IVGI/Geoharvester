@@ -1,3 +1,4 @@
 Timestamp,Operator,URL,Issue
-2024-12-15T03:53:52.782427+01:00,KT_GR,https://wms.geo.gr.ch/amtlichevermessung?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
-2024-12-15T03:55:06.089441+01:00,KT_GR,https://wfs.geo.gr.ch/amtlichevermessung?service=WFS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2024-12-22T03:55:37.352594+01:00,KT_GR,https://wms.geo.gr.ch/amtlichevermessung?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2024-12-22T03:56:50.124556+01:00,KT_GR,https://wfs.geo.gr.ch/amtlichevermessung?service=WFS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2024-12-22T03:56:58.345722+01:00,KT_GR,ms:Pumpwerk_Waermepumpe,"cannot convert float infinity to integer"
