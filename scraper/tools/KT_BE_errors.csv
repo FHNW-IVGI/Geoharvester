@@ -1,2 +1,0 @@
-Timestamp,Operator,URL,Issue
-2025-01-05T03:31:38.889334+01:00,KT_BE,https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_location01_de_ms_wfs/MapServer/WFSServer?&request=GetCapabilities&service=WFS,"Service does not seem to be a valid WMS, WMTS or WFS"
