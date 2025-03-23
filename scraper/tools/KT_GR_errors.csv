@@ -1,4 +1,5 @@
 Timestamp,Operator,URL,Issue
-2025-03-16T03:56:03.727480+01:00,KT_GR,https://wms.geo.gr.ch/bienenseuchen?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
-2025-03-16T04:12:17.356552+01:00,KT_GR,https://wms.geo.gr.ch/amtlichevermessung?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
-2025-03-16T04:13:57.388388+01:00,KT_GR,https://wfs.geo.gr.ch/amtlichevermessung?service=WFS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2025-03-23T03:45:55.141278+01:00,KT_GR,https://wms.geo.gr.ch/bienenseuchen?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2025-03-23T03:56:33.624770+01:00,KT_GR,https://wms.geo.gr.ch/amtlichevermessung?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2025-03-23T03:57:29.585718+01:00,KT_GR,https://wms.geo.gr.ch/uebersichtsplan?service=WMS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2025-03-23T03:57:32.374589+01:00,KT_GR,https://wfs.geo.gr.ch/amtlichevermessung?service=WFS&request=GetCapabilities,"GET requested yielded HTTP response status code 404"
