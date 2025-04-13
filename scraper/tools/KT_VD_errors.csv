@@ -1,0 +1,2 @@
+Timestamp,Operator,URL,Issue
+2025-04-13T06:17:21.606015+02:00,KT_VD,https://www.ogc.vd.ch/public/services/OGC/wmsVD/Mapserver/WMSServer?SERVICE=WMS&REQUEST=GetCapabilities,"HTTPSConnectionPool(host='www.ogc.vd.ch', port=443): Max retries exceeded with url: /public/services/OGC/wmsVD/Mapserver/WMSServer?SERVICE=WMS&REQUEST=GetCapabilities (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1147)')))"
