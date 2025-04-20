@@ -1,3 +1,0 @@
-Timestamp,Operator,URL,Issue
-2025-04-13T04:48:04.324076+02:00,KT_BE,https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_society03_de_ms_wms/MapServer/WMSServer?&request=GetCapabilities&service=WMS,"'NoneType' object has no attribute 'identification'"
-2025-04-13T04:51:15.377153+02:00,KT_BE,https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_society03_de_ms_wfs/MapServer/WFSServer?&request=GetCapabilities&service=WFS,"Service does not seem to be a valid WMS, WMTS or WFS"

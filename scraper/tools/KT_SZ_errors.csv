@@ -1,0 +1,3 @@
+Timestamp,Operator,URL,Issue
+2025-04-20T05:13:35.081570+02:00,KT_SZ,https://map.geo.sz.ch/mapserv_proxy?SERVICE=WMS&REQUEST=GetCapabilities&lang=de,"GET requested yielded HTTP response status code 503"
+2025-04-20T05:13:48.369376+02:00,KT_SZ,https://map.geo.sz.ch/mapserv_proxy?SERVICE=WFS&REQUEST=GetCapabilities&lang=de,"GET requested yielded HTTP response status code 503"
