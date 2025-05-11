@@ -1,4 +1,4 @@
 Timestamp,Operator,URL,Issue
-2025-05-04T05:02:02.589085+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00008_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 404"
-2025-05-04T05:04:12.955033+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00038_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 404"
-2025-05-04T05:06:34.656450+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00019_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
+2025-05-11T05:10:53.507525+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00008_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2025-05-11T05:13:05.449886+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00038_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 404"
+2025-05-11T05:15:38.919781+02:00,KT_SG,https://services.geo.sg.ch/wss/service/SG00019_WMS/guest?REQUEST=GetCapabilities,"GET requested yielded HTTP response status code 403"
