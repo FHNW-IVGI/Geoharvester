@@ -9,12 +9,10 @@ from typing import Union
 
 from app.constants import (DEFAULTSIZE, EnumLangType, EnumProviderType,
                            EnumServiceType)
-from app.processing.methods import (import_pkl_into_dataframe,
-                                    split_search_string,
-                                    generate_knowledge_graph,
-                                    open_knowledge_graph,
-                                    traverse_knowledge_graph,
-                                    find_translation)
+from app.processing.methods import (find_translation, generate_knowledge_graph,
+                                    import_pkl_into_dataframe,
+                                    open_knowledge_graph, split_search_string,
+                                    traverse_knowledge_graph)
 from app.redis.methods import (create_index, drop_redis_db, ingest_data,
                                redis_query_from_parameters, results_ranking,
                                search_redis, transform_wordlist_to_query)
