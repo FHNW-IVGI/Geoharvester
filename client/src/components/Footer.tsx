@@ -15,7 +15,7 @@ export const Footer = () => {
     >
       <FormattedMessage
         id="footer.impressum"
-        defaultMessage="© 2024 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut Geomatik, FHNW und swisstopo"
+        defaultMessage="© 2025 GeoHarvester | Ein Projekt in Zusammenarbeit mit dem Institut Geomatik, FHNW und swisstopo"
       />
     </Box>
   );

@@ -87,7 +87,7 @@ export const MenuComponent = () => {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            window.open("https://github.com/FHNW-IVGI/Geoharvester");
+            window.open("https://github.com/FHNW-IGEO/Geoharvester");
           }}
         >
           <InfoIcon style={{ marginRight: 14 }} />
@@ -100,7 +100,7 @@ export const MenuComponent = () => {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            window.open("https://github.com/FHNW-IVGI/Geoharvester");
+            window.open("https://github.com/FHNW-IGEO/Geoharvester");
           }}
         >
           <GitHubIcon style={{ marginRight: 14 }} />
